@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.garuda.web.console.oauthscope.OauthScopeRepository">
+
+    <resultMap id="oauthScopeMap" type="org.opencloudengine.garuda.web.console.oauthscope.OauthScope">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="additionalInformation" column="additional_information" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
+        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthscope.OauthScope">
+        INSERT INTO OAUTH_SCOPES (group_id, name, description, additional_information)
+        VALUES (
+        #{groupId}, #{name}, #{description}, #{additionalInformation}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="oauthScopeMap">
+        SELECT * FROM OAUTH_SCOPES
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="oauthScopeMap">
+        SELECT * FROM OAUTH_SCOPES
+        WHERE group_id = #{groupId}
+        ORDER BY upd_dt DESC
+    </select>
+
+    <select id="selectByGroupIdAndName" parameterType="map" resultMap="oauthScopeMap">
+        SELECT * FROM OAUTH_SCOPES
+        WHERE group_id = #{groupId}
+        AND name = #{name}
+    </select>
+
+    <select id="selectByGroupIdAndId" parameterType="map" resultMap="oauthScopeMap">
+        SELECT * FROM OAUTH_SCOPES
+        WHERE group_id = #{groupId}
+        AND id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthscope.OauthScope">
+        UPDATE OAUTH_SCOPES
+        SET
+        name = #{name},
+        description = #{description},
+        additional_information = #{additionalInformation},
+        UPD_DT = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_SCOPES
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.garuda.web.console.oauthuser.OauthUserRepository">
+
+    <resultMap id="oauthUserMap" type="org.opencloudengine.garuda.web.console.oauthuser.OauthUser">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userPassword" column="user_password" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="INTEGER"/>
+        <result property="additionalInformation" column="additional_information" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
+        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser">
+        INSERT INTO OAUTH_USER (group_id, user_name, user_password, level, additional_information)
+        VALUES (
+        #{groupId}, #{userName}, #{userPassword}, #{level}, #{additionalInformation}
+        )
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE group_id = #{groupId}
+        ORDER BY upd_dt DESC
+    </select>
+
+    <select id="selectByGroupIdAndUserName" parameterType="map" resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE group_id = #{groupId}
+        AND user_name = #{userName}
+    </select>
+
+    <select id="selectByGroupIdAndId" parameterType="map" resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE group_id = #{groupId}
+        AND id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser">
+        UPDATE OAUTH_USER
+        SET
+        user_name = #{userName},
+        user_password = #{userPassword},
+        level = #{level},
+        additional_information = #{additionalInformation},
+        UPD_DT = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_USER
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

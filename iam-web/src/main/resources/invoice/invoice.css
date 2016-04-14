@@ -1,0 +1,44 @@
+body {
+    position: relative;
+    color: #001028;
+    background: #FFFFFF;
+    font-family: NanumGothic;
+    font-size: 12px;
+}
+table{
+    font-size: 12px;
+}
+
+table td div{
+    line-height: 20px;
+}
+
+.line1{
+    background: #FAECC5;
+    height: 2px;
+    width: 100%;
+}
+.line2{
+    background: #FAECC5;
+    height: 1px;
+    width: 100%;
+}
+
+.small1{
+    font-size: 10px;
+}
+
+.padding20{
+    padding-top: 10px;padding-bottom: 10px;
+}
+
+.invoice{
+    border-top: solid 1px #FAECC5;width: 100%;
+    border-right: solid 1px #FAECC5;width: 100%;
+    border-left: solid 1px #FAECC5;width: 100%
+}
+.invoice td{
+    font-size: 12px;
+    border-bottom:solid 1px #FAECC5;
+    padding: 10px;
+}

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/iam-common/iam-common.iml" filepath="$PROJECT_DIR$/iam-common/iam-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iam-web/iam-web.iml" filepath="$PROJECT_DIR$/iam-web/iam-web.iml" />
       <module fileurl="file://$PROJECT_DIR$/oceIAM.iml" filepath="$PROJECT_DIR$/oceIAM.iml" />
     </modules>
   </component>

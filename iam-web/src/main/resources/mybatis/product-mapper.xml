@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.garuda.web.product.ProductRepository">
+
+    <resultMap id="ProductMap" type="org.opencloudengine.garuda.web.product.Product">
+        <result property="id" column="ID" jdbcType="BIGINT"/>
+        <result property="productFamilyId" column="PRODUCT_FAMILY_ID" jdbcType="BIGINT"/>
+        <result property="days" column="DAYS" jdbcType="VARCHAR"/>
+        <result property="country" column="COUNTRY" jdbcType="VARCHAR"/>
+        <result property="maxNode" column="MAX_NODE" jdbcType="INTEGER"/>
+        <result property="price" column="PRICE" jdbcType="INTEGER"/>
+        <result property="registration" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="ProductFamilyMap" type="org.opencloudengine.garuda.web.product.ProductFamily">
+        <result property="id" column="ID" jdbcType="BIGINT"/>
+        <result property="version" column="VERSION" jdbcType="VARCHAR"/>
+        <result property="name" column="NAME" jdbcType="VARCHAR"/>
+        <result property="family" column="FAMILY" jdbcType="VARCHAR"/>
+        <result property="licenseType" column="LICENSE_TYPE" jdbcType="VARCHAR"/>
+        <result property="registration" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="ProductFeaturesMap" type="org.opencloudengine.garuda.web.product.ProductFeatures">
+        <result property="id" column="ID" jdbcType="BIGINT"/>
+        <result property="productFamilyId" column="PRODUCT_FAMILY_ID" jdbcType="BIGINT"/>
+        <result property="feature" column="FEATURE" jdbcType="VARCHAR"/>
+        <result property="registration" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="ProductInterceptionMap" type="org.opencloudengine.garuda.web.product.ProductInterception">
+        <result property="id" column="ID" jdbcType="BIGINT"/>
+        <result property="country" column="COUNTRY" jdbcType="VARCHAR"/>
+        <result property="registration" column="REG_DT" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="ProductMixMap" type="org.opencloudengine.garuda.web.product.ProductMix">
+        <result property="id" column="ID" jdbcType="BIGINT"/>
+        <result property="productFamilyId" column="PRODUCT_FAMILY_ID" jdbcType="BIGINT"/>
+        <result property="days" column="DAYS" jdbcType="VARCHAR"/>
+        <result property="country" column="COUNTRY" jdbcType="VARCHAR"/>
+        <result property="maxNode" column="MAX_NODE" jdbcType="INTEGER"/>
+        <result property="price" column="PRICE" jdbcType="INTEGER"/>
+        <result property="registration" column="REG_DT" jdbcType="DATE"/>
+        <result property="familyId" column="FAMILY_ID" jdbcType="BIGINT"/>
+        <result property="productVersion" column="PRODUCT_VERSION" jdbcType="VARCHAR"/>
+        <result property="productName" column="PRODUCT_NAME" jdbcType="VARCHAR"/>
+        <result property="familyName" column="FAMILY_NAME" jdbcType="VARCHAR"/>
+        <result property="licenseType" column="LICENSE_TYPE" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectProductFeaturesByProductFamilyId" parameterType="java.lang.Long" resultMap="ProductFeaturesMap">
+        SELECT
+        *
+        FROM
+        PRODUCT_FEATURES
+        WHERE PRODUCT_FAMILY_ID = #{productFamilyId};
+    </select>
+
+    <select id="selectProductMixByCondition" parameterType="org.opencloudengine.garuda.web.product.ProductMix" resultMap="ProductMixMap">
+        SELECT
+        BB.*,
+        AA.ID as FAMILY_ID,
+        AA.VERSION as PRODUCT_VERSION,
+        AA.NAME as PRODUCT_NAME,
+        AA.FAMILY as FAMILY_NAME,
+        AA.LICENSE_TYPE
+        FROM
+        (SELECT * FROM PRODUCT_FAMILY)AA
+        join
+        (SELECT * FROM PRODUCT)BB
+        ON BB.PRODUCT_FAMILY_ID = AA.ID
+        WHERE 1=1
+        <if test="productVersion != '' and productVersion != null">
+            AND AA.VERSION = #{productVersion}
+        </if>
+        <if test="productName != '' and productName != null">
+            AND AA.NAME = #{productName}
+        </if>
+        <if test="familyName != '' and familyName != null">
+            AND AA.FAMILY = #{familyName}
+        </if>
+        <if test="licenseType != '' and licenseType != null">
+            AND AA.LICENSE_TYPE = #{licenseType}
+        </if>
+        ORDER BY PRICE;
+    </select>
+
+    <select id="selectAllProductMix" resultMap="ProductMixMap">
+        SELECT
+        BB.*,
+        AA.ID as FAMILY_ID,
+        AA.VERSION as PRODUCT_VERSION,
+        AA.NAME as PRODUCT_NAME,
+        AA.FAMILY as FAMILY_NAME,
+        AA.LICENSE_TYPE
+        FROM
+        (SELECT * FROM PRODUCT_FAMILY)AA
+        join
+        (SELECT * FROM PRODUCT)BB
+        ON BB.PRODUCT_FAMILY_ID = AA.ID
+        ORDER BY PRICE;
+    </select>
+
+    <select id="selectProductMixByProductId" parameterType="java.lang.Long" resultMap="ProductMixMap">
+        SELECT
+        BB.*,
+        AA.ID as FAMILY_ID,
+        AA.VERSION as PRODUCT_VERSION,
+        AA.NAME as PRODUCT_NAME,
+        AA.FAMILY as FAMILY_NAME,
+        AA.LICENSE_TYPE
+        FROM
+        (SELECT * FROM PRODUCT_FAMILY)AA
+        join
+        (SELECT * FROM PRODUCT)BB
+        ON BB.PRODUCT_FAMILY_ID = AA.ID
+        WHERE BB.ID = #{id};
+    </select>
+
+
+
+    <select id="selectAllProductInterception" resultMap="ProductInterceptionMap">
+        SELECT
+        *
+        FROM
+        PRODUCT_INTERCEPTION;
+    </select>
+
+</mapper>
