@@ -57,7 +57,7 @@
                         <form action="/console/scope/create" class="form-horizontal"
                               role="form"
                               id="oauthScopeForm" method="post">
-                            <h4>Create New Management Scope </h4>
+                            <h4>Create New Oauth Scope </h4>
 
                             <c:choose>
                                 <c:when test="${duplicate}">

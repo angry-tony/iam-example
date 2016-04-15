@@ -57,7 +57,7 @@
                         <form action="/console/scope/update" class="form-horizontal"
                               role="form"
                               id="oauthScopeForm" method="post">
-                            <h4>Edit New Management Group </h4>
+                            <h4>Edit Oauth Scope </h4>
 
                             <c:choose>
                                 <c:when test="${duplicate}">

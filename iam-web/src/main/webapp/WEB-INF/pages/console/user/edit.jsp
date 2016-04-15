@@ -57,7 +57,7 @@
                         <form action="/console/user/update" class="form-horizontal"
                               role="form"
                               id="oauthUserForm" method="post">
-                            <h4>Edit New Management Group </h4>
+                            <h4>Edit Oauth User </h4>
 
                             <c:choose>
                                 <c:when test="${duplicate}">

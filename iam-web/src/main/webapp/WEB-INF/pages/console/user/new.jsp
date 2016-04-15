@@ -57,7 +57,7 @@
                         <form action="/console/user/create" class="form-horizontal"
                               role="form"
                               id="oauthUserForm" method="post">
-                            <h4>Create New Management Group </h4>
+                            <h4>Create New Oauth User </h4>
 
                             <c:choose>
                                 <c:when test="${duplicate}">

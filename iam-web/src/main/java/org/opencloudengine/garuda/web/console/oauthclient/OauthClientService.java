@@ -1,22 +1,30 @@
 package org.opencloudengine.garuda.web.console.oauthclient;
 
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-
 import java.util.List;
 
 public interface OauthClientService {
 
-    OauthUser selectById(Long id);
+    OauthClient selectById(Long id);
 
-    List<OauthUser> selectByGroupId(Long groupId);
+    List<OauthClient> selectByGroupId(Long groupId);
 
-    OauthUser selectByGroupIdAndUserName(Long groupId, String userName);
+    OauthClient selectByGroupIdAndName(Long groupId, String name);
 
-    OauthUser selectByGroupIdAndId(Long groupId, Long id);
+    OauthClient selectByGroupIdAndId(Long groupId, Long id);
 
-    int updateById(Long id, String userName, String userPassword, int level, String additionalInformation);
+    int updateById(Long id, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
+                   String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
+                   int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
 
     int deleteById(Long id);
 
-    int createUser(Long groupId, String userName, String userPassword, int level, String additionalInformation);
+    int createClient(Long groupId, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
+                     String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
+                     int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
+
+    int insertScopes(OauthClientScopes oauthClientScopes);
+
+    List<OauthClientScopes> selectScopes(Long clientId);
+
+    int deleteScopes(Long clientId);
 }

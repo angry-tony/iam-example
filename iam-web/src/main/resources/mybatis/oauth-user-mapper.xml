@@ -14,7 +14,8 @@
         <result property="updDate" column="upd_dt" jdbcType="DATE"/>
     </resultMap>
 
-    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser">
+    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO OAUTH_USER (group_id, user_name, user_password, level, additional_information)
         VALUES (
         #{groupId}, #{userName}, #{userPassword}, #{level}, #{additionalInformation}

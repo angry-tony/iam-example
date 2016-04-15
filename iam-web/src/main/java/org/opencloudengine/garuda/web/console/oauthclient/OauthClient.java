@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.console.oauthclient;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Arrays;
 
 /**
  * Created by cloudine on 2015. 6. 3..
@@ -10,11 +11,13 @@ public class OauthClient implements Serializable {
 
     private Long id;
     private Long groupId;
+    private String name;
+    private String description;
     private String clientKey;
     private String clientSecret;
     private String clientJwtSecret;
+    private String clientTrust;
     private String clientType;
-    private boolean publicClient;
     private boolean activeClient;
     private String authorizedGrantTypes;
     private String webServerRedirectUri;
@@ -43,6 +46,22 @@ public class OauthClient implements Serializable {
         this.groupId = groupId;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getClientKey() {
         return clientKey;
     }
@@ -67,20 +86,20 @@ public class OauthClient implements Serializable {
         this.clientJwtSecret = clientJwtSecret;
     }
 
+    public String getClientTrust() {
+        return clientTrust;
+    }
+
+    public void setClientTrust(String clientTrust) {
+        this.clientTrust = clientTrust;
+    }
+
     public String getClientType() {
         return clientType;
     }
 
     public void setClientType(String clientType) {
         this.clientType = clientType;
-    }
-
-    public boolean isPublicClient() {
-        return publicClient;
-    }
-
-    public void setPublicClient(boolean publicClient) {
-        this.publicClient = publicClient;
     }
 
     public boolean isActiveClient() {
@@ -176,11 +195,13 @@ public class OauthClient implements Serializable {
         return "OauthClient{" +
                 "id=" + id +
                 ", groupId=" + groupId +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", clientKey='" + clientKey + '\'' +
                 ", clientSecret='" + clientSecret + '\'' +
                 ", clientJwtSecret='" + clientJwtSecret + '\'' +
+                ", clientTrust='" + clientTrust + '\'' +
                 ", clientType='" + clientType + '\'' +
-                ", publicClient=" + publicClient +
                 ", activeClient=" + activeClient +
                 ", authorizedGrantTypes='" + authorizedGrantTypes + '\'' +
                 ", webServerRedirectUri='" + webServerRedirectUri + '\'' +

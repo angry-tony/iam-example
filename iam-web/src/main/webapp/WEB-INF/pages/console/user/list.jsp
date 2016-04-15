@@ -54,7 +54,7 @@
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="headline margin-bottom-10"><h4>Management Users </h4></div>
+                        <div class="headline margin-bottom-10"><h4>Oauth Users </h4></div>
 
                         <a class="btn-u btn-u-primary" href="/console/user/new">Create Oauth User</a>
 

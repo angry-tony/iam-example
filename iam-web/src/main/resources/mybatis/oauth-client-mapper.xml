@@ -6,11 +6,13 @@
     <resultMap id="oauthClientMap" type="org.opencloudengine.garuda.web.console.oauthclient.OauthClient">
         <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="groupId" column="group_id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
         <result property="clientKey" column="client_key" jdbcType="VARCHAR"/>
         <result property="clientSecret" column="client_secret" jdbcType="VARCHAR"/>
         <result property="clientJwtSecret" column="client_jwt_secret" jdbcType="INTEGER"/>
+        <result property="clientTrust" column="client_trust" jdbcType="VARCHAR"/>
         <result property="clientType" column="client_type" jdbcType="VARCHAR"/>
-        <result property="publicClient" column="public_client" jdbcType="BOOLEAN"/>
         <result property="activeClient" column="active_client" jdbcType="BOOLEAN"/>
         <result property="authorizedGrantTypes" column="authorized_grant_types" jdbcType="VARCHAR"/>
         <result property="webServerRedirectUri" column="web_server_redirect_uri" jdbcType="VARCHAR"/>
@@ -24,15 +26,26 @@
         <result property="updDate" column="upd_dt" jdbcType="DATE"/>
     </resultMap>
 
-    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient">
+    <resultMap id="oauthClientScopes" type="org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="clientId" column="client_id" jdbcType="BIGINT"/>
+        <result property="scopeId" column="scope_id" jdbcType="BIGINT"/>
+        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
+        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO OAUTH_CLIENT
         (
         group_id,
+        name,
+        description,
         client_key,
         client_secret,
         client_jwt_secret,
+        client_trust,
         client_type,
-        public_client,
         active_client,
         authorized_grant_types,
         web_server_redirect_uri,
@@ -45,11 +58,13 @@
         )
         VALUES (
         #{groupId},
+        #{name},
+        #{description},
         #{clientKey},
         #{clientSecret},
         #{clientJwtSecret},
+        #{clientTrust},
         #{clientType},
-        #{publicClient},
         #{activeClient},
         #{authorizedGrantTypes},
         #{webServerRedirectUri},
@@ -73,6 +88,12 @@
         ORDER BY upd_dt DESC
     </select>
 
+    <select id="selectByGroupIdAndName" parameterType="map" resultMap="oauthClientMap">
+        SELECT * FROM OAUTH_CLIENT
+        WHERE group_id = #{groupId}
+        AND name = #{name}
+    </select>
+
     <select id="selectByGroupIdAndId" parameterType="map" resultMap="oauthClientMap">
         SELECT * FROM OAUTH_CLIENT
         WHERE group_id = #{groupId}
@@ -82,8 +103,10 @@
     <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient">
         UPDATE OAUTH_CLIENT
         SET
+        name = #{name},
+        description = #{description},
+        client_trust = #{clientTrust},
         client_type = #{clientType},
-        public_client = #{publicClient},
         active_client = #{activeClient},
         authorized_grant_types = #{authorizedGrantTypes},
         web_server_redirect_uri = #{webServerRedirectUri},
@@ -100,6 +123,28 @@
     <delete id="deleteById" parameterType="java.lang.Long">
         DELETE FROM OAUTH_CLIENT
         WHERE id = #{id}
+    </delete>
+
+    <insert id="insertScopes" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes">
+        INSERT INTO OAUTH_CLIENT_SCOPES
+        (
+        client_id,
+        scope_id
+        )
+        VALUES (
+        #{clientId},
+        #{scopeId}
+        )
+    </insert>
+
+    <select id="selectScopes" parameterType="java.lang.Long" resultMap="oauthClientScopes">
+        SELECT * FROM OAUTH_CLIENT_SCOPES
+        WHERE client_id = #{clientId}
+    </select>
+
+    <delete id="deleteScopes" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_CLIENT_SCOPES
+        WHERE client_id = #{clientId}
     </delete>
 
 </mapper>

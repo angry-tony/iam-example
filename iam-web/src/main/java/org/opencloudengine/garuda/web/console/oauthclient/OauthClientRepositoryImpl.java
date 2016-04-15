@@ -2,8 +2,6 @@ package org.opencloudengine.garuda.web.console.oauthclient;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,30 +23,30 @@ public class OauthClientRepositoryImpl extends PersistentRepositoryImpl<String, 
     }
 
     @Override
-    public int insert(OauthUser oauthUser) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insert", oauthUser);
+    public int insert(OauthClient OauthClient) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insert", OauthClient);
     }
 
     @Override
-    public OauthUser selectById(Long id) {
+    public OauthClient selectById(Long id) {
         return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectById", id);
     }
 
     @Override
-    public List<OauthUser> selectByGroupId(Long groupId) {
+    public List<OauthClient> selectByGroupId(Long groupId) {
         return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByGroupId", groupId);
     }
 
     @Override
-    public OauthUser selectByGroupIdAndUserName(Long groupId, String userName) {
+    public OauthClient selectByGroupIdAndName(Long groupId, String name) {
         Map map = new HashMap();
         map.put("groupId", groupId);
-        map.put("userName", userName);
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByGroupIdAndUserName", map);
+        map.put("name", name);
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByGroupIdAndName", map);
     }
 
     @Override
-    public OauthUser selectByGroupIdAndId(Long groupId, Long id) {
+    public OauthClient selectByGroupIdAndId(Long groupId, Long id) {
         Map map = new HashMap();
         map.put("groupId", groupId);
         map.put("id", id);
@@ -56,12 +54,27 @@ public class OauthClientRepositoryImpl extends PersistentRepositoryImpl<String, 
     }
 
     @Override
-    public int updateById(OauthUser oauthUser) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", oauthUser);
+    public int updateById(OauthClient OauthClient) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", OauthClient);
     }
 
     @Override
     public int deleteById(Long id) {
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteById", id);
+    }
+
+    @Override
+    public int insertScopes(OauthClientScopes oauthClientScopes) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertScopes", oauthClientScopes);
+    }
+
+    @Override
+    public List<OauthClientScopes> selectScopes(Long clientId) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectScopes", clientId);
+    }
+
+    @Override
+    public int deleteScopes(Long clientId) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteScopes", clientId);
     }
 }

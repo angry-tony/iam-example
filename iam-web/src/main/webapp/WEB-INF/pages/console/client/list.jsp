@@ -46,7 +46,7 @@
             <!--Left Sidebar-->
             <div class="col-md-3 md-margin-bottom-40">
                 <%@include file="../menu.jsp" %>
-                <script type="text/javascript">$('[name=list-menu-scope]').addClass('active');</script>
+                <script type="text/javascript">$('[name=list-menu-client]').addClass('active');</script>
             </div>
             <!--End Left Sidebar-->
 
@@ -54,9 +54,9 @@
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="headline margin-bottom-10"><h4>Oauth Scopes </h4></div>
+                        <div class="headline margin-bottom-10"><h4>Oauth Clients </h4></div>
 
-                        <a class="btn-u btn-u-primary" href="/console/scope/new">Create Oauth Scope</a>
+                        <a class="btn-u btn-u-primary" href="/console/client/new">Create Oauth Client</a>
 
                         <br>
                         <br>
@@ -66,22 +66,26 @@
                                 <table class="table table-bordered table-striped">
                                     <thead>
                                     <tr>
-                                        <th>Scope Name</th>
+                                        <th>Client Name</th>
                                         <th>Description</th>
+                                        <th>Type</th>
                                         <th></th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach items="${oauthScopes}" var="oauthScope" varStatus="status">
+                                    <c:forEach items="${oauthClients}" var="oauthClient" varStatus="status">
                                         <tr>
                                             <td>
-                                                    ${oauthScope.name}
+                                                    ${oauthClient.name}
                                             </td>
                                             <td>
-                                                    ${oauthScope.description}
+                                                    ${oauthClient.description}
                                             </td>
                                             <td>
-                                                <a href="/console/scope/edit?id=${oauthScope.id}">Edit</a>
+                                                    ${oauthClient.clientType}
+                                            </td>
+                                            <td>
+                                                <a href="/console/client/edit?id=${oauthClient.id}">Edit</a>
                                             </td>
                                         </tr>
                                     </c:forEach>
