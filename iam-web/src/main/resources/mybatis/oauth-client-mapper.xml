@@ -26,14 +26,6 @@
         <result property="updDate" column="upd_dt" jdbcType="DATE"/>
     </resultMap>
 
-    <resultMap id="oauthClientScopes" type="org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes">
-        <result property="id" column="id" jdbcType="BIGINT"/>
-        <result property="clientId" column="client_id" jdbcType="BIGINT"/>
-        <result property="scopeId" column="scope_id" jdbcType="BIGINT"/>
-        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
-        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
-    </resultMap>
-
     <insert id="insert" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         INSERT INTO OAUTH_CLIENT
@@ -82,6 +74,17 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectByClientKey" parameterType="java.lang.String" resultMap="oauthClientMap">
+        SELECT * FROM OAUTH_CLIENT
+        WHERE client_key = #{clientKey}
+    </select>
+
+    <select id="selectByClientKeyAndSecret" parameterType="java.lang.String" resultMap="oauthClientMap">
+        SELECT * FROM OAUTH_CLIENT
+        WHERE client_key = #{clientKey}
+        AND client_secret = #{clientSecret}
+    </select>
+
     <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="oauthClientMap">
         SELECT * FROM OAUTH_CLIENT
         WHERE group_id = #{groupId}
@@ -123,28 +126,6 @@
     <delete id="deleteById" parameterType="java.lang.Long">
         DELETE FROM OAUTH_CLIENT
         WHERE id = #{id}
-    </delete>
-
-    <insert id="insertScopes" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes">
-        INSERT INTO OAUTH_CLIENT_SCOPES
-        (
-        client_id,
-        scope_id
-        )
-        VALUES (
-        #{clientId},
-        #{scopeId}
-        )
-    </insert>
-
-    <select id="selectScopes" parameterType="java.lang.Long" resultMap="oauthClientScopes">
-        SELECT * FROM OAUTH_CLIENT_SCOPES
-        WHERE client_id = #{clientId}
-    </select>
-
-    <delete id="deleteScopes" parameterType="java.lang.Long">
-        DELETE FROM OAUTH_CLIENT_SCOPES
-        WHERE client_id = #{clientId}
     </delete>
 
 </mapper>

@@ -14,6 +14,7 @@
     <!--create-session="never"-->
     <!--entry-point-ref="restAuthenticationEntryPoint"-->
     <!-->-->
+
     <http realm="uEngine Protected Area"
           use-expressions="true"
           auto-config="false"

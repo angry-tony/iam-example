@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<img style="width: 150px" src="${imgDir}/header-cloudine.png"/>
+<img style="width: 150px" src="${imgDir}/header-uengine.png"/>
 
 <table style="border: none; width: 100%">
     <tr>
@@ -25,8 +25,8 @@
         <td width="10%"></td>
         <td width="60%" valign="top" class="hearder_right">
             <div style="position: relative">
-                <div class="padding20" style="font-size: 20px;">Cloudine Product Invoice</div>
-                <div class="padding20">Email or talk to us about your Cloudine account or bill, visit www.cloudine.io/contact/</div>
+                <div class="padding20" style="font-size: 20px;">uengine Product Invoice</div>
+                <div class="padding20">Email or talk to us about your uengine account or bill, visit www.uengine.io/contact/</div>
                 <div class="line1"></div>
                 <div class="padding20" style="font-size: 15px;">Invoice Summary</div>
                 <div class="line2"></div>
@@ -51,8 +51,8 @@
 <br/><br/>
 
 <div style="font-size: 20px">This invoice is for the billing period April 1 - April 30 , 2015</div>
-<p>Greetings from Cloudine Services, we're writing to provide you with an electronic invoice for your use of Cloudine services. Additional information
-    regarding your bill, individual service charge details, and your account history are available on the <a href="www.cloudine.io/license">Account Activity Page.</a></p>
+<p>Greetings from uengine Services, we're writing to provide you with an electronic invoice for your use of uengine services. Additional information
+    regarding your bill, individual service charge details, and your account history are available on the <a href="www.uengine.io/license">Account Activity Page.</a></p>
 
 <br/><br/><br/><br/>
 
@@ -61,7 +61,7 @@
         <td colspan="2">Summary</td>
     </tr>
     <tr style="color: #FFBB00;">
-        <td style="padding-left: 20px;">Cloudine Product Charges</td>
+        <td style="padding-left: 20px;">uengine Product Charges</td>
         <td align="right">$${amount}</td>
     </tr>
     <tr>
@@ -196,19 +196,19 @@
 
 <div style="font-size: 20px">Licensing & Support</div>
 
-<p>Support Requests related to licensing or Cloudine software can be initiated at <a href="http://support.cludine.io/support">http://support.cludine.io/support</a></p>
+<p>Support Requests related to licensing or uengine software can be initiated at <a href="http://support.cludine.io/support">http://support.cludine.io/support</a></p>
 
 <p>For support requests related to third party software please contact the third party vendor.</p>
 
-<p>Usage of Cloudine software and hosted services is subject to the <a href="http://support.cludine.io/support">Cloudine Customer Agreement</a></p>
+<p>Usage of uengine software and hosted services is subject to the <a href="http://support.cludine.io/support">uengine Customer Agreement</a></p>
 
-<p>Usage of third party add-ons purchased through the Cloudine Marketplace is subject to the Cloudine Marketplace <a href="http://support.cludine.io/support">Terms of Use</a></p>
+<p>Usage of third party add-ons purchased through the uengine Marketplace is subject to the uengine Marketplace <a href="http://support.cludine.io/support">Terms of Use</a></p>
 
-<p>Technical Account Management (TAM) services are subject to the <a href="http://support.cludine.io/support">Cloudine Professional Services Agreement</a></p>
+<p>Technical Account Management (TAM) services are subject to the <a href="http://support.cludine.io/support">uengine Professional Services Agreement</a></p>
 
-<p>Specific details on Cloudine's support policy are available at <a href="http://support.cludine.io/support">http://support.cludine.io/support/Cloudine+Support</a></p>
+<p>Specific details on uengine's support policy are available at <a href="http://support.cludine.io/support">http://support.cludine.io/support/uengine+Support</a></p>
 
-<p>Next steps for JIRA, Confluence, and Marketplace add-on legacy license holders are available in the <a href="http://support.cludine.io/support">Cloudine licensing FAQ</a></p>
+<p>Next steps for JIRA, Confluence, and Marketplace add-on legacy license holders are available in the <a href="http://support.cludine.io/support">uengine licensing FAQ</a></p>
 
 <p>Software maintenance covers access to any support* and software product updates for your software license.</p>
 
@@ -224,7 +224,7 @@
 
 <p>* Support covers technical service requests for implementation and configuration assistance, upgrade assistance, post-implementation product issues.</p>
 
-<p>A technical service request is defined as assistance with one issue, problem, or question relating to the use or installation of a Cloudine product, regardless
+<p>A technical service request is defined as assistance with one issue, problem, or question relating to the use or installation of a uengine product, regardless
 
     of the number of communications required.</p>
 
@@ -236,18 +236,18 @@
 
 <p>- Network topology or environment issues</p>
 
-<p>- Application server issues not directly related to the Cloudine product implementation, configuration or operation</p>
+<p>- Application server issues not directly related to the uengine product implementation, configuration or operation</p>
 
-<p>- Service requests or issues referred via Cloudine forums</p>
+<p>- Service requests or issues referred via uengine forums</p>
 
 <br/><br/><br/><br/><br/><br/>
 
 <div style="height: 1px;background: #000000;width: 100%"></div>
-<p>Cloudine Pty Ltd, Hokyoung 2F, 122-30, Samsung-dong, Gangnam-gu, Seoul, Korea</p>
-<p>support@cloudine.co.kr</p>
+<p>uengine Pty Ltd, Hokyoung 2F, 122-30, Samsung-dong, Gangnam-gu, Seoul, Korea</p>
+<p>support@uengine.co.kr</p>
 <p>(+82) 70-8806-3735</p>
 <p>(+82) 2-556-3402</p>
-<p><a href="http://www.cloudine.io">http://www.cloudine.io</a></p>
+<p><a href="http://www.uengine.io">http://www.uengine.io</a></p>
 
 </body>
 </html>

@@ -12,6 +12,10 @@ public interface OauthClientService {
 
     OauthClient selectByGroupIdAndId(Long groupId, Long id);
 
+    OauthClient selectByClientKey(String clientKey);
+
+    OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
+
     int updateById(Long id, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
                    String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
                    int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
@@ -21,10 +25,4 @@ public interface OauthClientService {
     int createClient(Long groupId, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
                      String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
                      int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
-
-    int insertScopes(OauthClientScopes oauthClientScopes);
-
-    List<OauthClientScopes> selectScopes(Long clientId);
-
-    int deleteScopes(Long clientId);
 }

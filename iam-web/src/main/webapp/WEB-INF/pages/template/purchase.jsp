@@ -8,8 +8,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8 animated fadeInLeft">
-                <span><uengine:message code="main.download.title"></uengine:message></span>
-                <p><uengine:message code="main.download.desc"></uengine:message></p>
+                <span>OCE IAM Platform</span>
+                <p>OCE IAM is a platform to support integrated authentication and api gateway</p>
             </div>
             <div class="col-md-4 btn-buy animated fadeInRight">
                 <a href="/download" class="btn-u btn-u-lg"><i class="fa fa-cloud-download"></i><uengine:message code="main.download.button"></uengine:message></a>

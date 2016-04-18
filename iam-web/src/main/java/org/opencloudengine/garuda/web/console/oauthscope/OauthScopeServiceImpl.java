@@ -1,6 +1,7 @@
 package org.opencloudengine.garuda.web.console.oauthscope;
 
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -63,5 +64,20 @@ public class OauthScopeServiceImpl implements OauthScopeService {
         OauthScope.setDescription(description);
         OauthScope.setAdditionalInformation(additionalInformation);
         return oauthScopeRepository.insert(OauthScope);
+    }
+
+    @Override
+    public int insertClientScopes(OauthClientScopes oauthClientScopes) {
+        return oauthScopeRepository.insertClientScopes(oauthClientScopes);
+    }
+
+    @Override
+    public List<OauthScope> selectClientScopes(Long clientId) {
+        return oauthScopeRepository.selectClientScopes(clientId);
+    }
+
+    @Override
+    public int deleteClientScopes(Long clientId) {
+        return oauthScopeRepository.deleteClientScopes(clientId);
     }
 }

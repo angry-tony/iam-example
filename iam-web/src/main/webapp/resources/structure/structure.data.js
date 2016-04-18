@@ -142,10 +142,10 @@ structure.data = {
         /*
          Pricing
          */
-        {
-            title: message.msg('menu.pricing'),
-            href: '/pricing/flamingo2'
-        },
+        //{
+        //    title: message.msg('menu.pricing'),
+        //    href: '/pricing/flamingo2'
+        //},
         /*
          Contact
          */

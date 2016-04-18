@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class CsrfSecurityRequestMatcher implements RequestMatcher {
     private Pattern allowedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
-    private RegexRequestMatcher unprotectedMatcher = new RegexRequestMatcher("/payment/notify", null);
+    private RegexRequestMatcher unprotectedMatcher = new RegexRequestMatcher("/oauth/authorize_redirect", null);
 
     @Override
     public boolean matches(HttpServletRequest request) {
@@ -20,6 +20,10 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
             return false;
         }
 
-        return !unprotectedMatcher.matches(request);
+        if(unprotectedMatcher.matches(request)){
+            return false;
+        }
+
+        return true;
     }
 }

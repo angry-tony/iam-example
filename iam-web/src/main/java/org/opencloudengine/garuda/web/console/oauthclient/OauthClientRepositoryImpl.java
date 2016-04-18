@@ -54,6 +54,19 @@ public class OauthClientRepositoryImpl extends PersistentRepositoryImpl<String, 
     }
 
     @Override
+    public OauthClient selectByClientKey(String clientKey) {
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByClientKey", clientKey);
+    }
+
+    @Override
+    public OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret) {
+        Map map = new HashMap();
+        map.put("clientKey", clientKey);
+        map.put("clientSecret", clientSecret);
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByClientKeyAndSecret", map);
+    }
+
+    @Override
     public int updateById(OauthClient OauthClient) {
         return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", OauthClient);
     }
@@ -63,18 +76,4 @@ public class OauthClientRepositoryImpl extends PersistentRepositoryImpl<String, 
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteById", id);
     }
 
-    @Override
-    public int insertScopes(OauthClientScopes oauthClientScopes) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertScopes", oauthClientScopes);
-    }
-
-    @Override
-    public List<OauthClientScopes> selectScopes(Long clientId) {
-        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectScopes", clientId);
-    }
-
-    @Override
-    public int deleteScopes(Long clientId) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteScopes", clientId);
-    }
 }

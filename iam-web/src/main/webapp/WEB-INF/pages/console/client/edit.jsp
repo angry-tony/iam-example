@@ -74,6 +74,30 @@
                             <input type="hidden" id="id" name="id" value="${oauthClient.id}">
 
                             <div class="form-group">
+                                <label class="col-md-2 control-label">Client ID <span class="color-red">*</span></label>
+
+                                <div class="col-md-6">
+                                    <input type="text" name="clientKey" class="form-control" value="${oauthClient.clientKey}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Client Secret <span class="color-red">*</span></label>
+
+                                <div class="col-md-6">
+                                    <input type="text" name="clientSecret" class="form-control" value="${oauthClient.clientSecret}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Client Jwt Secret <span class="color-red">*</span></label>
+
+                                <div class="col-md-6">
+                                    <input type="text" name="clientJwtSecret" class="form-control" value="${oauthClient.clientJwtSecret}" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
 
                                 <div class="col-md-6">
@@ -249,9 +273,9 @@
                                         </c:forEach>
                                     </select>
 
-                                    <c:forEach items="${oauthClientScopes}" var="oauthClientScope" varStatus="status">
-                                        <input type="hidden" name="oauthClientScope"
-                                               value="${oauthClientScope.scopeId}">
+                                    <c:forEach items="${clientScopes}" var="clientScope" varStatus="status">
+                                        <input type="hidden" name="clientScope"
+                                               value="${clientScope.id}">
                                     </c:forEach>
                                 </div>
                             </div>
@@ -322,7 +346,7 @@
         //스코프 처리
         var scopeOptions = form.find('[name=scopes]').find('option');
         var clientScopes = [];
-        form.find('[name=oauthClientScope]').each(function () {
+        form.find('[name=clientScope]').each(function () {
             clientScopes.push($(this).val());
         });
 

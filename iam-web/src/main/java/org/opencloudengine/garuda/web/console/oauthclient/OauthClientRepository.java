@@ -15,13 +15,11 @@ public interface OauthClientRepository {
 
     OauthClient selectByGroupIdAndId(Long groupId, Long id);
 
+    OauthClient selectByClientKey(String clientKey);
+
+    OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
+
     int updateById(OauthClient OauthClient);
 
     int deleteById(Long id);
-
-    int insertScopes(OauthClientScopes oauthClientScopes);
-
-    List<OauthClientScopes> selectScopes(Long clientId);
-
-    int deleteScopes(Long clientId);
 }

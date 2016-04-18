@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.console.oauthscope;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -61,5 +62,20 @@ public class OauthScopeRepositoryImpl extends PersistentRepositoryImpl<String, O
     @Override
     public int deleteById(Long id) {
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteById", id);
+    }
+
+    @Override
+    public int insertClientScopes(OauthClientScopes oauthClientScopes) {
+        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertClientScopes", oauthClientScopes);
+    }
+
+    @Override
+    public List<OauthScope> selectClientScopes(Long clientId) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectClientScopes", clientId);
+    }
+
+    @Override
+    public int deleteClientScopes(Long clientId) {
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteClientScopes", clientId);
     }
 }

@@ -34,9 +34,9 @@
                     <i class="fa fa-compress service-icon"></i>
 
                     <div class="desc">
-                        <h4><uengine:message code="main.middle.1.title"></uengine:message> </h4>
+                        <h4>Proven </h4>
 
-                        <p><uengine:message code="main.middle.1.text"></uengine:message> </p>
+                        <p>OCE Products are being used and proven to be effective by many enterprises and government offices such as Ministry of National Defense, Ministry of Land, Infrastructure, and Transport, National Information Society Agency, Electronics and Telecommunications Research Institute, Korea Institute of Industrial Technology and Korea Institute of Industrial Technology and Samsung Electronics </p>
                     </div>
                 </div>
             </div>
@@ -45,9 +45,9 @@
                     <i class="fa fa-cogs service-icon"></i>
 
                     <div class="desc">
-                        <h4><uengine:message code="main.middle.2.title"></uengine:message> </h4>
+                        <h4>Integrated </h4>
 
-                        <p><uengine:message code="main.middle.2.text"></uengine:message> </p>
+                        <p>OCE IAM accommodates a web-based remote terminal, numerous analytic algorithm modules, and a management tool for system administrators. Flamingo satisfies needs for data analysts, software engineers, and system administrators. </p>
                     </div>
                 </div>
             </div>
@@ -56,112 +56,18 @@
                     <i class="fa fa-rocket service-icon"></i>
 
                     <div class="desc">
-                        <h4><uengine:message code="main.middle.3.title"></uengine:message> </h4>
+                        <h4>Powerful </h4>
 
-                        <p><uengine:message code="main.middle.3.text"></uengine:message> </p>
+                        <p>One quick installation of OCE IAM takes care of setting up a Oauth2.0 EcoSystem based integrated authentication and api gateway platform for engineers, data analysts, and system administrators. </p>
                     </div>
                 </div>
             </div>
         </div>
         <!-- End Service Blokcs -->
 
-        <!-- Recent Works -->
-        <div class="headline"><h2><uengine:message code="main.movie.title"/></h2></div>
-        <script type="text/javascript">
-            $(function () {
-                initCube($('#grid-container'), null, {
-                    gapHorizontal: 20,
-                    gapVertical: 20,
-                    mediaQueries: [{
-                        width: 800,
-                        cols: 4
-                    }, {
-                        width: 500,
-                        cols: 2
-                    }, {
-                        width: 320,
-                        cols: 1
-                    }]
-                });
-            });
-        </script>
-        <div id="grid-container" class="cbp-l-grid-agency">
-            <div class="col-md-3 col-sm-6 cbp-item">
-                <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                    <div class="thumbnail-img">
-                        <div class="overflow-hidden">
-                            <img class="img-responsive" src="/resources/images/flamingo/main-small-designer.png" alt="">
-                        </div>
-                        <a class="btn-more hover-effect cbp-lightbox"
-                           href="https://www.youtube.com/watch?v=P89_3QxvR7g&feature=youtu.be"><uengine:message code="main.tooltip.readmore"/></a>
-                    </div>
-                    <div class="caption">
-                        <h3><a class="hover-effect" href="#"><uengine:message code="main.movie.1.title"></uengine:message> </a></h3>
-
-                        <p><uengine:message code="main.movie.1.text"></uengine:message> </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 cbp-item">
-                <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                    <div class="thumbnail-img">
-                        <div class="overflow-hidden">
-                            <img class="img-responsive" src="/resources/images/flamingo/main-small-hive.png" alt="">
-                        </div>
-                        <a class="btn-more hover-effect cbp-lightbox"
-                           href="https://www.youtube.com/watch?v=yCCeLQaTX4U&feature=youtu.be"><uengine:message code="main.tooltip.readmore"/></a>
-                    </div>
-                    <div class="caption">
-                        <h3><a class="hover-effect" href="#"><uengine:message code="main.movie.2.title"></uengine:message> </a></h3>
-
-                        <p><uengine:message code="main.movie.2.text"></uengine:message> </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 cbp-item">
-                <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                    <div class="thumbnail-img">
-                        <div class="overflow-hidden">
-                            <img class="img-responsive" src="/resources/images/flamingo/main-small-monitoring.png" alt="">
-                        </div>
-                        <a class="btn-more hover-effect cbp-lightbox"
-                           href="https://www.youtube.com/watch?v=sxfWTgxMl0o&feature=youtu.be"><uengine:message code="main.tooltip.readmore"/></a>
-                    </div>
-                    <div class="caption">
-                        <h3><a class="hover-effect" href="#"><uengine:message code="main.movie.3.title"></uengine:message> </a></h3>
-
-                        <p><uengine:message code="main.movie.3.text"></uengine:message> </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6 cbp-item">
-                <div class="thumbnails thumbnail-style thumbnail-kenburn">
-                    <div class="thumbnail-img">
-                        <div class="overflow-hidden">
-                            <img class="img-responsive" src="/resources/images/flamingo/main-small-hdfs.png" alt="">
-                        </div>
-                        <a class="btn-more hover-effect cbp-lightbox"
-                           href="https://www.youtube.com/watch?v=QZQiGuxtb4Q&feature=youtu.be"><uengine:message code="main.tooltip.readmore"/></a>
-                    </div>
-                    <div class="caption">
-                        <h3><a class="hover-effect" href="#"><uengine:message code="main.movie.4.title"></uengine:message> </a></h3>
-
-                        <p><uengine:message code="main.movie.4.text"></uengine:message> </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Recent Works -->
-
-<%--
-        <div class="container content-sm">
-            <div class="headline-center"><h2><uengine:message code="main.workflow.title"></uengine:message> </h2></div>
-            <%@include file="flamingo/features/workflowcube.jsp" %>
-        </div>
---%>
 
         <!-- Owl Clients v1 -->
-        <div class="headline"><h2><uengine:message code="text.contactus.customer"/></h2></div>
+        <div class="headline"><h2>OCE Products Customers</h2></div>
         <div class="owl-clients-v1">
             <div class="item">
                 <img src="/resources/images/customers/1.png" alt="Client 1">

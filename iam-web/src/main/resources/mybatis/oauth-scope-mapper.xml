@@ -58,4 +58,32 @@
         WHERE id = #{id}
     </delete>
 
+    <insert id="insertClientScopes" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes">
+        INSERT INTO OAUTH_CLIENT_SCOPES
+        (
+        client_id,
+        scope_id
+        )
+        VALUES (
+        #{clientId},
+        #{scopeId}
+        )
+    </insert>
+
+    <select id="selectClientScopes" parameterType="java.lang.Long" resultMap="oauthScopeMap">
+        SELECT
+        B.*
+        FROM
+        (SELECT scope_id FROM OAUTH_CLIENT_SCOPES
+                WHERE client_id = #{clientId}) A
+        LEFT OUTER JOIN
+        (SELECT * FROM OAUTH_SCOPES) B
+        ON B.id = A.scope_id;
+    </select>
+
+    <delete id="deleteClientScopes" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_CLIENT_SCOPES
+        WHERE client_id = #{clientId}
+    </delete>
+
 </mapper>

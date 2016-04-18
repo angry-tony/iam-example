@@ -3,8 +3,6 @@ package org.opencloudengine.garuda.web.console.oauthclient;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,14 +134,14 @@ public class OauthClientController {
         }
 
         //스코프 검색
-        List<OauthClientScopes> oauthClientScopes = oauthClientService.selectScopes(id);
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(id);
         try {
 
             ModelAndView mav = new ModelAndView("/console/client/edit");
             mav.addObject("management", management);
             mav.addObject("oauthClient", oauthClient);
             mav.addObject("oauthScopes", oauthScopes);
-            mav.addObject("oauthClientScopes", oauthClientScopes);
+            mav.addObject("clientScopes", clientScopes);
             return mav;
         } catch (Exception ex) {
             throw new ServiceException("Invalid oauth client id");
@@ -207,7 +205,7 @@ public class OauthClientController {
         }
 
         //스코프 검색
-        List<OauthClientScopes> oauthClientScopes = oauthClientService.selectScopes(id);
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(id);
         try {
 
             //같은 이름 검색
@@ -217,7 +215,7 @@ public class OauthClientController {
                     ModelAndView mav = new ModelAndView("/console/client/edit");
                     mav.addObject("management", management);
                     mav.addObject("oauthClient", oauthClient);
-                    mav.addObject("oauthScopes", oauthScopes);
+                    mav.addObject("clientScopes", clientScopes);
                     mav.addObject("duplicate", true);
                     return mav;
                 }
@@ -237,7 +235,7 @@ public class OauthClientController {
             mav.addObject("management", management);
             mav.addObject("oauthClient", oauthClient);
             mav.addObject("oauthScopes", oauthScopes);
-            mav.addObject("oauthClientScopes", oauthClientScopes);
+            mav.addObject("clientScopes", clientScopes);
             mav.addObject("failed", true);
             return mav;
         }

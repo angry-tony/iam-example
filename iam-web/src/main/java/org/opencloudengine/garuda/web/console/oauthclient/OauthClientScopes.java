@@ -13,6 +13,8 @@ public class OauthClientScopes implements Serializable {
     private Long scopeId;
     private Date regDate;
     private Date updDate;
+    private String name;
+    private String description;
 
     public Long getId() {
         return id;
@@ -54,6 +56,22 @@ public class OauthClientScopes implements Serializable {
         this.updDate = updDate;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
         return "OauthClientScopes{" +
@@ -62,6 +80,8 @@ public class OauthClientScopes implements Serializable {
                 ", scopeId=" + scopeId +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 '}';
     }
 }

@@ -2,7 +2,7 @@ package org.opencloudengine.garuda.web.console.oauthclient;
 
 import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
-import org.opencloudengine.garuda.web.management.Management;
+import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.management.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     private OauthClientRepository oauthClientRepository;
 
     @Autowired
-    private ManagementService managementService;
+    private OauthScopeService oauthScopeService;
 
     @Autowired
     ConfigurationHelper configurationHelper;
@@ -50,6 +50,16 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
+    public OauthClient selectByClientKey(String clientKey) {
+        return oauthClientRepository.selectByClientKey(clientKey);
+    }
+
+    @Override
+    public OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret) {
+        return oauthClientRepository.selectByClientKeyAndSecret(clientKey, clientSecret);
+    }
+
+    @Override
     public int updateById(Long id, String name, String description, String clientTrust, String clientType, boolean activeClient,
                           String authorizedGrantTypes, String webServerRedirectUri, boolean refreshTokenValidity,
                           String additionalInformation, int codeLifetime, int refreshTokenLifetime,
@@ -73,7 +83,7 @@ public class OauthClientServiceImpl implements OauthClientService {
         int update = oauthClientRepository.updateById(oauthClient);
 
         //스코프 처리
-        oauthClientRepository.deleteScopes(oauthClient.getId());
+        oauthScopeService.deleteClientScopes(oauthClient.getId());
         if (!StringUtils.isEmpty(scopes)) {
             String[] split = scopes.split(",");
             for (int i = 0; i < split.length; i++) {
@@ -81,7 +91,7 @@ public class OauthClientServiceImpl implements OauthClientService {
                 OauthClientScopes oauthClientScopes = new OauthClientScopes();
                 oauthClientScopes.setClientId(oauthClient.getId());
                 oauthClientScopes.setScopeId(Long.parseLong(scope));
-                oauthClientRepository.insertScopes(oauthClientScopes);
+                oauthScopeService.insertClientScopes(oauthClientScopes);
             }
         }
         return update;
@@ -96,19 +106,9 @@ public class OauthClientServiceImpl implements OauthClientService {
         OauthClient oauthClient = new OauthClient();
         oauthClient.setGroupId(groupId);
 
-        //신뢰 어플리케이션
-        if (clientType.equals(this.TRUST_CLIENT_TYPE)) {
-            Management management = managementService.selectById(groupId);
-            oauthClient.setClientKey(management.getGroupKey());
-            oauthClient.setClientSecret(management.getGroupSecret());
-            oauthClient.setClientJwtSecret(management.getGroupJwtSecret());
-        }
-        //서드 파티 어플리케이션
-        else {
-            oauthClient.setClientKey(UUID.randomUUID().toString());
-            oauthClient.setClientSecret(UUID.randomUUID().toString());
-            oauthClient.setClientJwtSecret(UUID.randomUUID().toString());
-        }
+        oauthClient.setClientKey(UUID.randomUUID().toString());
+        oauthClient.setClientSecret(UUID.randomUUID().toString());
+        oauthClient.setClientJwtSecret(UUID.randomUUID().toString());
 
         oauthClient.setName(name);
         oauthClient.setDescription(description);
@@ -133,7 +133,7 @@ public class OauthClientServiceImpl implements OauthClientService {
                 OauthClientScopes oauthClientScopes = new OauthClientScopes();
                 oauthClientScopes.setClientId(oauthClient.getId());
                 oauthClientScopes.setScopeId(Long.parseLong(scope));
-                oauthClientRepository.insertScopes(oauthClientScopes);
+                oauthScopeService.insertClientScopes(oauthClientScopes);
             }
         }
 
@@ -143,20 +143,5 @@ public class OauthClientServiceImpl implements OauthClientService {
     @Override
     public int deleteById(Long id) {
         return oauthClientRepository.deleteById(id);
-    }
-
-    @Override
-    public int insertScopes(OauthClientScopes oauthClientScopes) {
-        return oauthClientRepository.insertScopes(oauthClientScopes);
-    }
-
-    @Override
-    public List<OauthClientScopes> selectScopes(Long clientId) {
-        return oauthClientRepository.selectScopes(clientId);
-    }
-
-    @Override
-    public int deleteScopes(Long clientId) {
-        return oauthClientRepository.deleteScopes(clientId);
     }
 }

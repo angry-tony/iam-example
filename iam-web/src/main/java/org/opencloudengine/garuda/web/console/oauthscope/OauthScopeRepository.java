@@ -1,5 +1,7 @@
 package org.opencloudengine.garuda.web.console.oauthscope;
 
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
+
 import java.util.List;
 
 public interface OauthScopeRepository {
@@ -18,4 +20,10 @@ public interface OauthScopeRepository {
     int updateById(OauthScope oauthScope);
 
     int deleteById(Long id);
+
+    int insertClientScopes(OauthClientScopes oauthClientScopes);
+
+    List<OauthScope> selectClientScopes(Long clientId);
+
+    int deleteClientScopes(Long clientId);
 }
