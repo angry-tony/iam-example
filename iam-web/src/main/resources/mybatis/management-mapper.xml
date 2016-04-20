@@ -10,21 +10,44 @@
         <result property="groupKey" column="group_key" jdbcType="VARCHAR"/>
         <result property="groupSecret" column="group_secret" jdbcType="VARCHAR"/>
         <result property="groupJwtSecret" column="group_jwt_secret" jdbcType="VARCHAR"/>
+        <result property="sessionTokenLifetime" column="session_token_lifetime" jdbcType="INTEGER"/>
+        <result property="scopeCheckLifetime" column="scope_check_lifetime" jdbcType="INTEGER"/>
         <result property="description" column="description" jdbcType="VARCHAR"/>
         <result property="regDate" column="reg_dt" jdbcType="DATE"/>
         <result property="updDate" column="upd_dt" jdbcType="DATE"/>
     </resultMap>
 
     <insert id="insert" parameterType="org.opencloudengine.garuda.web.management.Management">
-        INSERT INTO MANAGEMENT_GROUP (user_id, group_name, group_key, group_secret, group_jwt_secret, description)
+        INSERT INTO MANAGEMENT_GROUP (
+        user_id,
+        group_name,
+        group_key,
+        group_secret,
+        group_jwt_secret,
+        session_token_lifetime,
+        scope_check_lifetime,
+        description
+        )
         VALUES (
-        #{userId}, #{groupName}, #{groupKey}, #{groupSecret}, #{groupJwtSecret}, #{description}
+        #{userId},
+        #{groupName},
+        #{groupKey},
+        #{groupSecret},
+        #{groupJwtSecret},
+        #{sessionTokenLifetime},
+        #{scopeCheckLifetime},
+        #{description}
         )
     </insert>
 
     <select id="selectById" parameterType="java.lang.Long" resultMap="managementMap">
         SELECT * FROM MANAGEMENT_GROUP
         WHERE id = #{id}
+    </select>
+
+    <select id="selectByKey" parameterType="java.lang.String" resultMap="managementMap">
+        SELECT * FROM MANAGEMENT_GROUP
+        WHERE group_key = #{groupKey}
     </select>
 
     <select id="selectByUserIdAndId" parameterType="map" resultMap="managementMap">
@@ -44,6 +67,8 @@
         SET
         group_name = #{groupName},
         description = #{description},
+        session_token_lifetime = #{sessionTokenLifetime},
+        scope_check_lifetime = #{scopeCheckLifetime},
         UPD_DT = CURRENT_TIMESTAMP
         WHERE id = #{id}
     </update>

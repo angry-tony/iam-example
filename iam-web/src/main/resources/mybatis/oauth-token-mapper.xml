@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.opencloudengine.garuda.web.oauth.OauthTokenRepository">
+
+    <resultMap id="oauthCodeMap" type="org.opencloudengine.garuda.web.oauth.OauthCode">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="clientId" column="client_id" jdbcType="BIGINT"/>
+        <result property="oauthUserId" column="oauth_user_id" jdbcType="BIGINT"/>
+        <result property="code" column="code" jdbcType="VARCHAR"/>
+        <result property="scopes" column="scopes" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
+        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="oauthAccessTokenMap" type="org.opencloudengine.garuda.web.oauth.OauthAccessToken">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="scopes" column="scopes" jdbcType="VARCHAR"/>
+        <result property="token" column="token" jdbcType="VARCHAR"/>
+        <result property="oauthUserId" column="oauth_user_id" jdbcType="BIGINT"/>
+        <result property="clientId" column="client_id" jdbcType="BIGINT"/>
+        <result property="refreshToken" column="refresh_token" jdbcType="VARCHAR"/>
+        <result property="additionalInformation" column="additional_information" jdbcType="VARCHAR"/>
+        <result property="regDate" column="reg_dt" jdbcType="DATE"/>
+        <result property="updDate" column="upd_dt" jdbcType="DATE"/>
+    </resultMap>
+
+    <insert id="insertCode" parameterType="org.opencloudengine.garuda.web.oauth.OauthCode"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO OAUTH_CODE (client_id, oauth_user_id, code, scopes)
+        VALUES (
+        #{clientId}, #{oauthUserId}, #{code}, #{scopes}
+        )
+    </insert>
+
+    <select id="selectCodeById" parameterType="java.lang.Long" resultMap="oauthCodeMap">
+        SELECT * FROM OAUTH_CODE
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectCodeByCode" parameterType="java.lang.String" resultMap="oauthCodeMap">
+        SELECT * FROM OAUTH_CODE
+        WHERE code = #{code}
+    </select>
+
+    <select id="selectCodeByCodeAndClientId" parameterType="map" resultMap="oauthCodeMap">
+        SELECT * FROM OAUTH_CODE
+        WHERE code = #{code}
+        AND client_id = #{clientId}
+    </select>
+
+    <update id="updateCodeById" parameterType="org.opencloudengine.garuda.web.oauth.OauthCode">
+        UPDATE OAUTH_CODE
+        SET
+        client_id = #{clientId},
+        oauth_user_id = #{oauthUserId},
+        code = #{code},
+        scopes = #{scopes},
+        UPD_DT = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCodeById" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_CODE
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insertToken" parameterType="org.opencloudengine.garuda.web.oauth.OauthAccessToken"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        INSERT INTO OAUTH_ACCESS_TOKEN
+        (
+        type,
+        scopes,
+        token,
+        oauth_user_id,
+        client_id,
+        refresh_token,
+        additional_information
+        )
+        VALUES (
+        #{type},
+        #{scopes},
+        #{token},
+        #{oauthUserId},
+        #{clientId},
+        #{refreshToken},
+        #{additionalInformation}
+        )
+    </insert>
+
+    <select id="selectTokenById" parameterType="java.lang.Long" resultMap="oauthAccessTokenMap">
+        SELECT * FROM OAUTH_ACCESS_TOKEN
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectTokenByToken" parameterType="java.lang.String" resultMap="oauthAccessTokenMap">
+        SELECT * FROM OAUTH_ACCESS_TOKEN
+        WHERE token = #{token}
+    </select>
+
+    <update id="updateTokenById" parameterType="org.opencloudengine.garuda.web.oauth.OauthAccessToken">
+        UPDATE OAUTH_ACCESS_TOKEN
+        SET
+        type = #{type},
+        scopes = #{scopes},
+        token = #{token},
+        oauth_user_id = #{oauthUserId},
+        client_id = #{clientId},
+        refresh_token = #{refreshToken},
+        additional_information = #{additionalInformation},
+        UPD_DT = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteTokenById" parameterType="java.lang.Long">
+        DELETE FROM OAUTH_ACCESS_TOKEN
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

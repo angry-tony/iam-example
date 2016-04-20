@@ -10,11 +10,13 @@ public interface ManagementRepository {
 
     Management selectById(Long id);
 
+    Management selectByKey(String groupKey);
+
     Management selectByUserIdAndId(Long userId, Long id);
 
     List<Management> selectByUserId(Long userId);
 
-    int updateById(Long id, String groupName, String description);
+    int updateById(Long id, String groupName, String description,int sessionTokenLifetime, int scopeCheckLifetime);
 
     int deleteById(Long id);
 }

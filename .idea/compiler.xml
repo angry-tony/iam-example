@@ -35,6 +35,7 @@
     <bytecodeTargetLevel>
       <module name="iam-common" target="1.5" />
       <module name="iam-web" target="1.7" />
+      <module name="oce-jwt" target="1.5" />
       <module name="oceIAM" target="1.5" />
     </bytecodeTargetLevel>
   </component>

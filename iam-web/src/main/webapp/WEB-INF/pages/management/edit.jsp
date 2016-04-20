@@ -80,6 +80,24 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Login Check Lifetime <span
+                                class="color-red">*</span></label>
+
+                        <div class="col-md-6">
+                            <input name="sessionTokenLifetime" type="number" class="form-control" value="${management.sessionTokenLifetime}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Scope Check Lifetime <span
+                                class="color-red">*</span></label>
+
+                        <div class="col-md-6">
+                            <input name="scopeCheckLifetime" type="number" class="form-control" value="${management.scopeCheckLifetime}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
                             <button id="submitBtn" type="submit" class="btn-u btn-u-primary">Edit
                             </button>

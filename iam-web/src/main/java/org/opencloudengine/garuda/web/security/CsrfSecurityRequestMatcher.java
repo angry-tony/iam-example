@@ -13,6 +13,10 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
     private Pattern allowedMethods = Pattern.compile("^(GET|HEAD|TRACE|OPTIONS)$");
     private RegexRequestMatcher unprotectedMatcher = new RegexRequestMatcher("/oauth/authorize_redirect", null);
 
+    private RegexRequestMatcher redirectMatcher = new RegexRequestMatcher("/oauth/redirect", null);
+
+    private RegexRequestMatcher accessTokentMatcher = new RegexRequestMatcher("/oauth/access_token", null);
+
     @Override
     public boolean matches(HttpServletRequest request) {
 
@@ -21,6 +25,14 @@ public class CsrfSecurityRequestMatcher implements RequestMatcher {
         }
 
         if(unprotectedMatcher.matches(request)){
+            return false;
+        }
+
+        if(redirectMatcher.matches(request)){
+            return false;
+        }
+
+        if(accessTokentMatcher.matches(request)){
             return false;
         }
 

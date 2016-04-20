@@ -55,10 +55,12 @@ public class ManagementController {
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView create(HttpSession session,
                                @RequestParam(defaultValue = "") String groupName,
-                               @RequestParam(defaultValue = "") String description) throws IOException {
+                               @RequestParam(defaultValue = "") String description,
+                               @RequestParam(defaultValue = "") int sessionTokenLifetime,
+                               @RequestParam(defaultValue = "") int scopeCheckLifetime) throws IOException {
 
         try {
-            managementService.createManagement(SessionUtils.getId(), groupName, description);
+            managementService.createManagement(SessionUtils.getId(), groupName, description, sessionTokenLifetime, scopeCheckLifetime);
             ModelAndView mav = new ModelAndView("/management/list");
 
             List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
@@ -138,10 +140,12 @@ public class ManagementController {
     public ModelAndView update(HttpSession session,
                                @RequestParam(defaultValue = "") Long groupId,
                                @RequestParam(defaultValue = "") String groupName,
-                               @RequestParam(defaultValue = "") String description) throws IOException {
+                               @RequestParam(defaultValue = "") String description,
+                               @RequestParam(defaultValue = "") int sessionTokenLifetime,
+                               @RequestParam(defaultValue = "") int scopeCheckLifetime) throws IOException {
 
         try {
-            managementService.updateById(SessionUtils.getId(), groupId, groupName, description);
+            managementService.updateById(SessionUtils.getId(), groupId, groupName, description, sessionTokenLifetime, scopeCheckLifetime);
 
             ModelAndView mav = new ModelAndView("/management/list");
             List<Management> managements = managementService.selectByUserId(SessionUtils.getId());

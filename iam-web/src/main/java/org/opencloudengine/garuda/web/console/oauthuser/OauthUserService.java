@@ -10,6 +10,8 @@ public interface OauthUserService {
 
     OauthUser selectByGroupIdAndUserName(Long groupId, String userName);
 
+    OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword);
+
     OauthUser selectByGroupIdAndId(Long groupId, Long id);
 
     int updateById(Long id, String userName, String userPassword, int level, String additionalInformation);
@@ -17,4 +19,12 @@ public interface OauthUserService {
     int deleteById(Long id);
 
     int createUser(Long groupId, String userName, String userPassword, int level, String additionalInformation);
+
+    OauthSessionToken validateSessionToken(String sessionToken) throws Exception;
+
+    OauthScopeToken validateScopeToken(String scopeToken) throws Exception;
+
+    OauthSessionToken generateSessionToken(String managementKey, String userName, String userPassword) throws Exception;
+
+    OauthScopeToken generateScopeToken(String managementKey, String userName, String clientKey, String scopes) throws Exception;
 }

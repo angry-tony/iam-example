@@ -48,6 +48,15 @@ public class OauthUserRepositoryImpl extends PersistentRepositoryImpl<String, Ob
     }
 
     @Override
+    public OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword) {
+        Map map = new HashMap();
+        map.put("groupId", groupId);
+        map.put("userName", userName);
+        map.put("userPassword", userPassword);
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByGroupIdAndCredential", map);
+    }
+
+    @Override
     public OauthUser selectByGroupIdAndId(Long groupId, Long id) {
         Map map = new HashMap();
         map.put("groupId", groupId);

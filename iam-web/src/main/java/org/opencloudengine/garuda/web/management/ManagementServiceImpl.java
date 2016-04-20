@@ -35,16 +35,23 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
+    public Management selectByKey(String groupKey) {
+        return managementRepository.selectByKey(groupKey);
+    }
+
+    @Override
     public Management selectByUserIdAndId(Long userId, Long id) {
         return managementRepository.selectByUserIdAndId(userId, id);
     }
 
     @Override
-    public int createManagement(Long userId, String groupName, String description) {
+    public int createManagement(Long userId, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime) {
         Management management = new Management();
         management.setUserId(userId);
         management.setGroupName(groupName);
         management.setDescription(description);
+        management.setSessionTokenLifetime(sessionTokenLifetime);
+        management.setScopeCheckLifetime(scopeCheckLifetime);
 
         //클라이언트 키
         String groupKey = UUID.randomUUID().toString();
@@ -64,12 +71,12 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
-    public int updateById(Long userId, Long id, String groupName, String description) {
+    public int updateById(Long userId, Long id, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime) {
         Management management = this.selectByUserIdAndId(userId, id);
         if (management == null) {
             throw new ServiceException("Invalid management groupId");
         }
 
-        return managementRepository.updateById(id, groupName, description);
+        return managementRepository.updateById(id, groupName, description, sessionTokenLifetime, scopeCheckLifetime);
     }
 }

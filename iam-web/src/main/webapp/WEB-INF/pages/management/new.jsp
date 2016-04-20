@@ -77,6 +77,24 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-2 control-label">Login Check Lifetime <span
+                                class="color-red">*</span></label>
+
+                        <div class="col-md-6">
+                            <input name="sessionTokenLifetime" type="number" class="form-control" value="3600">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Scope Check Lifetime <span
+                                class="color-red">*</span></label>
+
+                        <div class="col-md-6">
+                            <input name="scopeCheckLifetime" type="number" class="form-control" value="3600">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
                             <button id="submitBtn" type="submit" class="btn-u btn-u-primary">Create Management Group
                             </button>
@@ -110,6 +128,12 @@
                 },
                 description: {
                     required: true
+                },
+                sessionTokenLifetime: {
+                    required: true
+                },
+                scopeCheckLifetime: {
+                    required: true
                 }
             },
             messages: {
@@ -117,6 +141,12 @@
                     required: "<span style='color: red;'>Required filed</span>"
                 },
                 description: {
+                    required: "<span style='color: red;'>Required filed</span>"
+                },
+                sessionTokenLifetime: {
+                    required: "<span style='color: red;'>Required filed</span>"
+                },
+                scopeCheckLifetime: {
                     required: "<span style='color: red;'>Required filed</span>"
                 }
             },

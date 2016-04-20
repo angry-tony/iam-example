@@ -615,15 +615,17 @@ DELIMITER ;
 DROP TABLE IF EXISTS iam.MANAGEMENT_GROUP;
 
 CREATE TABLE iam.MANAGEMENT_GROUP (
-  id               BIGINT NOT NULL AUTO_INCREMENT,
-  user_id          BIGINT NOT NULL,
-  group_name       VARCHAR(255),
-  group_key        VARCHAR(255),
-  group_secret     VARCHAR(255),
-  group_jwt_secret VARCHAR(255),
-  description      LONGTEXT,
-  reg_dt           TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-  upd_dt           TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+  id                     BIGINT NOT NULL AUTO_INCREMENT,
+  user_id                BIGINT NOT NULL,
+  group_name             VARCHAR(255),
+  group_key              VARCHAR(255),
+  group_secret           VARCHAR(255),
+  group_jwt_secret       VARCHAR(255),
+  session_token_lifetime INTEGER         DEFAULT 3600,
+  scope_check_lifetime   INTEGER         DEFAULT 3600,
+  description            LONGTEXT,
+  reg_dt                 TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+  upd_dt                 TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 )
   ENGINE = INNODB
@@ -726,6 +728,7 @@ CREATE TABLE iam.OAUTH_CODE (
   client_id     BIGINT,
   oauth_user_id BIGINT,
   code          LONGTEXT,
+  scopes        LONGTEXT,
   reg_dt        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
   upd_dt        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)

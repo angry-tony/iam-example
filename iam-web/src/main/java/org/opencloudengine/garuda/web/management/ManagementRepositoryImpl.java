@@ -33,6 +33,11 @@ public class ManagementRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
+    public Management selectByKey(String groupKey) {
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByKey", groupKey);
+    }
+
+    @Override
     public Management selectByUserIdAndId(Long userId, Long id) {
         Map map = new HashMap();
         map.put("userId" , userId);
@@ -46,11 +51,13 @@ public class ManagementRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
-    public int updateById(Long id, String groupName, String description) {
+    public int updateById(Long id, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime) {
         Map map = new HashMap();
         map.put("id", id);
         map.put("groupName", groupName);
         map.put("description", description);
+        map.put("sessionTokenLifetime", sessionTokenLifetime);
+        map.put("scopeCheckLifetime", scopeCheckLifetime);
         return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", map);
     }
 

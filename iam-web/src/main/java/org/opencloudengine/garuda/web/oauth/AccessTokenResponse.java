@@ -5,26 +5,33 @@ import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.management.Management;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by uengine on 2016. 4. 15..
  */
-public class AuthorizeResponse implements Serializable {
+public class AccessTokenResponse implements Serializable {
     private String clientId;
-    private String responseType;
+    private String clientSecret;
+    private String grant_type;
     private String redirectUri;
+    private String code;
     private String scope;
     private String state;
-    private String code;
+    private String username;
+    private String password;
     private String accessToken;
     private String tokenType;
+    private String assertion;
     private int expiresIn;
+    private String refreshToken;
     private OauthClient oauthClient;
     private List<OauthScope> oauthScopes;
     private Management management;
     private OauthUser oauthUser;
+    private HttpServletResponse response;
 
     private String error;
     private String error_description;
@@ -37,12 +44,20 @@ public class AuthorizeResponse implements Serializable {
         this.clientId = clientId;
     }
 
-    public String getResponseType() {
-        return responseType;
+    public String getClientSecret() {
+        return clientSecret;
     }
 
-    public void setResponseType(String responseType) {
-        this.responseType = responseType;
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getGrant_type() {
+        return grant_type;
+    }
+
+    public void setGrant_type(String grant_type) {
+        this.grant_type = grant_type;
     }
 
     public String getRedirectUri() {
@@ -51,6 +66,14 @@ public class AuthorizeResponse implements Serializable {
 
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getScope() {
@@ -69,12 +92,20 @@ public class AuthorizeResponse implements Serializable {
         this.state = state;
     }
 
-    public String getCode() {
-        return code;
+    public String getUsername() {
+        return username;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getAccessToken() {
@@ -93,12 +124,28 @@ public class AuthorizeResponse implements Serializable {
         this.tokenType = tokenType;
     }
 
+    public String getAssertion() {
+        return assertion;
+    }
+
+    public void setAssertion(String assertion) {
+        this.assertion = assertion;
+    }
+
     public int getExpiresIn() {
         return expiresIn;
     }
 
     public void setExpiresIn(int expiresIn) {
         this.expiresIn = expiresIn;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public OauthClient getOauthClient() {
@@ -125,6 +172,22 @@ public class AuthorizeResponse implements Serializable {
         this.management = management;
     }
 
+    public OauthUser getOauthUser() {
+        return oauthUser;
+    }
+
+    public void setOauthUser(OauthUser oauthUser) {
+        this.oauthUser = oauthUser;
+    }
+
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    public void setResponse(HttpServletResponse response) {
+        this.response = response;
+    }
+
     public String getError() {
         return error;
     }
@@ -141,30 +204,28 @@ public class AuthorizeResponse implements Serializable {
         this.error_description = error_description;
     }
 
-    public OauthUser getOauthUser() {
-        return oauthUser;
-    }
-
-    public void setOauthUser(OauthUser oauthUser) {
-        this.oauthUser = oauthUser;
-    }
-
     @Override
     public String toString() {
-        return "AuthorizeResponse{" +
+        return "AccessTokenResponse{" +
                 "clientId='" + clientId + '\'' +
-                ", responseType='" + responseType + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", grant_type='" + grant_type + '\'' +
                 ", redirectUri='" + redirectUri + '\'' +
+                ", code='" + code + '\'' +
                 ", scope='" + scope + '\'' +
                 ", state='" + state + '\'' +
-                ", code='" + code + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
                 ", accessToken='" + accessToken + '\'' +
                 ", tokenType='" + tokenType + '\'' +
+                ", assertion='" + assertion + '\'' +
                 ", expiresIn=" + expiresIn +
+                ", refreshToken='" + refreshToken + '\'' +
                 ", oauthClient=" + oauthClient +
                 ", oauthScopes=" + oauthScopes +
                 ", management=" + management +
                 ", oauthUser=" + oauthUser +
+                ", response=" + response +
                 ", error='" + error + '\'' +
                 ", error_description='" + error_description + '\'' +
                 '}';

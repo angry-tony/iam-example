@@ -15,6 +15,8 @@ public interface OauthUserRepository {
 
     OauthUser selectByGroupIdAndUserName(Long groupId, String userName);
 
+    OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword);
+
     OauthUser selectByGroupIdAndId(Long groupId, Long id);
 
     int updateById(OauthUser oauthUser);

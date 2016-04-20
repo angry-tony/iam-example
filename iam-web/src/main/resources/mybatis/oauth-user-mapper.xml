@@ -39,6 +39,13 @@
         AND user_name = #{userName}
     </select>
 
+    <select id="selectByGroupIdAndCredential" parameterType="map" resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE group_id = #{groupId}
+        AND user_name = #{userName}
+        AND user_password = #{userPassword}
+    </select>
+
     <select id="selectByGroupIdAndId" parameterType="map" resultMap="oauthUserMap">
         SELECT * FROM OAUTH_USER
         WHERE group_id = #{groupId}

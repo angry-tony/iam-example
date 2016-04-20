@@ -11,11 +11,13 @@ public interface ManagementService {
 
     Management selectById(Long id);
 
+    Management selectByKey(String groupKey);
+
     Management selectByUserIdAndId(Long userId, Long id);
 
-    int createManagement(Long userId, String groupName, String description);
+    int createManagement(Long userId, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime);
 
     int deleteById(Long id);
 
-    int updateById(Long userId, Long id, String groupName, String description);
+    int updateById(Long userId, Long id, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime);
 }
