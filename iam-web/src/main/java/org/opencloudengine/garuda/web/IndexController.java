@@ -31,6 +31,18 @@ public class IndexController {
     @Qualifier("config")
     private Properties config;
 
+    /**
+     * API 페이지로 이동한다.
+     *
+     * @return Model And View
+     */
+    @RequestMapping(value = "/rest/console", method = RequestMethod.GET)
+    public ModelAndView api(HttpSession session, final Locale locale) {
+        session.setAttribute("lang", locale.toString());
+
+        return new ModelAndView("api");
+    }
+
 
     /**
      * 인덱스 페이지로 이동한다.

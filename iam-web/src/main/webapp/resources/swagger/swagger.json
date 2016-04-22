@@ -1,344 +1,1609 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "title": "OCE IAM",
-        "description": "OCE IAM REST API CONSOLE",
-        "version": "1.0.0"
+  "swagger": "2.0",
+  "info": {
+    "title": "OCE IAM",
+    "description": "OCE IAM REST API CONSOLE",
+    "version": "1.0.0"
+  },
+  "host": "localhost:8080",
+  "schemes": [
+    "http"
+  ],
+  "basePath": "/rest/v1",
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/user": {
+      "get": {
+        "summary": "List user",
+        "description": "list of user",
+        "parameters": [
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of users"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create User",
+        "description": "create user",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "query",
+            "description": "user name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userPassword",
+            "in": "query",
+            "description": "user password",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "user level",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      }
     },
-    "host": "localhost:8080",
-    "schemes": [
-        "http"
-    ],
-    "basePath": "/rest/v1",
-    "produces": [
-        "application/json"
-    ],
-    "paths": {
-        "/user": {
-            "get": {
-                "summary": "List user",
-                "description": "get lisr of user\n",
-                "parameters": [
-                    {
-                        "name": "management-key",
-                        "in": "header",
-                        "description": "management key",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "management-secret",
-                        "in": "header",
-                        "description": "management secret",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of users"
-                    },
-                    "400": {
-                        "description": "Server error"
-                    },
-                    "405": {
-                        "description": "Method error"
-                    }
-                }
-            }
-        },
-        "/user/{id}": {
-            "get": {
-                "summary": "Price Estimates",
-                "description": "유저를 조회한다.",
-                "parameters": [
+    "/user/{id}": {
+      "get": {
+        "summary": "Get User",
+        "description": "get user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "user id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "User"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update User",
+        "description": "update user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "user id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "userName",
+            "in": "query",
+            "description": "user name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "userPassword",
+            "in": "query",
+            "description": "user password",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "user level",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User",
+        "description": "delete user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "user id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+    "/search/user": {
+      "get": {
+        "summary": "Search access token",
+        "description": "Search access token",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "query",
+            "description": "userName",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "userPassword",
+            "in": "query",
+            "description": "userPassword",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "level",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of user"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
 
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Latitude component of start location.",
-                        "required": true,
-                        "type": "number"
-                    }
-                ],
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An object of user",
-                        "schema": {
-                            "type": "object",
-                            "items": {
-                                "$ref": "#/definitions/PriceEstimate"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/estimates/time": {
-            "get": {
-                "summary": "Time Estimates",
-                "description": "The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.",
-                "parameters": [
-                    {
-                        "name": "start_latitude",
-                        "in": "query",
-                        "description": "Latitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "start_longitude",
-                        "in": "query",
-                        "description": "Longitude component of start location.",
-                        "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "customer_uuid",
-                        "in": "query",
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Unique customer identifier to be used for experience customization."
-                    },
-                    {
-                        "name": "product_id",
-                        "in": "query",
-                        "type": "string",
-                        "description": "Unique identifier representing a specific product for a given latitude & longitude."
-                    }
-                ],
-                "tags": [
-                    "Estimates"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of products",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Product"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/me": {
-            "get": {
-                "summary": "User Profile",
-                "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Profile information for a user",
-                        "schema": {
-                            "$ref": "#/definitions/Profile"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/history": {
-            "get": {
-                "summary": "User Activity",
-                "description": "The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.",
-                "parameters": [
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Offset the list of returned results by this amount. Default is zero."
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Number of items to retrieve. Default is 5, maximum is 100."
-                    }
-                ],
-                "tags": [
-                    "User"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "History information for the given user",
-                        "schema": {
-                            "$ref": "#/definitions/Activities"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
+
+
+
+
+
+    "/scope": {
+      "get": {
+        "summary": "List scope",
+        "description": "list of scope",
+        "parameters": [
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of scopes"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
         }
+      },
+      "post": {
+        "summary": "Create Scope",
+        "description": "create scope",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      }
     },
-    "definitions": {
-        "Product": {
-            "type": "object",
-            "properties": {
-                "product_id": {
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles."
-                },
-                "description": {
-                    "type": "string",
-                    "description": "Description of product."
-                },
-                "display_name": {
-                    "type": "string",
-                    "description": "Display name of product."
-                },
-                "capacity": {
-                    "type": "string",
-                    "description": "Capacity of product. For example, 4 people."
-                },
-                "image": {
-                    "type": "string",
-                    "description": "Image URL representing the product."
-                }
-            }
-        },
-        "PriceEstimate": {
-            "type": "object",
-            "properties": {
-                "product_id": {
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles"
-                },
-                "currency_code": {
-                    "type": "string",
-                    "description": "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
-                },
-                "display_name": {
-                    "type": "string",
-                    "description": "Display name of product."
-                },
-                "estimate": {
-                    "type": "string",
-                    "description": "Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or \"Metered\" for TAXI."
-                },
-                "low_estimate": {
-                    "type": "number",
-                    "description": "Lower bound of the estimated price."
-                },
-                "high_estimate": {
-                    "type": "number",
-                    "description": "Upper bound of the estimated price."
-                },
-                "surge_multiplier": {
-                    "type": "number",
-                    "description": "Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier."
-                }
-            }
-        },
-        "Profile": {
-            "type": "object",
-            "properties": {
-                "first_name": {
-                    "type": "string",
-                    "description": "First name of the Uber user."
-                },
-                "last_name": {
-                    "type": "string",
-                    "description": "Last name of the Uber user."
-                },
-                "email": {
-                    "type": "string",
-                    "description": "Email address of the Uber user"
-                },
-                "picture": {
-                    "type": "string",
-                    "description": "Image URL of the Uber user."
-                },
-                "promo_code": {
-                    "type": "string",
-                    "description": "Promo code of the Uber user."
-                }
-            }
-        },
-        "Activity": {
-            "type": "object",
-            "properties": {
-                "uuid": {
-                    "type": "string",
-                    "description": "Unique identifier for the activity"
-                }
-            }
-        },
-        "Activities": {
-            "type": "object",
-            "properties": {
-                "offset": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Position in pagination."
-                },
-                "limit": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Number of items to retrieve (100 max)."
-                },
-                "count": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Total number of items available."
-                },
-                "history": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Activity"
-                    }
-                }
-            }
-        },
-        "Error": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "fields": {
-                    "type": "string"
-                }
-            }
+    "/scope/{id}": {
+      "get": {
+        "summary": "Get Scope",
+        "description": "get scope",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scope"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
         }
+      },
+      "put": {
+        "summary": "Update Scope",
+        "description": "update scope",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Scope",
+        "description": "delete scope",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+    "/search/scope": {
+      "get": {
+        "summary": "Search scope",
+        "description": "Search scope",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Scope"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of scope"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+
+
+
+
+
+    "/client": {
+      "get": {
+        "summary": "List client",
+        "description": "list of client",
+        "parameters": [
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of clients"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Client",
+        "description": "create client",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "clientTrust",
+            "in": "query",
+            "description": "clientTrust, 'trust' or '3th_party'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "clientType, 'public' or 'confidential'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "activeClient",
+            "in": "query",
+            "description": "activeClient, 'Y' or 'N'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorizedGrantTypes",
+            "in": "query",
+            "description": "authorizedGrantTypes",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "webServerRedirectUri",
+            "in": "query",
+            "description": "webServerRedirectUri",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "refreshTokenValidity",
+            "in": "query",
+            "description": "refreshTokenValidity, 'Y' or 'N'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "refreshTokenLifetime",
+            "in": "query",
+            "description": "refreshTokenLifetime",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "accessTokenLifetime",
+            "in": "query",
+            "description": "accessTokenLifetime",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "jwtTokenLifetime",
+            "in": "query",
+            "description": "jwtTokenLifetime",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      }
+    },
+    "/client/{id}": {
+      "get": {
+        "summary": "Get Client",
+        "description": "get client",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "Client"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Client",
+        "description": "update client",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "clientTrust",
+            "in": "query",
+            "description": "clientTrust, 'trust' or '3th_party'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "clientType, 'public' or 'confidential'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "activeClient",
+            "in": "query",
+            "description": "activeClient, 'Y' or 'N'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorizedGrantTypes",
+            "in": "query",
+            "description": "authorizedGrantTypes",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "webServerRedirectUri",
+            "in": "query",
+            "description": "webServerRedirectUri",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "refreshTokenValidity",
+            "in": "query",
+            "description": "refreshTokenValidity, 'Y' or 'N'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "refreshTokenLifetime",
+            "in": "query",
+            "description": "refreshTokenLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "accessTokenLifetime",
+            "in": "query",
+            "description": "accessTokenLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "jwtTokenLifetime",
+            "in": "query",
+            "description": "jwtTokenLifetime",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Client",
+        "description": "delete client",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+
+
+
+
+    "/client/{clientId}/scope": {
+      "get": {
+        "summary": "List client's scope",
+        "description": "list of client's scope",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of scopes"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+    "/client/{clientId}/scope/{scopeId}": {
+      "post": {
+        "summary": "Create client's Scope",
+        "description": "create client's scope",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "scopeId",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get client's Scope",
+        "description": "get client's scope",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "scopeId",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "Scope"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete client's Scope",
+        "description": "delete client's scope",
+        "parameters": [
+          {
+            "name": "clientId",
+            "in": "path",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "scopeId",
+            "in": "path",
+            "description": "scope id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+    "/search/client": {
+      "get": {
+        "summary": "Search client",
+        "description": "Search client",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "description": "description",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "clientTrust",
+            "in": "query",
+            "description": "clientTrust, 'trust' or '3th_party'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "clientType",
+            "in": "query",
+            "description": "clientType, 'public' or 'confidential'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "activeClient",
+            "in": "query",
+            "description": "activeClient, 'Y' or 'N'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorizedGrantTypes",
+            "in": "query",
+            "description": "authorizedGrantTypes",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "webServerRedirectUri",
+            "in": "query",
+            "description": "webServerRedirectUri",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "refreshTokenValidity",
+            "in": "query",
+            "description": "refreshTokenValidity, 'Y' or 'N'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "codeLifetime",
+            "in": "query",
+            "description": "codeLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "refreshTokenLifetime",
+            "in": "query",
+            "description": "refreshTokenLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "accessTokenLifetime",
+            "in": "query",
+            "description": "accessTokenLifetime",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "jwtTokenLifetime",
+            "in": "query",
+            "description": "jwtTokenLifetime",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Client"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of client"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+
+
+
+
+
+
+    "/token": {
+      "post": {
+        "summary": "Create access token",
+        "description": "create access token",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "type, 'client' or 'user'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "scopes",
+            "in": "query",
+            "description": "scopes",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "oauthUserId",
+            "in": "query",
+            "description": "user id, if type is 'user' then required",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "description": "client id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "201": {
+            "description": "CREATED"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      }
+    },
+    "/token/{id}": {
+      "get": {
+        "summary": "Get Access Token",
+        "description": "get access token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "token id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Access Token"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update Access Token",
+        "description": "update access token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "token id",
+            "required": true,
+            "type": "number"
+          },
+          {
+            "name": "scopes",
+            "in": "query",
+            "description": "scopes",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          },
+          "409": {
+            "description": "CONFLICT"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Access Token",
+        "description": "delete access token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "token id",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
+    "/search/token": {
+      "get": {
+        "summary": "Search access token",
+        "description": "Search access token",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "type, 'client' or 'user'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "scopes",
+            "in": "query",
+            "description": "scopes",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "token",
+            "in": "query",
+            "description": "token",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "oauthUserId",
+            "in": "query",
+            "description": "user id",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "clientId",
+            "in": "query",
+            "description": "client id",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "refreshToken",
+            "in": "query",
+            "description": "refreshToken",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "additionalInformation",
+            "in": "query",
+            "description": "additionalInformation",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of token"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
     }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of product."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Display name of product."
+        },
+        "capacity": {
+          "type": "string",
+          "description": "Capacity of product. For example, 4 people."
+        },
+        "image": {
+          "type": "string",
+          "description": "Image URL representing the product."
+        }
+      }
+    },
+    "PriceEstimate": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles"
+        },
+        "currency_code": {
+          "type": "string",
+          "description": "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Display name of product."
+        },
+        "estimate": {
+          "type": "string",
+          "description": "Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or \"Metered\" for TAXI."
+        },
+        "low_estimate": {
+          "type": "number",
+          "description": "Lower bound of the estimated price."
+        },
+        "high_estimate": {
+          "type": "number",
+          "description": "Upper bound of the estimated price."
+        },
+        "surge_multiplier": {
+          "type": "number",
+          "description": "Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier."
+        }
+      }
+    },
+    "Profile": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "First name of the Uber user."
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name of the Uber user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the Uber user"
+        },
+        "picture": {
+          "type": "string",
+          "description": "Image URL of the Uber user."
+        },
+        "promo_code": {
+          "type": "string",
+          "description": "Promo code of the Uber user."
+        }
+      }
+    },
+    "Activity": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "description": "Unique identifier for the activity"
+        }
+      }
+    },
+    "Activities": {
+      "type": "object",
+      "properties": {
+        "offset": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Position in pagination."
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Number of items to retrieve (100 max)."
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Total number of items available."
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Activity"
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }
