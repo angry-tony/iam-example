@@ -76,7 +76,6 @@
 
                     //로그인 세션 확인시 어세스 토큰을 서버로 보냄
                     if (res.success && res.map.validated) {
-                        ;
                         userName = res.map.userName;
                         checkScopeToken();
                     }

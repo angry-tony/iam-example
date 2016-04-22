@@ -12,7 +12,7 @@ public class OauthUser implements Serializable {
     private Long groupId;
     private String userName;
     private String userPassword;
-    private int level;
+    private Integer level;
     private String additionalInformation;
     private Date regDate;
     private Date updDate;
@@ -49,11 +49,11 @@ public class OauthUser implements Serializable {
         this.userPassword = userPassword;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         this.level = level;
     }
 

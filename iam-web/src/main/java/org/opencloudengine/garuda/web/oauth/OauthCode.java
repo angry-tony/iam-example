@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 public class OauthCode implements Serializable {
 
     private Long id;
+    private Long groupId;
     private Long clientId;
     private Long oauthUserId;
     private String code;
@@ -24,6 +25,14 @@ public class OauthCode implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public Long getClientId() {
@@ -78,6 +87,7 @@ public class OauthCode implements Serializable {
     public String toString() {
         return "OauthCode{" +
                 "id=" + id +
+                ", groupId=" + groupId +
                 ", clientId=" + clientId +
                 ", oauthUserId=" + oauthUserId +
                 ", code='" + code + '\'' +

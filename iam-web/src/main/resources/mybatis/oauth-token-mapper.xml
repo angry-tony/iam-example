@@ -5,6 +5,7 @@
 
     <resultMap id="oauthCodeMap" type="org.opencloudengine.garuda.web.oauth.OauthCode">
         <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
         <result property="clientId" column="client_id" jdbcType="BIGINT"/>
         <result property="oauthUserId" column="oauth_user_id" jdbcType="BIGINT"/>
         <result property="code" column="code" jdbcType="VARCHAR"/>
@@ -19,6 +20,7 @@
         <result property="scopes" column="scopes" jdbcType="VARCHAR"/>
         <result property="token" column="token" jdbcType="VARCHAR"/>
         <result property="oauthUserId" column="oauth_user_id" jdbcType="BIGINT"/>
+        <result property="groupId" column="group_id" jdbcType="BIGINT"/>
         <result property="clientId" column="client_id" jdbcType="BIGINT"/>
         <result property="refreshToken" column="refresh_token" jdbcType="VARCHAR"/>
         <result property="additionalInformation" column="additional_information" jdbcType="VARCHAR"/>
@@ -28,9 +30,9 @@
 
     <insert id="insertCode" parameterType="org.opencloudengine.garuda.web.oauth.OauthCode"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-        INSERT INTO OAUTH_CODE (client_id, oauth_user_id, code, scopes)
+        INSERT INTO OAUTH_CODE (group_id,client_id, oauth_user_id, code, scopes)
         VALUES (
-        #{clientId}, #{oauthUserId}, #{code}, #{scopes}
+        #{groupId},#{clientId}, #{oauthUserId}, #{code}, #{scopes}
         )
     </insert>
 
@@ -50,14 +52,50 @@
         AND client_id = #{clientId}
     </select>
 
+    <select id="selectCodeByCondition" parameterType="org.opencloudengine.garuda.web.oauth.OauthCode"
+            resultMap="oauthCodeMap">
+        SELECT * FROM OAUTH_CODE
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="clientId != null">
+            AND client_id = #{clientId}
+        </if>
+        <if test="oauthUserId != null">
+            AND oauth_user_id = #{oauthUserId}
+        </if>
+        <if test="code != '' and code != null">
+            AND code = #{code}
+        </if>
+        <if test="scopes != '' and scopes != null">
+            AND scopes = #{scopes}
+        </if>
+    </select>
+
     <update id="updateCodeById" parameterType="org.opencloudengine.garuda.web.oauth.OauthCode">
         UPDATE OAUTH_CODE
-        SET
-        client_id = #{clientId},
-        oauth_user_id = #{oauthUserId},
-        code = #{code},
-        scopes = #{scopes},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="groupId != null">
+                group_id = #{groupId},
+            </if>
+            <if test="clientId != null">
+                client_id = #{clientId},
+            </if>
+            <if test="oauthUserId != null">
+                oauth_user_id = #{oauthUserId},
+            </if>
+            <if test="code != '' and code != null">
+                code = #{code},
+            </if>
+            <if test="scopes != '' and scopes != null">
+                scopes = #{scopes},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 
@@ -74,6 +112,7 @@
         scopes,
         token,
         oauth_user_id,
+        group_id,
         client_id,
         refresh_token,
         additional_information
@@ -83,6 +122,7 @@
         #{scopes},
         #{token},
         #{oauthUserId},
+        #{groupId},
         #{clientId},
         #{refreshToken},
         #{additionalInformation}
@@ -99,17 +139,79 @@
         WHERE token = #{token}
     </select>
 
+    <select id="selectTokenByRefreshToken" parameterType="java.lang.String" resultMap="oauthAccessTokenMap">
+        SELECT * FROM OAUTH_ACCESS_TOKEN
+        WHERE refresh_token = #{refreshToken}
+    </select>
+
+    <select id="selectTokenByGroupIdAndId" parameterType="map" resultMap="oauthAccessTokenMap">
+        SELECT * FROM OAUTH_ACCESS_TOKEN
+        WHERE group_id = #{groupId}
+        AND id = #{id}
+    </select>
+
+    <select id="selectTokenByCondition" parameterType="org.opencloudengine.garuda.web.oauth.OauthAccessToken"
+            resultMap="oauthAccessTokenMap">
+        SELECT * FROM OAUTH_ACCESS_TOKEN
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="type != '' and type != null">
+            AND type = #{type}
+        </if>
+        <if test="scopes != '' and scopes != null">
+            AND scopes = #{scopes}
+        </if>
+        <if test="token != '' and token != null">
+            AND token = #{token}
+        </if>
+        <if test="oauthUserId != null">
+            AND oauth_user_id = #{oauthUserId}
+        </if>
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="clientId != null">
+            AND client_id = #{clientId}
+        </if>
+        <if test="refreshToken != '' and refreshToken != null">
+            AND refresh_token = #{refreshToken}
+        </if>
+        <if test="additionalInformation != '' and additionalInformation != null">
+            AND additional_information = #{additionalInformation}
+        </if>
+    </select>
+
     <update id="updateTokenById" parameterType="org.opencloudengine.garuda.web.oauth.OauthAccessToken">
         UPDATE OAUTH_ACCESS_TOKEN
-        SET
-        type = #{type},
-        scopes = #{scopes},
-        token = #{token},
-        oauth_user_id = #{oauthUserId},
-        client_id = #{clientId},
-        refresh_token = #{refreshToken},
-        additional_information = #{additionalInformation},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="type != '' and type != null">
+                type = #{type},
+            </if>
+            <if test="scopes != '' and scopes != null">
+                scopes = #{scopes},
+            </if>
+            <if test="token != '' and token != null">
+                token = #{token},
+            </if>
+            <if test="oauthUserId != null">
+                oauth_user_id = #{oauthUserId},
+            </if>
+            <if test="groupId != null">
+                group_id = #{groupId},
+            </if>
+            <if test="clientId != null">
+                client_id = #{clientId},
+            </if>
+            <if test="refreshToken != '' and refreshToken != null">
+                refresh_token = #{refreshToken},
+            </if>
+            <if test="additionalInformation != '' and additionalInformation != null">
+                additional_information = #{additionalInformation},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 

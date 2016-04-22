@@ -67,6 +67,11 @@ public class OauthClientRepositoryImpl extends PersistentRepositoryImpl<String, 
     }
 
     @Override
+    public List<OauthClient> selectByCondition(OauthClient oauthClient) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByCondition", oauthClient);
+    }
+
+    @Override
     public int updateById(OauthClient OauthClient) {
         return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", OauthClient);
     }

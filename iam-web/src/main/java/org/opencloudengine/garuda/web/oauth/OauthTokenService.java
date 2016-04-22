@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.oauth;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 public interface OauthTokenService {
 
@@ -13,17 +14,25 @@ public interface OauthTokenService {
 
     OauthCode selectCodeByCodeAndClientId(String code, Long clientId);
 
+    List<OauthCode> selectCodeByCondition(OauthCode oauthCode);
+
     int updateCodeById(Long id);
 
     int deleteCodeById(Long id);
 
-    int insertToken(OauthAccessToken oauthAccessToken);
+    OauthAccessToken insertToken(OauthAccessToken oauthAccessToken);
 
-    OauthCode selectTokenById(Long id);
+    OauthAccessToken selectTokenById(Long id);
 
-    OauthCode selectTokenByToken(String token);
+    OauthAccessToken selectTokenByToken(String token);
 
-    int updateTokenById(Long id);
+    OauthAccessToken selectTokenByRefreshToken(String refreshToken);
+
+    OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id);
+
+    List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken);
+
+    int updateTokenById(OauthAccessToken oauthAccessToken);
 
     int deleteTokenById(Long id);
 }

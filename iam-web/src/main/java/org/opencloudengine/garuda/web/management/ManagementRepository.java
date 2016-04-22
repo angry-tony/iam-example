@@ -16,7 +16,11 @@ public interface ManagementRepository {
 
     List<Management> selectByUserId(Long userId);
 
-    int updateById(Long id, String groupName, String description,int sessionTokenLifetime, int scopeCheckLifetime);
+    Management selectByCredential(String groupKey, String groupSecret);
+
+    List<Management> selectByCondition(Management management);
+
+    int updateById(Long id, String groupName, String description,Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 
     int deleteById(Long id);
 }

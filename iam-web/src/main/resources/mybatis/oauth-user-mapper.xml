@@ -52,14 +52,50 @@
         AND id = #{id}
     </select>
 
+    <select id="selectByCondition" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser"
+            resultMap="oauthUserMap">
+        SELECT * FROM OAUTH_USER
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="userName != '' and userName != null">
+            AND user_name = #{userName}
+        </if>
+        <if test="userName != '' and userName != null">
+            AND user_name = #{userName}
+        </if>
+        <if test="userPassword != '' and userPassword != null">
+            AND user_password = #{userPassword}
+        </if>
+        <if test="level != null">
+            AND level = #{level}
+        </if>
+        <if test="additionalInformation != '' and additionalInformation != null">
+            AND additional_information = #{additionalInformation}
+        </if>
+    </select>
+
     <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthuser.OauthUser">
         UPDATE OAUTH_USER
-        SET
-        user_name = #{userName},
-        user_password = #{userPassword},
-        level = #{level},
-        additional_information = #{additionalInformation},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="userName != '' and userName != null">
+                user_name = #{userName},
+            </if>
+            <if test="userPassword != '' and userPassword != null">
+                user_password = #{userPassword},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+            <if test="additionalInformation != '' and additionalInformation != null">
+                additional_information = #{additionalInformation},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 

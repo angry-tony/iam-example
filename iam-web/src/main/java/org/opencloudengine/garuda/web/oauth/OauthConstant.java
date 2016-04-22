@@ -6,6 +6,7 @@ package org.opencloudengine.garuda.web.oauth;
 public class OauthConstant {
 
     public static String INVALID_REQUEST = "invalid_request";
+    public static String INVALID_TOKEN = "invalid_token";
     public static String UNAUTHORIZED_CLIENT = "unauthorized_client";
     public static String ACCESS_DENIED = "access_denied";
     public static String UNSUPPORTED_RESPONSE_TYPE = "unsupported_response_type";

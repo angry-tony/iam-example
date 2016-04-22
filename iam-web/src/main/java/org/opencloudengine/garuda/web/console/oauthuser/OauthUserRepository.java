@@ -22,4 +22,6 @@ public interface OauthUserRepository {
     int updateById(OauthUser oauthUser);
 
     int deleteById(Long id);
+
+    List<OauthUser> selectByCondition(OauthUser oauthUser);
 }

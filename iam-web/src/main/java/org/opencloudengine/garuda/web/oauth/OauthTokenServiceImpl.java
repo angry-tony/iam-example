@@ -50,6 +50,11 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
+    public List<OauthCode> selectCodeByCondition(OauthCode oauthCode) {
+        return oauthTokenRepository.selectCodeByCondition(oauthCode);
+    }
+
+    @Override
     public int updateCodeById(Long id) {
         return oauthTokenRepository.updateCodeById(id);
     }
@@ -60,23 +65,39 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
-    public int insertToken(OauthAccessToken oauthAccessToken) {
-        return oauthTokenRepository.insertToken(oauthAccessToken);
+    public OauthAccessToken insertToken(OauthAccessToken oauthAccessToken) {
+        oauthTokenRepository.insertToken(oauthAccessToken);
+        return oauthAccessToken;
     }
 
     @Override
-    public OauthCode selectTokenById(Long id) {
+    public OauthAccessToken selectTokenById(Long id) {
         return oauthTokenRepository.selectTokenById(id);
     }
 
     @Override
-    public OauthCode selectTokenByToken(String token) {
+    public OauthAccessToken selectTokenByToken(String token) {
         return oauthTokenRepository.selectTokenByToken(token);
     }
 
     @Override
-    public int updateTokenById(Long id) {
-        return oauthTokenRepository.updateTokenById(id);
+    public OauthAccessToken selectTokenByRefreshToken(String refreshToken) {
+        return oauthTokenRepository.selectTokenByRefreshToken(refreshToken);
+    }
+
+    @Override
+    public OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id) {
+        return oauthTokenRepository.selectTokenByGroupIdAndId(groupId, id);
+    }
+
+    @Override
+    public List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken) {
+        return oauthTokenRepository.selectTokenByCondition(oauthAccessToken);
+    }
+
+    @Override
+    public int updateTokenById(OauthAccessToken oauthAccessToken) {
+        return oauthTokenRepository.updateTokenById(oauthAccessToken);
     }
 
     @Override

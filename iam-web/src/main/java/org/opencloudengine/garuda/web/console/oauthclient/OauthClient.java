@@ -1,5 +1,7 @@
 package org.opencloudengine.garuda.web.console.oauthclient;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.Arrays;
@@ -18,15 +20,15 @@ public class OauthClient implements Serializable {
     private String clientJwtSecret;
     private String clientTrust;
     private String clientType;
-    private boolean activeClient;
+    private String activeClient;
     private String authorizedGrantTypes;
     private String webServerRedirectUri;
-    private boolean refreshTokenValidity;
+    private String refreshTokenValidity;
     private String additionalInformation;
-    private int codeLifetime;
-    private int refreshTokenLifetime;
-    private int accessTokenLifetime;
-    private int jwtTokenLifetime;
+    private Integer codeLifetime;
+    private Integer refreshTokenLifetime;
+    private Integer accessTokenLifetime;
+    private Integer jwtTokenLifetime;
     private Date regDate;
     private Date updDate;
 
@@ -102,11 +104,11 @@ public class OauthClient implements Serializable {
         this.clientType = clientType;
     }
 
-    public boolean isActiveClient() {
+    public String getActiveClient() {
         return activeClient;
     }
 
-    public void setActiveClient(boolean activeClient) {
+    public void setActiveClient(String activeClient) {
         this.activeClient = activeClient;
     }
 
@@ -126,11 +128,11 @@ public class OauthClient implements Serializable {
         this.webServerRedirectUri = webServerRedirectUri;
     }
 
-    public boolean isRefreshTokenValidity() {
+    public String getRefreshTokenValidity() {
         return refreshTokenValidity;
     }
 
-    public void setRefreshTokenValidity(boolean refreshTokenValidity) {
+    public void setRefreshTokenValidity(String refreshTokenValidity) {
         this.refreshTokenValidity = refreshTokenValidity;
     }
 
@@ -142,35 +144,35 @@ public class OauthClient implements Serializable {
         this.additionalInformation = additionalInformation;
     }
 
-    public int getCodeLifetime() {
+    public Integer getCodeLifetime() {
         return codeLifetime;
     }
 
-    public void setCodeLifetime(int codeLifetime) {
+    public void setCodeLifetime(Integer codeLifetime) {
         this.codeLifetime = codeLifetime;
     }
 
-    public int getRefreshTokenLifetime() {
+    public Integer getRefreshTokenLifetime() {
         return refreshTokenLifetime;
     }
 
-    public void setRefreshTokenLifetime(int refreshTokenLifetime) {
+    public void setRefreshTokenLifetime(Integer refreshTokenLifetime) {
         this.refreshTokenLifetime = refreshTokenLifetime;
     }
 
-    public int getAccessTokenLifetime() {
+    public Integer getAccessTokenLifetime() {
         return accessTokenLifetime;
     }
 
-    public void setAccessTokenLifetime(int accessTokenLifetime) {
+    public void setAccessTokenLifetime(Integer accessTokenLifetime) {
         this.accessTokenLifetime = accessTokenLifetime;
     }
 
-    public int getJwtTokenLifetime() {
+    public Integer getJwtTokenLifetime() {
         return jwtTokenLifetime;
     }
 
-    public void setJwtTokenLifetime(int jwtTokenLifetime) {
+    public void setJwtTokenLifetime(Integer jwtTokenLifetime) {
         this.jwtTokenLifetime = jwtTokenLifetime;
     }
 
@@ -202,10 +204,10 @@ public class OauthClient implements Serializable {
                 ", clientJwtSecret='" + clientJwtSecret + '\'' +
                 ", clientTrust='" + clientTrust + '\'' +
                 ", clientType='" + clientType + '\'' +
-                ", activeClient=" + activeClient +
+                ", activeClient='" + activeClient + '\'' +
                 ", authorizedGrantTypes='" + authorizedGrantTypes + '\'' +
                 ", webServerRedirectUri='" + webServerRedirectUri + '\'' +
-                ", refreshTokenValidity=" + refreshTokenValidity +
+                ", refreshTokenValidity='" + refreshTokenValidity + '\'' +
                 ", additionalInformation='" + additionalInformation + '\'' +
                 ", codeLifetime=" + codeLifetime +
                 ", refreshTokenLifetime=" + refreshTokenLifetime +

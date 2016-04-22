@@ -17,6 +17,8 @@ public interface OauthScopeRepository {
 
     OauthScope selectByGroupIdAndId(Long groupId, Long id);
 
+    List<OauthScope> selectByCondition(OauthScope oauthScope);
+
     int updateById(OauthScope oauthScope);
 
     int deleteById(Long id);
@@ -25,5 +27,9 @@ public interface OauthScopeRepository {
 
     List<OauthScope> selectClientScopes(Long clientId);
 
+    OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId);
+
     int deleteClientScopes(Long clientId);
+
+    int deleteClientScopesByScopeId(Long clientId, Long scopeId);
 }

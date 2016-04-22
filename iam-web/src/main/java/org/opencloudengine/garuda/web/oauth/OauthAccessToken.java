@@ -14,6 +14,7 @@ public class OauthAccessToken implements Serializable {
     private String scopes;
     private String token;
     private Long oauthUserId;
+    private Long groupId;
     private Long clientId;
     private String refreshToken;
     private String additionalInformation;
@@ -58,6 +59,14 @@ public class OauthAccessToken implements Serializable {
 
     public void setOauthUserId(Long oauthUserId) {
         this.oauthUserId = oauthUserId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public Long getClientId() {
@@ -108,6 +117,7 @@ public class OauthAccessToken implements Serializable {
                 ", scopes='" + scopes + '\'' +
                 ", token='" + token + '\'' +
                 ", oauthUserId=" + oauthUserId +
+                ", groupId=" + groupId +
                 ", clientId=" + clientId +
                 ", refreshToken='" + refreshToken + '\'' +
                 ", additionalInformation='" + additionalInformation + '\'' +

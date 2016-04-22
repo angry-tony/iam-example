@@ -14,8 +14,8 @@ public class Management implements Serializable {
     private String groupKey;
     private String groupSecret;
     private String groupJwtSecret;
-    private int sessionTokenLifetime;
-    private int scopeCheckLifetime;
+    private Integer sessionTokenLifetime;
+    private Integer scopeCheckLifetime;
     private String description;
     private Date regDate;
     private Date updDate;
@@ -72,19 +72,19 @@ public class Management implements Serializable {
         this.groupJwtSecret = groupJwtSecret;
     }
 
-    public int getSessionTokenLifetime() {
+    public Integer getSessionTokenLifetime() {
         return sessionTokenLifetime;
     }
 
-    public void setSessionTokenLifetime(int sessionTokenLifetime) {
+    public void setSessionTokenLifetime(Integer sessionTokenLifetime) {
         this.sessionTokenLifetime = sessionTokenLifetime;
     }
 
-    public int getScopeCheckLifetime() {
+    public Integer getScopeCheckLifetime() {
         return scopeCheckLifetime;
     }
 
-    public void setScopeCheckLifetime(int scopeCheckLifetime) {
+    public void setScopeCheckLifetime(Integer scopeCheckLifetime) {
         this.scopeCheckLifetime = scopeCheckLifetime;
     }
 

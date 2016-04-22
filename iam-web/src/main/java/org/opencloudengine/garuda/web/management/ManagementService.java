@@ -15,9 +15,13 @@ public interface ManagementService {
 
     Management selectByUserIdAndId(Long userId, Long id);
 
-    int createManagement(Long userId, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime);
+    Management selectByCredential(String groupKey, String groupSecret);
+
+    List<Management> selectByCondition(Management management);
+
+    int createManagement(Long userId, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 
     int deleteById(Long id);
 
-    int updateById(Long userId, Long id, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime);
+    int updateById(Long userId, Long id, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 }

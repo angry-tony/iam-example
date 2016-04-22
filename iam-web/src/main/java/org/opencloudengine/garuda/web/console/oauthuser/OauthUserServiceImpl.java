@@ -65,7 +65,7 @@ public class OauthUserServiceImpl implements OauthUserService {
     }
 
     @Override
-    public int updateById(Long id, String userName, String userPassword, int level, String additionalInformation) {
+    public int updateById(Long id, String userName, String userPassword, Integer level, String additionalInformation) {
         OauthUser oauthUser = new OauthUser();
         oauthUser.setId(id);
         oauthUser.setUserName(userName);
@@ -76,19 +76,30 @@ public class OauthUserServiceImpl implements OauthUserService {
     }
 
     @Override
+    public int updateById(OauthUser oauthUser) {
+        return oauthUserRepository.updateById(oauthUser);
+    }
+
+    @Override
     public int deleteById(Long id) {
         return oauthUserRepository.deleteById(id);
     }
 
     @Override
-    public int createUser(Long groupId, String userName, String userPassword, int level, String additionalInformation) {
+    public List<OauthUser> selectByCondition(OauthUser oauthUser) {
+        return oauthUserRepository.selectByCondition(oauthUser);
+    }
+
+    @Override
+    public OauthUser createUser(Long groupId, String userName, String userPassword, Integer level, String additionalInformation) {
         OauthUser oauthUser = new OauthUser();
         oauthUser.setGroupId(groupId);
         oauthUser.setUserName(userName);
         oauthUser.setUserPassword(userPassword);
         oauthUser.setLevel(level);
         oauthUser.setAdditionalInformation(additionalInformation);
-        return oauthUserRepository.insert(oauthUser);
+        oauthUserRepository.insert(oauthUser);
+        return oauthUser;
     }
 
     @Override
@@ -108,7 +119,8 @@ public class OauthUserServiceImpl implements OauthUserService {
         String userName = (String) context.get("userName");
 
         //만료시간
-        Date expirationTime = new Date(new Date().getTime() + management.getSessionTokenLifetime() * 1000);
+        Date issueTime = jwtClaimsSet.getIssueTime();
+        Date expirationTime = new Date(issueTime.getTime() + management.getSessionTokenLifetime() * 1000);
 
         boolean validated = JwtUtils.validateToken(sessionToken, sharedSecret, expirationTime);
 
@@ -120,7 +132,7 @@ public class OauthUserServiceImpl implements OauthUserService {
     }
 
     @Override
-    public OauthScopeToken validateScopeToken(String scopeToken) throws Exception{
+    public OauthScopeToken validateScopeToken(String scopeToken) throws Exception {
         OauthScopeToken oauthScopeToken = new OauthScopeToken();
 
         JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(scopeToken);
@@ -137,7 +149,8 @@ public class OauthUserServiceImpl implements OauthUserService {
         String scopes = (String) context.get("scopes");
 
         //만료시간
-        Date expirationTime = new Date(new Date().getTime() + management.getScopeCheckLifetime() * 1000);
+        Date issueTime = jwtClaimsSet.getIssueTime();
+        Date expirationTime = new Date(issueTime.getTime() + management.getScopeCheckLifetime() * 1000);
 
         boolean validated = JwtUtils.validateToken(scopeToken, sharedSecret, expirationTime);
 
@@ -219,7 +232,7 @@ public class OauthUserServiceImpl implements OauthUserService {
         Date issueTime = new Date();
 
         //만료시간
-        Date expirationTime = new Date(new Date().getTime() + management.getScopeCheckLifetime()  * 1000);
+        Date expirationTime = new Date(new Date().getTime() + management.getScopeCheckLifetime() * 1000);
 
         //발급자
         String issuer = management.getGroupKey();

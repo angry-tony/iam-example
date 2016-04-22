@@ -114,7 +114,7 @@
                                 <label class="col-md-2 control-label">Active Client </label>
 
                                 <div class="col-md-6">
-                                    <label class="checkbox"><input type="checkbox" name="activeClient"
+                                    <label class="checkbox"><input type="checkbox" name="activeClient" value="Y"
                                                                    checked>active</label>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@
                                 <label class="col-md-2 control-label">Refresh Token </label>
 
                                 <div class="col-md-6">
-                                    <label class="checkbox"><input type="checkbox" name="refreshTokenValidity"
+                                    <label class="checkbox"><input type="checkbox" name="refreshTokenValidity" value="Y"
                                                                    checked>Enable refreshToken</label>
                                 </div>
                             </div>

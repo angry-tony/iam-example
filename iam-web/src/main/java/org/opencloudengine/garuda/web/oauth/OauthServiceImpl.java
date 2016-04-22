@@ -4,12 +4,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.util.HttpUtils;
+import org.opencloudengine.garuda.util.JsonFormatterUtils;
+import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
@@ -121,7 +124,7 @@ public class OauthServiceImpl implements OauthService {
             authorizeResponse.setRedirectUri(oauthClient.getWebServerRedirectUri());
         }
         if (StringUtils.isEmpty(authorizeResponse.getRedirectUri())) {
-            authorizeResponse.setError(OauthConstant.UNSUPPORTED_RESPONSE_TYPE);
+            authorizeResponse.setError(OauthConstant.INVALID_REQUEST);
             authorizeResponse.setError_description("Requested client does not have default redirect_uri. You must set redirect_uri in your parameters.");
             return authorizeResponse;
         }
@@ -166,6 +169,7 @@ public class OauthServiceImpl implements OauthService {
         accessTokenResponse.setUsername(request.getParameter("username"));
         accessTokenResponse.setPassword(request.getParameter("password"));
         accessTokenResponse.setAssertion(request.getParameter("assertion"));
+        accessTokenResponse.setRefreshToken(request.getParameter("refresh_token"));
         accessTokenResponse.setResponse(response);
 
         //grant_type을 검증한다.
@@ -177,7 +181,7 @@ public class OauthServiceImpl implements OauthService {
         }
 
         //gratn_type 별로 프로세스를 수행한다.
-        try{
+        try {
             switch (accessTokenResponse.getGrant_type()) {
                 case "authorization_code":
                     oauthGrantService.processCodeGrant(accessTokenResponse);
@@ -195,12 +199,16 @@ public class OauthServiceImpl implements OauthService {
                     oauthGrantService.processJWTGrant(accessTokenResponse);
                     break;
 
+                case "refresh_token":
+                    oauthGrantService.processRefreshToken(accessTokenResponse);
+                    break;
+
                 default:
                     accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
-                    accessTokenResponse.setError_description("grant_type must be one of authorization_code,password,client_credentials,urn:ietf:params:oauth:grant-type:jwt-bearer");
+                    accessTokenResponse.setError_description("grant_type must be one of authorization_code,password,client_credentials,refresh_token,urn:ietf:params:oauth:grant-type:jwt-bearer");
                     oauthGrantService.processRedirect(accessTokenResponse);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             accessTokenResponse.setError(OauthConstant.SERVER_ERROR);
             accessTokenResponse.setError_description("server error during access token processing");
             oauthGrantService.processRedirect(accessTokenResponse);
@@ -278,6 +286,7 @@ public class OauthServiceImpl implements OauthService {
                 //2. 코드와 스테이트를 리턴
                 case "code":
                     OauthCode oauthCode = new OauthCode();
+                    oauthCode.setGroupId(authorizeResponse.getManagement().getId());
                     oauthCode.setClientId(authorizeResponse.getOauthClient().getId());
                     oauthCode.setOauthUserId(authorizeResponse.getOauthUser().getId());
                     oauthCode.setCode(UUID.randomUUID().toString());
@@ -305,7 +314,7 @@ public class OauthServiceImpl implements OauthService {
                     accessToken.setOauthUserId(authorizeResponse.getOauthUser().getId());
                     accessToken.setClientId(authorizeResponse.getOauthClient().getId());
 
-                    if (authorizeResponse.getOauthClient().isRefreshTokenValidity()) {
+                    if (authorizeResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
                         accessToken.setRefreshToken(UUID.randomUUID().toString());
                     }
 
@@ -336,5 +345,22 @@ public class OauthServiceImpl implements OauthService {
         String getQueryString = HttpUtils.createGETQueryString(params);
         String url = authorizeResponse.getRedirectUri();
         response.sendRedirect(url + getQueryString);
+    }
+
+    @Override
+    public void processTokenInfo(HttpServletRequest request, HttpServletResponse response) {
+
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
+
+        accessTokenResponse.setAccessToken(request.getParameter("access_token"));
+        accessTokenResponse.setResponse(response);
+
+        try {
+            oauthGrantService.processTokenInfo(accessTokenResponse);
+        } catch (Exception ex) {
+            accessTokenResponse.setError(OauthConstant.SERVER_ERROR);
+            accessTokenResponse.setError_description("server error during access token processing");
+            oauthGrantService.processRedirect(accessTokenResponse);
+        }
     }
 }

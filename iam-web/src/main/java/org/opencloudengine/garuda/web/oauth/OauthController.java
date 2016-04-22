@@ -201,4 +201,15 @@ public class OauthController {
 
         oauthService.processAccessToken(request, response);
     }
+
+    @RequestMapping(value = "/token_info", method = RequestMethod.GET, produces = "application/json")
+    public void tokenInfo(HttpServletRequest request, HttpServletResponse response
+    ) throws IOException {
+
+        oauthService.processTokenInfo(request, response);
+    }
+
+    //TODO 어플리케이션 정리
+
+    //TODO 다큐멘테이션과 동영상 제작
 }

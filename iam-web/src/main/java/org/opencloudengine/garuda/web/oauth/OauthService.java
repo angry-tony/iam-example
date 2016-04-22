@@ -16,4 +16,6 @@ public interface OauthService {
     void processAuthorize(AuthorizeResponse authorizeResponse, HttpServletResponse response) throws IOException;
 
     void processAccessToken(HttpServletRequest request, HttpServletResponse response);
+
+    void processTokenInfo(HttpServletRequest request, HttpServletResponse response);
 }

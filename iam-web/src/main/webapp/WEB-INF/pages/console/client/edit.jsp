@@ -169,8 +169,8 @@
                                 <label class="col-md-2 control-label">Active Client </label>
 
                                 <div class="col-md-6">
-                                    <label class="checkbox"><input type="checkbox" name="activeClient"
-                                                                   <c:if test="${oauthClient.activeClient}">checked</c:if>>active</label>
+                                    <label class="checkbox"><input type="checkbox" name="activeClient" value="Y"
+                                                                   <c:if test="${oauthClient.activeClient == 'Y'}">checked</c:if>>active</label>
                                 </div>
                             </div>
 
@@ -206,8 +206,8 @@
                                 <label class="col-md-2 control-label">Refresh Token </label>
 
                                 <div class="col-md-6">
-                                    <label class="checkbox"><input type="checkbox" name="refreshTokenValidity"
-                                                                   <c:if test="${oauthClient.refreshTokenValidity}">checked</c:if>>Enable
+                                    <label class="checkbox"><input type="checkbox" name="refreshTokenValidity" value="Y"
+                                                                   <c:if test="${oauthClient.refreshTokenValidity == 'Y'}">checked</c:if>>Enable
                                         refreshToken</label>
                                 </div>
                             </div>

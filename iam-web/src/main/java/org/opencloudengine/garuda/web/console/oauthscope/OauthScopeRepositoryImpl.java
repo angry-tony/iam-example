@@ -55,6 +55,11 @@ public class OauthScopeRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
+    public List<OauthScope> selectByCondition(OauthScope oauthScope) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByCondition", oauthScope);
+    }
+
+    @Override
     public int updateById(OauthScope OauthScope) {
         return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", OauthScope);
     }
@@ -75,7 +80,23 @@ public class OauthScopeRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
+    public OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId) {
+        Map map = new HashMap();
+        map.put("clientId", clientId);
+        map.put("scopeId", scopeId);
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectClientScopesByScopeId", map);
+    }
+
+    @Override
     public int deleteClientScopes(Long clientId) {
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteClientScopes", clientId);
+    }
+
+    @Override
+    public int deleteClientScopesByScopeId(Long clientId, Long scopeId) {
+        Map map = new HashMap();
+        map.put("clientId", clientId);
+        map.put("scopeId", scopeId);
+        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteClientScopesByScopeId", map);
     }
 }

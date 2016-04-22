@@ -16,13 +16,17 @@ public interface OauthClientService {
 
     OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
 
-    int updateById(Long id, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
-                   String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
-                   int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
+    List<OauthClient> selectByCondition(OauthClient oauthClient);
+
+    int updateById(Long id, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
+                   String webServerRedirectUri, String refreshTokenValidity, String additionalInformation, Integer codeLifetime,
+                   Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
+
+    int updateById(OauthClient oauthClient);
 
     int deleteById(Long id);
 
-    int createClient(Long groupId, String name, String description, String clientTrust, String clientType, boolean activeClient, String authorizedGrantTypes,
-                     String webServerRedirectUri, boolean refreshTokenValidity, String additionalInformation, int codeLifetime,
-                     int refreshTokenLifetime, int accessTokenLifetime, int jwtTokenLifetime, String scopes);
+    OauthClient createClient(Long groupId, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
+                     String webServerRedirectUri, String refreshTokenValidity, String additionalInformation, Integer codeLifetime,
+                     Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
 }

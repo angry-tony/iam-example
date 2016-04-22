@@ -634,14 +634,14 @@ CREATE TABLE iam.MANAGEMENT_GROUP (
 DROP TABLE IF EXISTS iam.OAUTH_USER;
 
 CREATE TABLE iam.OAUTH_USER (
-  id                     BIGINT   NOT NULL AUTO_INCREMENT,
-  group_id               BIGINT   NOT NULL,
-  user_name              VARCHAR(255),
-  user_password          VARCHAR(255),
-  level                  SMALLINT NOT NULL DEFAULT 5,
+  id                     BIGINT       NOT NULL AUTO_INCREMENT,
+  group_id               BIGINT       NOT NULL,
+  user_name              VARCHAR(255) NOT NULL,
+  user_password          VARCHAR(255) NOT NULL,
+  level                  SMALLINT     NOT NULL DEFAULT 5,
   additional_information LONGTEXT,
-  reg_dt                 TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
-  upd_dt                 TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
+  reg_dt                 TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
+  upd_dt                 TIMESTAMP             DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 )
   ENGINE = INNODB
@@ -657,12 +657,12 @@ CREATE TABLE iam.OAUTH_CLIENT (
   client_key              VARCHAR(255),
   client_secret           VARCHAR(255),
   client_jwt_secret       VARCHAR(255),
-  client_trust            VARCHAR(255) COMMENT 'trust/3th',
+  client_trust            VARCHAR(255) COMMENT 'trust/3th_party',
   client_type             VARCHAR(255) COMMENT 'public/confidential',
-  active_client           BOOLEAN         DEFAULT TRUE,
+  active_client           CHAR(1),
   authorized_grant_types  VARCHAR(255),
   web_server_redirect_uri VARCHAR(255),
-  refresh_token_validity  BOOLEAN         DEFAULT FALSE,
+  refresh_token_validity  CHAR(1),
   additional_information  LONGTEXT,
   code_lifetime           INTEGER         DEFAULT 3600,
   refresh_token_lifetime  INTEGER         DEFAULT 3600,
@@ -706,16 +706,17 @@ CREATE TABLE iam.OAUTH_CLIENT_SCOPES (
 DROP TABLE IF EXISTS iam.OAUTH_ACCESS_TOKEN;
 
 CREATE TABLE iam.OAUTH_ACCESS_TOKEN (
-  id                     BIGINT NOT NULL AUTO_INCREMENT,
+  id                     BIGINT   NOT NULL AUTO_INCREMENT,
   type                   VARCHAR(255) COMMENT 'client/user',
   scopes                 LONGTEXT,
-  token                  LONGTEXT,
+  token                  LONGTEXT NOT NULL,
   oauth_user_id          BIGINT,
-  client_id              BIGINT,
+  group_id               BIGINT   NOT NULL,
+  client_id              BIGINT   NOT NULL,
   refresh_token          LONGTEXT,
   additional_information LONGTEXT,
-  reg_dt                 TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-  upd_dt                 TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+  reg_dt                 TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
+  upd_dt                 TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 )
   ENGINE = INNODB
@@ -724,13 +725,14 @@ CREATE TABLE iam.OAUTH_ACCESS_TOKEN (
 DROP TABLE IF EXISTS iam.OAUTH_CODE;
 
 CREATE TABLE iam.OAUTH_CODE (
-  id            BIGINT NOT NULL AUTO_INCREMENT,
-  client_id     BIGINT,
-  oauth_user_id BIGINT,
-  code          LONGTEXT,
+  id            BIGINT   NOT NULL AUTO_INCREMENT,
+  group_id      BIGINT   NOT NULL,
+  client_id     BIGINT   NOT NULL,
+  oauth_user_id BIGINT   NOT NULL,
+  code          LONGTEXT NOT NULL,
   scopes        LONGTEXT,
-  reg_dt        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
-  upd_dt        TIMESTAMP       DEFAULT CURRENT_TIMESTAMP,
+  reg_dt        TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
+  upd_dt        TIMESTAMP         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 )
   ENGINE = INNODB

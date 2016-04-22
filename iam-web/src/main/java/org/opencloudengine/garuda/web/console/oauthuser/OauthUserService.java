@@ -14,11 +14,15 @@ public interface OauthUserService {
 
     OauthUser selectByGroupIdAndId(Long groupId, Long id);
 
-    int updateById(Long id, String userName, String userPassword, int level, String additionalInformation);
+    int updateById(Long id, String userName, String userPassword, Integer level, String additionalInformation);
+
+    int updateById(OauthUser oauthUser);
 
     int deleteById(Long id);
 
-    int createUser(Long groupId, String userName, String userPassword, int level, String additionalInformation);
+    List<OauthUser> selectByCondition(OauthUser oauthUser);
+
+    OauthUser createUser(Long groupId, String userName, String userPassword, Integer level, String additionalInformation);
 
     OauthSessionToken validateSessionToken(String sessionToken) throws Exception;
 

@@ -73,4 +73,9 @@ public class OauthUserRepositoryImpl extends PersistentRepositoryImpl<String, Ob
     public int deleteById(Long id) {
         return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteById", id);
     }
+
+    @Override
+    public List<OauthUser> selectByCondition(OauthUser oauthUser) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByCondition", oauthUser);
+    }
 }

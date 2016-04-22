@@ -13,10 +13,10 @@
         <result property="clientJwtSecret" column="client_jwt_secret" jdbcType="INTEGER"/>
         <result property="clientTrust" column="client_trust" jdbcType="VARCHAR"/>
         <result property="clientType" column="client_type" jdbcType="VARCHAR"/>
-        <result property="activeClient" column="active_client" jdbcType="BOOLEAN"/>
+        <result property="activeClient" column="active_client" jdbcType="CHAR"/>
         <result property="authorizedGrantTypes" column="authorized_grant_types" jdbcType="VARCHAR"/>
         <result property="webServerRedirectUri" column="web_server_redirect_uri" jdbcType="VARCHAR"/>
-        <result property="refreshTokenValidity" column="refresh_token_validity" jdbcType="BOOLEAN"/>
+        <result property="refreshTokenValidity" column="refresh_token_validity" jdbcType="CHAR"/>
         <result property="additionalInformation" column="additional_information" jdbcType="VARCHAR"/>
         <result property="codeLifetime" column="code_lifetime" jdbcType="INTEGER"/>
         <result property="refreshTokenLifetime" column="refresh_token_lifetime" jdbcType="INTEGER"/>
@@ -103,23 +103,101 @@
         AND id = #{id}
     </select>
 
+    <select id="selectByCondition" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient"
+            resultMap="oauthClientMap">
+        SELECT * FROM OAUTH_CLIENT
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="name != '' and name != null">
+            AND name = #{name}
+        </if>
+        <if test="description != '' and description != null">
+            AND description = #{description}
+        </if>
+        <if test="clientTrust != '' and clientTrust != null">
+            AND client_trust = #{clientTrust}
+        </if>
+        <if test="clientType != '' and clientType != null">
+            AND client_type = #{clientType}
+        </if>
+        <if test="activeClient != '' and activeClient != null">
+            AND active_client = #{activeClient}
+        </if>
+        <if test="authorizedGrantTypes != '' and authorizedGrantTypes != null">
+            AND authorized_grant_types = #{authorizedGrantTypes}
+        </if>
+        <if test="webServerRedirectUri != '' and webServerRedirectUri != null">
+            AND web_server_redirect_uri = #{webServerRedirectUri}
+        </if>
+        <if test="refreshTokenValidity != '' and refreshTokenValidity != null">
+            AND refresh_token_validity = #{refreshTokenValidity}
+        </if>
+        <if test="additionalInformation != '' and additionalInformation != null">
+            AND additional_information = #{additionalInformation}
+        </if>
+        <if test="codeLifetime != null">
+            AND code_lifetime = #{codeLifetime}
+        </if>
+        <if test="refreshTokenLifetime != null">
+            AND refresh_token_lifetime = #{refreshTokenLifetime}
+        </if>
+        <if test="accessTokenLifetime != null">
+            AND access_token_lifetime = #{accessTokenLifetime}
+        </if>
+        <if test="jwtTokenLifetime != null">
+            AND jwt_token_lifetime = #{jwtTokenLifetime}
+        </if>
+    </select>
+
     <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthclient.OauthClient">
         UPDATE OAUTH_CLIENT
-        SET
-        name = #{name},
-        description = #{description},
-        client_trust = #{clientTrust},
-        client_type = #{clientType},
-        active_client = #{activeClient},
-        authorized_grant_types = #{authorizedGrantTypes},
-        web_server_redirect_uri = #{webServerRedirectUri},
-        refresh_token_validity = #{refreshTokenValidity},
-        additional_information = #{additionalInformation},
-        code_lifetime = #{codeLifetime},
-        refresh_token_lifetime = #{refreshTokenLifetime},
-        access_token_lifetime = #{accessTokenLifetime},
-        jwt_token_lifetime = #{jwtTokenLifetime},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="name != '' and name != null">
+                name = #{name},
+            </if>
+            <if test="description != '' and description != null">
+                description = #{description},
+            </if>
+            <if test="clientTrust != '' and clientTrust != null">
+                client_trust = #{clientTrust},
+            </if>
+            <if test="clientType != '' and clientType != null">
+                client_type = #{clientType},
+            </if>
+            <if test="activeClient != null">
+                active_client = #{activeClient},
+            </if>
+            <if test="authorizedGrantTypes != '' and authorizedGrantTypes != null">
+                authorized_grant_types = #{authorizedGrantTypes},
+            </if>
+            <if test="webServerRedirectUri != '' and webServerRedirectUri != null">
+                web_server_redirect_uri = #{webServerRedirectUri},
+            </if>
+            <if test="refreshTokenValidity != '' and refreshTokenValidity != null">
+                refresh_token_validity = #{refreshTokenValidity},
+            </if>
+            <if test="additionalInformation != '' and additionalInformation != null">
+                additional_information = #{additionalInformation},
+            </if>
+            <if test="codeLifetime != null">
+                code_lifetime = #{codeLifetime, jdbcType=INTEGER},
+            </if>
+            <if test="refreshTokenLifetime != null">
+                refresh_token_lifetime = #{refreshTokenLifetime},
+            </if>
+            <if test="accessTokenLifetime != null">
+                access_token_lifetime = #{accessTokenLifetime},
+            </if>
+            <if test="jwtTokenLifetime != null">
+                jwt_token_lifetime = #{jwtTokenLifetime},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 

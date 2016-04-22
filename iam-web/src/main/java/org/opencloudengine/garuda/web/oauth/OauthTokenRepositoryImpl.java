@@ -48,6 +48,11 @@ public class OauthTokenRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
+    public List<OauthCode> selectCodeByCondition(OauthCode oauthCode) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectCodeByCondition", oauthCode);
+    }
+
+    @Override
     public int updateCodeById(Long id) {
         return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateCodeById", id);
     }
@@ -63,18 +68,36 @@ public class OauthTokenRepositoryImpl extends PersistentRepositoryImpl<String, O
     }
 
     @Override
-    public OauthCode selectTokenById(Long id) {
+    public OauthAccessToken selectTokenById(Long id) {
         return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenById", id);
     }
 
     @Override
-    public OauthCode selectTokenByToken(String token) {
+    public OauthAccessToken selectTokenByToken(String token) {
         return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByToken", token);
     }
 
     @Override
-    public int updateTokenById(Long id) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateTokenById", id);
+    public OauthAccessToken selectTokenByRefreshToken(String refreshToken) {
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByRefreshToken", refreshToken);
+    }
+
+    @Override
+    public OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id) {
+        Map map = new HashMap();
+        map.put("groupId", groupId);
+        map.put("id", id);
+        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByGroupIdAndId", map);
+    }
+
+    @Override
+    public List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken) {
+        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectTokenByCondition", oauthAccessToken);
+    }
+
+    @Override
+    public int updateTokenById(OauthAccessToken oauthAccessToken) {
+        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateTokenById", oauthAccessToken);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class OauthUserController {
     public ModelAndView create(HttpSession session,
                                @RequestParam(defaultValue = "") String userName,
                                @RequestParam(defaultValue = "") String userPassword,
-                               @RequestParam(defaultValue = "5") int level,
+                               @RequestParam(defaultValue = "5") Integer level,
                                @RequestParam(defaultValue = "") String additionalInformation
     ) throws IOException {
         Management management = (Management) session.getAttribute("management");
@@ -150,7 +150,7 @@ public class OauthUserController {
                                @RequestParam(defaultValue = "") Long id,
                                @RequestParam(defaultValue = "") String userName,
                                @RequestParam(defaultValue = "") String userPassword,
-                               @RequestParam(defaultValue = "5") int level,
+                               @RequestParam(defaultValue = "5") Integer level,
                                @RequestParam(defaultValue = "") String additionalInformation) throws IOException {
 
         Management management = (Management) session.getAttribute("management");

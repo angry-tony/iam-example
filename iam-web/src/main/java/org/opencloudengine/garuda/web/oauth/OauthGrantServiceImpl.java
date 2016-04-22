@@ -46,6 +46,142 @@ public class OauthGrantServiceImpl implements OauthGrantService {
     @Autowired
     private OauthScopeService oauthScopeService;
 
+    @Override
+    public void processTokenInfo(AccessTokenResponse accessTokenResponse) throws Exception {
+
+        Map map = new HashMap();
+
+        //필요한 값을 검증한다.
+        String[] params = new String[]{"access_token"};
+        if (!this.checkParameters(params, accessTokenResponse)) {
+            return;
+        }
+
+        OauthAccessToken accessToken = oauthTokenService.selectTokenByToken(accessTokenResponse.getAccessToken());
+        if (accessToken == null) {
+            accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+            accessTokenResponse.setError_description("Requested access_token is not exist.");
+            this.processRedirect(accessTokenResponse);
+            return;
+        }
+
+        OauthClient oauthClient = oauthClientService.selectById(accessToken.getClientId());
+        OauthUser oauthUser = oauthUserService.selectById(accessToken.getOauthUserId());
+
+        //코드의 발급시간을 확인한다.
+        Timestamp regDate = accessToken.getRegDate();
+        Date currentTime = new Date();
+        Date expirationTime = new Date(regDate.getTime() + oauthClient.getAccessTokenLifetime() * 1000);
+        long diff = (long) Math.floor((expirationTime.getTime() - currentTime.getTime()) / 1000);
+
+        if (diff <= 0) {
+            accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+            accessTokenResponse.setError_description("requested access_token has expired.");
+            this.processRedirect(accessTokenResponse);
+            return;
+        } else {
+            map.put("expires_in", diff);
+        }
+
+        map.put("client", oauthClient.getClientKey());
+        if (oauthUser != null) {
+            map.put("username", oauthUser.getUserName());
+        }
+        if (!StringUtils.isEmpty(accessToken.getRefreshToken())) {
+            map.put("refreshToken", accessToken.getRefreshToken());
+        }
+        map.put("type", accessToken.getType());
+        map.put("scope", accessToken.getScopes());
+        map.put("additionalInformation", accessToken.getAdditionalInformation());
+
+        String marshal = JsonUtils.marshal(map);
+        String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+
+        HttpServletResponse response = accessTokenResponse.getResponse();
+        response.setStatus(200);
+        response.setHeader("Content-Type", "application/json;charset=UTF-8");
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("Pragma", "no-cache");
+        response.getWriter().write(prettyPrint);
+    }
+
+    @Override
+    public void processRefreshToken(AccessTokenResponse accessTokenResponse) throws Exception {
+        //필요한 값을 검증한다.
+        String[] params = new String[]{"client_id", "client_secret", "grant_type", "refresh_token"};
+        if (!this.checkParameters(params, accessTokenResponse)) {
+            return;
+        }
+
+        //클라이언트를 검증한다.
+        OauthClient oauthClient = oauthClientService.selectByClientKey(accessTokenResponse.getClientId());
+        if (!this.checkClient(oauthClient, accessTokenResponse)) {
+            return;
+        }
+        accessTokenResponse.setOauthClient(oauthClient);
+
+        //매니지먼트를 등록한다.
+        Long groupId = oauthClient.getGroupId();
+        Management management = managementService.selectById(groupId);
+        accessTokenResponse.setManagement(management);
+
+        //클라이언트가 리프레쉬 토큰을 허용하는지 알아본다.
+        if(!oauthClient.getRefreshTokenValidity().equals("Y")){
+            accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
+            accessTokenResponse.setError_description("Requested client does not support grant_type refresh_token");
+            this.processRedirect(accessTokenResponse);
+            return;
+        }
+
+        //어세스 토큰을 찾는다.
+        OauthAccessToken accessToken = oauthTokenService.selectTokenByRefreshToken(accessTokenResponse.getRefreshToken());
+        if(accessToken == null){
+            accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+            accessTokenResponse.setError_description("Requested refresh_token is not exist.");
+            this.processRedirect(accessTokenResponse);
+            return;
+        }
+
+        //어세스 토큰의 발급자 확인
+        if(!accessToken.getClientId().equals(oauthClient.getId())){
+            accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
+            accessTokenResponse.setError_description("client does not have authority to requested refresh_token.");
+            this.processRedirect(accessTokenResponse);
+            return;
+        }
+
+        //어세스 토큰의 발급시간을 확인한다.
+        Timestamp regDate = accessToken.getRegDate();
+        Date expirationTime = new Date(regDate.getTime() + oauthClient.getRefreshTokenLifetime() * 1000);
+        int compareTo = new Date().compareTo(expirationTime);
+        if (compareTo > 0) {
+            accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
+            accessTokenResponse.setError_description("requested refresh_token has expired.");
+            this.processRedirect(accessTokenResponse);
+            return;
+        }
+
+        //새로운 어세스토큰을 만들고 저장한다.
+        OauthAccessToken newAccessToken = new OauthAccessToken();
+        newAccessToken.setType("user");
+        newAccessToken.setScopes(accessToken.getScopes());
+        newAccessToken.setToken(UUID.randomUUID().toString());
+        newAccessToken.setOauthUserId(accessToken.getOauthUserId());
+        accessToken.setGroupId(management.getId());
+        newAccessToken.setClientId(oauthClient.getId());
+        newAccessToken.setRefreshToken(UUID.randomUUID().toString());
+
+        oauthTokenService.insertToken(newAccessToken);
+
+        //리스폰스에 리턴값을 세팅한다.
+        accessTokenResponse.setTokenType("Bearer");
+        accessTokenResponse.setAccessToken(newAccessToken.getToken());
+        accessTokenResponse.setRefreshToken(newAccessToken.getRefreshToken());
+        accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
+
+        //리스폰스를 수행한다.
+        this.processRedirect(accessTokenResponse);
+    }
 
     @Override
     public void processCodeGrant(AccessTokenResponse accessTokenResponse) throws Exception {
@@ -132,9 +268,10 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setScopes(oauthCode.getScopes());
         accessToken.setToken(UUID.randomUUID().toString());
         accessToken.setOauthUserId(oauthUser.getId());
+        accessToken.setGroupId(management.getId());
         accessToken.setClientId(oauthClient.getId());
 
-        if (oauthClient.isRefreshTokenValidity()) {
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
         }
         oauthTokenService.insertToken(accessToken);
@@ -143,7 +280,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         //리스폰스에 리턴값을 세팅한다.
         accessTokenResponse.setTokenType("Bearer");
         accessTokenResponse.setAccessToken(accessToken.getToken());
-        if (oauthClient.isRefreshTokenValidity()) {
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
         }
         accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
@@ -223,9 +360,10 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setScopes(accessTokenResponse.getScope());
         accessToken.setToken(UUID.randomUUID().toString());
         accessToken.setOauthUserId(oauthUser.getId());
+        accessToken.setGroupId(management.getId());
         accessToken.setClientId(oauthClient.getId());
 
-        if (oauthClient.isRefreshTokenValidity()) {
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
         }
         oauthTokenService.insertToken(accessToken);
@@ -234,7 +372,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         //리스폰스에 리턴값을 세팅한다.
         accessTokenResponse.setTokenType("Bearer");
         accessTokenResponse.setAccessToken(accessToken.getToken());
-        if (oauthClient.isRefreshTokenValidity()) {
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
         }
         accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
@@ -302,7 +440,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setType("client");
         accessToken.setScopes(accessTokenResponse.getScope());
         accessToken.setToken(UUID.randomUUID().toString());
+        accessToken.setGroupId(management.getId());
         accessToken.setClientId(oauthClient.getId());
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+            accessToken.setRefreshToken(UUID.randomUUID().toString());
+        }
 
         oauthTokenService.insertToken(accessToken);
 
@@ -311,6 +453,9 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setTokenType("Bearer");
         accessTokenResponse.setAccessToken(accessToken.getToken());
         accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+            accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
+        }
 
         //리스폰스를 수행한다.
         this.processRedirect(accessTokenResponse);
@@ -373,7 +518,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //클라이언트 액티브를 체크한다.
-        if (!oauthClient.isActiveClient()) {
+        if (!oauthClient.getActiveClient().equals("Y")) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
             this.processRedirect(accessTokenResponse);
@@ -425,7 +570,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setType("client");
         accessToken.setScopes(accessTokenResponse.getScope());
         accessToken.setToken(UUID.randomUUID().toString());
+        accessToken.setGroupId(management.getId());
         accessToken.setClientId(oauthClient.getId());
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+            accessToken.setRefreshToken(UUID.randomUUID().toString());
+        }
 
         oauthTokenService.insertToken(accessToken);
 
@@ -434,6 +583,9 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setTokenType("Bearer");
         accessTokenResponse.setAccessToken(accessToken.getToken());
         accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
+        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+            accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
+        }
 
         //리스폰스를 수행한다.
         this.processRedirect(accessTokenResponse);
@@ -465,26 +617,43 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                         map.put("access_token", accessTokenResponse.getAccessToken());
                         map.put("token_type", accessTokenResponse.getTokenType());
                         map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        }
                         break;
 
                     case "password":
                         map.put("access_token", accessTokenResponse.getAccessToken());
                         map.put("token_type", accessTokenResponse.getTokenType());
                         map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        }
                         break;
 
                     case "client_credentials":
                         map.put("access_token", accessTokenResponse.getAccessToken());
                         map.put("token_type", accessTokenResponse.getTokenType());
                         map.put("expires_in", accessTokenResponse.getExpiresIn());
+                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        }
                         break;
 
                     case "urn:ietf:params:oauth:grant-type:jwt-bearer":
                         map.put("access_token", accessTokenResponse.getAccessToken());
                         map.put("token_type", accessTokenResponse.getTokenType());
                         map.put("expires_in", accessTokenResponse.getExpiresIn());
+                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
+                        }
+                        break;
+
+                    case "refresh_token":
+                        map.put("access_token", accessTokenResponse.getAccessToken());
+                        map.put("token_type", accessTokenResponse.getTokenType());
+                        map.put("expires_in", accessTokenResponse.getExpiresIn());
+                        map.put("refresh_token", accessTokenResponse.getRefreshToken());
                         break;
                 }
 
@@ -553,7 +722,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                     break;
                 case "redirect_uri":
                     if (StringUtils.isEmpty(accessTokenResponse.getRedirectUri())) {
-                        accessTokenResponse.setError(OauthConstant.UNSUPPORTED_RESPONSE_TYPE);
+                        accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
                         accessTokenResponse.setError_description("Requested client does not have default redirect_uri. You must set redirect_uri in your parameters.");
                     }
                     break;
@@ -561,6 +730,18 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                     if (StringUtils.isEmpty(accessTokenResponse.getAssertion())) {
                         accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
                         accessTokenResponse.setError_description("assertion is required.");
+                    }
+                    break;
+                case "access_token":
+                    if (StringUtils.isEmpty(accessTokenResponse.getAccessToken())) {
+                        accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
+                        accessTokenResponse.setError_description("access_token is required.");
+                    }
+                    break;
+                case "refresh_token":
+                    if (StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                        accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
+                        accessTokenResponse.setError_description("refresh_token is required.");
                     }
                     break;
             }
@@ -581,7 +762,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //클라이언트 액티브를 체크한다.
-        if (!oauthClient.isActiveClient()) {
+        if (!oauthClient.getActiveClient().equals("Y")) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
             this.processRedirect(accessTokenResponse);

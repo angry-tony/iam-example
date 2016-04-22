@@ -62,14 +62,53 @@
         ORDER BY group_name
     </select>
 
+    <select id="selectByCredential" parameterType="map" resultMap="managementMap">
+        SELECT * FROM MANAGEMENT_GROUP
+        WHERE group_key = #{groupKey}
+        AND group_secret = #{groupSecret}
+    </select>
+
+    <select id="selectByCondition" parameterType="org.opencloudengine.garuda.web.management.Management"
+            resultMap="managementMap">
+        SELECT * FROM MANAGEMENT_GROUP
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="userId != null">
+            AND user_id = #{userId}
+        </if>
+        <if test="groupName != '' and groupName != null">
+            AND group_name = #{groupName}
+        </if>
+        <if test="description != '' and description != null">
+            AND description = #{description}
+        </if>
+        <if test="sessionTokenLifetime != null">
+            AND session_token_lifetime = #{sessionTokenLifetime}
+        </if>
+        <if test="scopeCheckLifetime != null">
+            AND scope_check_lifetime = #{scopeCheckLifetime}
+        </if>
+    </select>
+
     <update id="updateById" parameterType="map">
         UPDATE MANAGEMENT_GROUP
-        SET
-        group_name = #{groupName},
-        description = #{description},
-        session_token_lifetime = #{sessionTokenLifetime},
-        scope_check_lifetime = #{scopeCheckLifetime},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="groupName != '' and groupName != null">
+                group_name = #{groupName},
+            </if>
+            <if test="description != '' and description != null">
+                description = #{description},
+            </if>
+            <if test="sessionTokenLifetime != null">
+                session_token_lifetime = #{sessionTokenLifetime},
+            </if>
+            <if test="scopeCheckLifetime != null">
+                scope_check_lifetime = #{scopeCheckLifetime},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 

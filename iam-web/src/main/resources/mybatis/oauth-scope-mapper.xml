@@ -43,13 +43,41 @@
         AND id = #{id}
     </select>
 
+    <select id="selectByCondition" parameterType="org.opencloudengine.garuda.web.console.oauthscope.OauthScope"
+            resultMap="oauthScopeMap">
+        SELECT * FROM OAUTH_SCOPES
+        WHERE 0 = 0
+        <if test="id != null">
+            AND id = #{id}
+        </if>
+        <if test="groupId != null">
+            AND group_id = #{groupId}
+        </if>
+        <if test="name != '' and name != null">
+            AND name = #{name}
+        </if>
+        <if test="description != '' and description != null">
+            AND description = #{description}
+        </if>
+        <if test="additionalInformation != '' and additionalInformation != null">
+            AND additional_information = #{additionalInformation}
+        </if>
+    </select>
+
     <update id="updateById" parameterType="org.opencloudengine.garuda.web.console.oauthscope.OauthScope">
         UPDATE OAUTH_SCOPES
-        SET
-        name = #{name},
-        description = #{description},
-        additional_information = #{additionalInformation},
-        UPD_DT = CURRENT_TIMESTAMP
+        <set>
+            <if test="name != '' and name != null">
+                name = #{name},
+            </if>
+            <if test="description != '' and description != null">
+                description = #{description},
+            </if>
+            <if test="additionalInformation != '' and additionalInformation != null">
+                additional_information = #{additionalInformation},
+            </if>
+            UPD_DT = CURRENT_TIMESTAMP
+        </set>
         WHERE id = #{id}
     </update>
 
@@ -81,9 +109,28 @@
         ON B.id = A.scope_id;
     </select>
 
+    <select id="selectClientScopesByScopeId" parameterType="map" resultMap="oauthScopeMap">
+        SELECT
+        B.*
+        FROM
+        (SELECT scope_id FROM OAUTH_CLIENT_SCOPES
+        WHERE client_id = #{clientId}
+        AND scope_id = #{scopeId}
+        ) A
+        LEFT OUTER JOIN
+        (SELECT * FROM OAUTH_SCOPES) B
+        ON B.id = A.scope_id;
+    </select>
+
     <delete id="deleteClientScopes" parameterType="java.lang.Long">
         DELETE FROM OAUTH_CLIENT_SCOPES
         WHERE client_id = #{clientId}
+    </delete>
+
+    <delete id="deleteClientScopesByScopeId" parameterType="map">
+        DELETE FROM OAUTH_CLIENT_SCOPES
+        WHERE client_id = #{clientId}
+        AND scope_id = #{scopeId}
     </delete>
 
 </mapper>

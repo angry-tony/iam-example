@@ -19,6 +19,8 @@ public interface OauthClientRepository {
 
     OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
 
+    List<OauthClient> selectByCondition(OauthClient oauthClient);
+
     int updateById(OauthClient OauthClient);
 
     int deleteById(Long id);

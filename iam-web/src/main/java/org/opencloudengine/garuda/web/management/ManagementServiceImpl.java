@@ -45,7 +45,17 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
-    public int createManagement(Long userId, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime) {
+    public Management selectByCredential(String groupKey, String groupSecret) {
+        return managementRepository.selectByCredential(groupKey, groupSecret);
+    }
+
+    @Override
+    public List<Management> selectByCondition(Management management) {
+        return managementRepository.selectByCondition(management);
+    }
+
+    @Override
+    public int createManagement(Long userId, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
         Management management = new Management();
         management.setUserId(userId);
         management.setGroupName(groupName);
@@ -71,7 +81,7 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
-    public int updateById(Long userId, Long id, String groupName, String description, int sessionTokenLifetime, int scopeCheckLifetime) {
+    public int updateById(Long userId, Long id, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
         Management management = this.selectByUserIdAndId(userId, id);
         if (management == null) {
             throw new ServiceException("Invalid management groupId");

@@ -20,7 +20,7 @@ public class AuthorizeResponse implements Serializable {
     private String code;
     private String accessToken;
     private String tokenType;
-    private int expiresIn;
+    private Integer expiresIn;
     private OauthClient oauthClient;
     private List<OauthScope> oauthScopes;
     private Management management;
@@ -93,11 +93,11 @@ public class AuthorizeResponse implements Serializable {
         this.tokenType = tokenType;
     }
 
-    public int getExpiresIn() {
+    public Integer getExpiresIn() {
         return expiresIn;
     }
 
-    public void setExpiresIn(int expiresIn) {
+    public void setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
     }
 
@@ -125,6 +125,14 @@ public class AuthorizeResponse implements Serializable {
         this.management = management;
     }
 
+    public OauthUser getOauthUser() {
+        return oauthUser;
+    }
+
+    public void setOauthUser(OauthUser oauthUser) {
+        this.oauthUser = oauthUser;
+    }
+
     public String getError() {
         return error;
     }
@@ -139,14 +147,6 @@ public class AuthorizeResponse implements Serializable {
 
     public void setError_description(String error_description) {
         this.error_description = error_description;
-    }
-
-    public OauthUser getOauthUser() {
-        return oauthUser;
-    }
-
-    public void setOauthUser(OauthUser oauthUser) {
-        this.oauthUser = oauthUser;
     }
 
     @Override

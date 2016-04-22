@@ -42,6 +42,11 @@ public class OauthScopeServiceImpl implements OauthScopeService {
     }
 
     @Override
+    public List<OauthScope> selectByCondition(OauthScope oauthScope) {
+        return oauthScopeRepository.selectByCondition(oauthScope);
+    }
+
+    @Override
     public int updateById(Long id, String name, String description, String additionalInformation) {
         OauthScope OauthScope = new OauthScope();
         OauthScope.setId(id);
@@ -52,18 +57,25 @@ public class OauthScopeServiceImpl implements OauthScopeService {
     }
 
     @Override
+    public int updateById(OauthScope oauthScope) {
+        return oauthScopeRepository.updateById(oauthScope);
+    }
+
+    @Override
     public int deleteById(Long id) {
         return oauthScopeRepository.deleteById(id);
     }
 
     @Override
-    public int createScope(Long groupId, String name, String description, String additionalInformation) {
+    public OauthScope createScope(Long groupId, String name, String description, String additionalInformation) {
         OauthScope OauthScope = new OauthScope();
         OauthScope.setGroupId(groupId);
         OauthScope.setName(name);
         OauthScope.setDescription(description);
         OauthScope.setAdditionalInformation(additionalInformation);
-        return oauthScopeRepository.insert(OauthScope);
+        oauthScopeRepository.insert(OauthScope);
+
+        return OauthScope;
     }
 
     @Override
@@ -77,7 +89,17 @@ public class OauthScopeServiceImpl implements OauthScopeService {
     }
 
     @Override
+    public OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId) {
+        return oauthScopeRepository.selectClientScopesByScopeId(clientId, scopeId);
+    }
+
+    @Override
     public int deleteClientScopes(Long clientId) {
         return oauthScopeRepository.deleteClientScopes(clientId);
+    }
+
+    @Override
+    public int deleteClientScopesByScopeId(Long clientId, Long scopeId) {
+        return oauthScopeRepository.deleteClientScopesByScopeId(clientId, scopeId);
     }
 }

@@ -14,15 +14,23 @@ public interface OauthScopeService {
 
     OauthScope selectByGroupIdAndName(Long groupId, String name);
 
+    List<OauthScope> selectByCondition(OauthScope oauthScope);
+
     int updateById(Long id, String name, String description, String additionalInformation);
+
+    int updateById(OauthScope oauthScope);
 
     int deleteById(Long id);
 
-    int createScope(Long groupId, String name, String description, String additionalInformation);
+    OauthScope createScope(Long groupId, String name, String description, String additionalInformation);
 
     int insertClientScopes(OauthClientScopes oauthClientScopes);
 
     List<OauthScope> selectClientScopes(Long clientId);
 
+    OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId);
+
     int deleteClientScopes(Long clientId);
+
+    int deleteClientScopesByScopeId(Long clientId, Long scopeId);
 }

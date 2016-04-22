@@ -25,7 +25,7 @@ public class AccessTokenResponse implements Serializable {
     private String accessToken;
     private String tokenType;
     private String assertion;
-    private int expiresIn;
+    private Integer expiresIn;
     private String refreshToken;
     private OauthClient oauthClient;
     private List<OauthScope> oauthScopes;
@@ -132,11 +132,11 @@ public class AccessTokenResponse implements Serializable {
         this.assertion = assertion;
     }
 
-    public int getExpiresIn() {
+    public Integer getExpiresIn() {
         return expiresIn;
     }
 
-    public void setExpiresIn(int expiresIn) {
+    public void setExpiresIn(Integer expiresIn) {
         this.expiresIn = expiresIn;
     }
 

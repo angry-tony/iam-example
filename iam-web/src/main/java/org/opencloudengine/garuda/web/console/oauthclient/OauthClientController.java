@@ -70,15 +70,15 @@ public class OauthClientController {
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") String clientTrust,
                                @RequestParam(defaultValue = "") String clientType,
-                               @RequestParam(defaultValue = "false", required = false) boolean activeClient,
+                               @RequestParam(defaultValue = "N") String activeClient,
                                @RequestParam(defaultValue = "") String authorizedGrantTypes,
                                @RequestParam(defaultValue = "") String webServerRedirectUri,
-                               @RequestParam(defaultValue = "false", required = false) boolean refreshTokenValidity,
+                               @RequestParam(defaultValue = "") String refreshTokenValidity,
                                @RequestParam(defaultValue = "") String additionalInformation,
-                               @RequestParam(defaultValue = "") int codeLifetime,
-                               @RequestParam(defaultValue = "") int refreshTokenLifetime,
-                               @RequestParam(defaultValue = "") int accessTokenLifetime,
-                               @RequestParam(defaultValue = "") int jwtTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer codeLifetime,
+                               @RequestParam(defaultValue = "") Integer refreshTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer accessTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer jwtTokenLifetime,
                                @RequestParam(defaultValue = "") String scopes
     ) throws IOException {
 
@@ -183,15 +183,15 @@ public class OauthClientController {
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") String clientTrust,
                                @RequestParam(defaultValue = "") String clientType,
-                               @RequestParam(defaultValue = "false", required = false) boolean activeClient,
+                               @RequestParam(defaultValue = "N") String activeClient,
                                @RequestParam(defaultValue = "") String authorizedGrantTypes,
                                @RequestParam(defaultValue = "") String webServerRedirectUri,
-                               @RequestParam(defaultValue = "false", required = false) boolean refreshTokenValidity,
+                               @RequestParam(defaultValue = "") String refreshTokenValidity,
                                @RequestParam(defaultValue = "") String additionalInformation,
-                               @RequestParam(defaultValue = "") int codeLifetime,
-                               @RequestParam(defaultValue = "") int refreshTokenLifetime,
-                               @RequestParam(defaultValue = "") int accessTokenLifetime,
-                               @RequestParam(defaultValue = "") int jwtTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer codeLifetime,
+                               @RequestParam(defaultValue = "") Integer refreshTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer accessTokenLifetime,
+                               @RequestParam(defaultValue = "") Integer jwtTokenLifetime,
                                @RequestParam(defaultValue = "") String scopes
     ) throws IOException {
 
