@@ -23,7 +23,7 @@
         <javadoc.locale>ko_KR</javadoc.locale>
 
         <!-- Spring Framework -->
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>4.2.0.RELEASE</spring.version>
         <aspectj.version>1.8.4</aspectj.version>
         <aopalliance.version>1.0</aopalliance.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>

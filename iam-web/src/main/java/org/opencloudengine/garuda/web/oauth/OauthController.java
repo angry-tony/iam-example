@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.oauth;
 
 import org.opencloudengine.garuda.common.rest.Response;
 import org.opencloudengine.garuda.util.ExceptionUtils;
+import org.opencloudengine.garuda.util.JsonFormatterUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthScopeToken;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthSessionToken;
@@ -45,7 +46,9 @@ public class OauthController {
             map.put("error_description", authorizeResponse.getError_description());
             map.put("state", authorizeResponse.getState());
             String marshal = JsonUtils.marshal(map);
-            response.getWriter().write(marshal);
+            String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+            System.out.println(prettyPrint);
+            response.getWriter().write(prettyPrint);
 
             oauthService.responseAuthorize(authorizeResponse);
 

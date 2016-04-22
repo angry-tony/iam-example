@@ -96,6 +96,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
         String marshal = JsonUtils.marshal(map);
         String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+        System.out.println(prettyPrint);
 
         HttpServletResponse response = accessTokenResponse.getResponse();
         response.setStatus(200);
@@ -601,6 +602,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
                 String marshal = JsonUtils.marshal(map);
                 String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+                System.out.println(prettyPrint);
 
                 HttpServletResponse response = accessTokenResponse.getResponse();
 
@@ -659,6 +661,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
                 String marshal = JsonUtils.marshal(map);
                 String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+                System.out.println(prettyPrint);
 
                 HttpServletResponse response = accessTokenResponse.getResponse();
 
