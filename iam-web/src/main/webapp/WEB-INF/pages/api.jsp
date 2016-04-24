@@ -84,21 +84,21 @@
 
             window.swaggerUi.load();
 
-            $('#management_key').change(function() {
-                var key = $('#management_key').val();
-                if(key && key.trim() != "") {
-                    swaggerUi.api.clientAuthorizations.add("key1", new SwaggerClient.ApiKeyAuthorization("management-key", key, "header"));
-                    console.log(key);
-                }
-            });
-
-            $('#management_secret').change(function() {
-                var key = $('#management_secret').val();
-                if(key && key.trim() != "") {
-                    swaggerUi.api.clientAuthorizations.add("key2", new SwaggerClient.ApiKeyAuthorization("management-secret", key, "header"));
-                    console.log(key);
-                }
-            });
+//            $('#management_key').change(function() {
+//                var key = $('#management_key').val();
+//                if(key && key.trim() != "") {
+//                    swaggerUi.api.clientAuthorizations.add("key1", new SwaggerClient.ApiKeyAuthorization("management-key", key, "header"));
+//                    console.log(key);
+//                }
+//            });
+//
+//            $('#management_secret').change(function() {
+//                var key = $('#management_secret').val();
+//                if(key && key.trim() != "") {
+//                    swaggerUi.api.clientAuthorizations.add("key2", new SwaggerClient.ApiKeyAuthorization("management-secret", key, "header"));
+//                    console.log(key);
+//                }
+//            });
 
             function log() {
                 if ('console' in window) {
@@ -127,12 +127,12 @@
 
 <div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
 
-<div class="swagger-ui-wrap">
-    <div class="info_description input">management-key <input id="management_key" name="management_key" type="text"/></div>
-    <div class="info_description input">management-secret <input id="management_secret" name="management_secret" type="text"/>
-    </div>
-</div>
-<br><br>
+<%--<div class="swagger-ui-wrap">--%>
+    <%--<div class="info_description input">management-key <input id="management_key" name="management_key" type="text"/></div>--%>
+    <%--<div class="info_description input">management-secret <input id="management_secret" name="management_secret" type="text"/>--%>
+    <%--</div>--%>
+<%--</div>--%>
+<%--<br><br>--%>
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
 </body>
 </html>
