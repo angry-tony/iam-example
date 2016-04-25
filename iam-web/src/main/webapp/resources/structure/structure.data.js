@@ -128,17 +128,17 @@ structure.data = {
         /*
          Support
          */
-        {
-            title: message.msg('menu.support'),
-            href: '/support'
-        },
+        //{
+        //    title: message.msg('menu.support'),
+        //    href: '/support'
+        //},
         /*
          Download
          */
-        {
-            title: message.msg('menu.download'),
-            href: '/download'
-        },
+        //{
+        //    title: message.msg('menu.download'),
+        //    href: '/download'
+        //},
         /*
          Pricing
          */

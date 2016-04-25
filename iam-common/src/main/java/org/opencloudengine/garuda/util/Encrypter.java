@@ -47,7 +47,7 @@ public class Encrypter {
     public static void main(String[] args) {
 
         String key1 = "ThisisServerIdPa"; // 128 bit key
-        String key2 = "rserForCloudine.";
+        String key2 = "rserForUengine.";
 
         //서버 아이디 생성
         System.out.println(encrypt(key1, key2, "64:76:ba:b4:29:8c"));

@@ -63,12 +63,12 @@ public class HttpUtils {
         return httpResponse;
     }
 
-    public static String createGETQueryString(Map<String, String> params) {
+    public static String createGETQueryString(Map<String, Object> params) {
         StringBuilder sb = new StringBuilder("");
 
         List<String> listOfParams = new ArrayList<String>();
         for (String param : params.keySet()) {
-            listOfParams.add(param + "=" + encodeString(params.get(param)));
+            listOfParams.add(param + "=" + encodeString(params.get(param) + ""));
         }
 
         if (!listOfParams.isEmpty()) {
@@ -80,12 +80,12 @@ public class HttpUtils {
         return sb.toString();
     }
 
-    public static String createPOSTQueryString(Map<String, String> params) {
+    public static String createPOSTQueryString(Map<String, Object> params) {
         StringBuilder sb = new StringBuilder("");
 
         List<String> listOfParams = new ArrayList<String>();
         for (String param : params.keySet()) {
-            listOfParams.add(param + "=" + encodeString(params.get(param)));
+            listOfParams.add(param + "=" + encodeString(params.get(param) + ""));
         }
 
         if (!listOfParams.isEmpty()) {

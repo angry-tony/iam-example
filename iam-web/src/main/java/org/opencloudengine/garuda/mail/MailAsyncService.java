@@ -64,6 +64,9 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
     @Value("#{config['mail.smtp.starttls.enable']}")
     private boolean starttls = true;
 
+    @Value("#{config['mail.redirect.address']}")
+    private String redirectAddress;
+
     @Autowired
     private VelocityEngine velocityEngine;
 
@@ -75,39 +78,25 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
     @Override
     public void accept(Event<Map> event) {
         // mailService.sendMail("");
-        String command = (String)event.getData().get("command");
+        String command = (String) event.getData().get("command");
         Map map = event.getData();
 
-        switch (command){
-            case "sendBySmtp" :
+        switch (command) {
+            case "sendBySmtp":
                 this.sendBySmtp(
-                        map.get("subject") != null ? map.get("subject").toString() : null ,
-                        map.get("text") != null ? map.get("text").toString() : null ,
-                        map.get("fromUser") != null ? map.get("fromUser").toString() : null ,
-                        map.get("fromName") != null ? map.get("fromName").toString() : null ,
-                        map.get("toUser") != null ? map.get("toUser").toString() : null ,
-                        map.get("telephone") != null ? map.get("telephone").toString() : null ,
-                        map.get("toCC") != null ? (InternetAddress[]) map.get("toCC") : null
-                );
-                break;
-
-            case "download" :
-                this.download(
-                        map.get("type") != null ? map.get("type").toString() : null,
-                        map.get("version") != null ? map.get("version").toString() : null,
-                        map.get("token") != null ? map.get("token").toString() : null,
                         map.get("subject") != null ? map.get("subject").toString() : null,
+                        map.get("text") != null ? map.get("text").toString() : null,
                         map.get("fromUser") != null ? map.get("fromUser").toString() : null,
                         map.get("fromName") != null ? map.get("fromName").toString() : null,
                         map.get("toUser") != null ? map.get("toUser").toString() : null,
-                        map.get("toName") != null ? map.get("toName").toString() : null,
+                        map.get("telephone") != null ? map.get("telephone").toString() : null,
                         map.get("toCC") != null ? (InternetAddress[]) map.get("toCC") : null
                 );
                 break;
 
-            case "registe" :
+            case "registe":
                 this.registe(
-                        map.get("userId") != null ? (Long) map.get("userId"): null,
+                        map.get("userId") != null ? (Long) map.get("userId") : null,
                         map.get("token") != null ? map.get("token").toString() : null,
                         map.get("subject") != null ? map.get("subject").toString() : null,
                         map.get("fromUser") != null ? map.get("fromUser").toString() : null,
@@ -117,7 +106,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
                 );
                 break;
 
-            case "passwd" :
+            case "passwd":
                 this.passwd(
                         map.get("userId") != null ? (Long) map.get("userId") : null,
                         map.get("token") != null ? map.get("token").toString() : null,
@@ -129,45 +118,8 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
                 );
                 break;
 
-            case "trialCreated" :
-                this.trialCreated(
-                        map.get("subject") != null ? (String) map.get("subject") : null,
-                        map.get("fromUser") != null ? (String) map.get("fromUser") : null,
-                        map.get("fromName") != null ? (String) map.get("fromName") : null,
-                        map.get("toUser") != null ? map.get("toUser").toString() : null,
-                        map.get("toCC") != null ? (InternetAddress[]) map.get("toCC") : null
-                );
-                break;
-
             default:
                 break;
-        }
-    }
-
-    @Async
-    public void trialCreated(String subject, String fromUser, String fromName, String toUser, InternetAddress[] toCC) {
-        Session session = setMailProperties(toUser);
-
-        Map model = new HashMap();
-        model.put("link", "http://www.cloudine.io/my/license");
-
-        String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/trial-created.vm", "UTF-8", model);
-
-        try {
-            InternetAddress from = new InternetAddress(fromUser, fromName);
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(from);
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toUser));
-            message.setSubject(subject);
-            message.setContent(body,"text/html; charset=utf-8");
-            if (toCC != null && toCC.length > 0)
-                message.setRecipients(Message.RecipientType.CC, toCC);
-
-            Transport.send(message);
-
-            logger.info("{} 메일주소로 메일을 발송했습니다.", toUser);
-        } catch (Exception e) {
-            throw new ServiceException("메일을 발송할 수 없습니다.", e);
         }
     }
 
@@ -176,7 +128,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
         Session session = setMailProperties(toUser);
 
         Map model = new HashMap();
-        model.put("link", MessageFormatter.arrayFormat("http://www.cloudine.io/auth/passwdConfirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
+        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/auth/passwdConfirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
 
         String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/passwd.vm", "UTF-8", model);
 
@@ -186,7 +138,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
             message.setFrom(from);
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toUser));
             message.setSubject(subject);
-            message.setContent(body,"text/html; charset=utf-8");
+            message.setContent(body, "text/html; charset=utf-8");
             if (toCC != null && toCC.length > 0)
                 message.setRecipients(Message.RecipientType.CC, toCC);
 
@@ -203,7 +155,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
         Session session = setMailProperties(toUser);
 
         Map model = new HashMap();
-        model.put("link", MessageFormatter.arrayFormat("http://www.cloudine.io/registe/confirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
+        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/registe/confirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
 
         String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/registe.vm", "UTF-8", model);
 
@@ -213,35 +165,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
             message.setFrom(from);
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toUser));
             message.setSubject(subject);
-            message.setContent(body,"text/html; charset=utf-8");
-            if (toCC != null && toCC.length > 0)
-                message.setRecipients(Message.RecipientType.CC, toCC);
-
-            Transport.send(message);
-
-            logger.info("{} 메일주소로 메일을 발송했습니다.", toUser);
-        } catch (Exception e) {
-            throw new ServiceException("메일을 발송할 수 없습니다.", e);
-        }
-    }
-    @Async
-    public void download(String type, String version, String token, String subject, String fromUser, String fromName, final String toUser, final String toName, InternetAddress[] toCC) {
-        Session session = setMailProperties(toUser);
-
-
-        Map model = new HashMap();
-        model.put("link", MessageFormatter.arrayFormat("http://www.cloudine.io/download/get?type={}&version={}&token={}", new Object[]{type, version, token}).getMessage());
-        model.put("name", toName);
-
-        String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/download.vm", "UTF-8", model);
-
-        try {
-            InternetAddress from = new InternetAddress(fromUser, fromName);
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(from);
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toUser));
-            message.setSubject(subject);
-            message.setContent(body,"text/html; charset=utf-8");
+            message.setContent(body, "text/html; charset=utf-8");
             if (toCC != null && toCC.length > 0)
                 message.setRecipients(Message.RecipientType.CC, toCC);
 

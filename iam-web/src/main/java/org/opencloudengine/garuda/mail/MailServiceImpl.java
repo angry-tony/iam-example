@@ -40,25 +40,6 @@ public class MailServiceImpl implements MailService {
         reactor.notify("mail", Event.wrap(map));
     }
 
-
-    @Override
-    public void download(String type, String version, String token, String subject, String fromUser, String fromName, final String toUser, final String toName, InternetAddress[] toCC) {
-        Map map = new HashMap();
-        map.put("command", "download");
-        map.put("type", type);
-        map.put("version", version);
-        map.put("token", token);
-        map.put("subject", subject);
-        map.put("fromUser", fromUser);
-        map.put("fromName", fromName);
-        map.put("toUser", toUser);
-        map.put("toName", toName);
-        map.put("toCC", toCC);
-
-        reactor.notify("mail", Event.wrap(map));
-
-    }
-
     @Override
     public void registe(Long userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
         Map map = new HashMap();
@@ -82,33 +63,6 @@ public class MailServiceImpl implements MailService {
         map.put("userId", userId);
         map.put("token", token);
         map.put("subject", subject);
-        map.put("fromUser", fromUser);
-        map.put("fromName", fromName);
-        map.put("toUser", toUser);
-        map.put("toCC", toCC);
-
-        reactor.notify("mail", Event.wrap(map));
-    }
-
-    @Override
-    public void trialCreated(String subject, String fromUser, String fromName, String toUser, InternetAddress[] toCC) {
-        Map map = new HashMap();
-        map.put("command", "trialCreated");
-        map.put("subject", subject);
-        map.put("fromUser", fromUser);
-        map.put("fromName", fromName);
-        map.put("toUser", toUser);
-        map.put("toCC", toCC);
-
-        reactor.notify("mail", Event.wrap(map));
-
-    }
-
-    @Override
-    public void sendInvoice(String identifier, String fromUser, String fromName, String toUser, InternetAddress[] toCC) {
-        Map map = new HashMap();
-        map.put("command", "sendInvoice");
-        map.put("identifier", identifier);
         map.put("fromUser", fromUser);
         map.put("fromName", fromName);
         map.put("toUser", toUser);

@@ -16,11 +16,11 @@
  * limitations under the License.
  */
 /**
- * Flamingo Project
+ * Oce Iam Project
  *
- * Copyright (C) 2011-2013 Cloudine.
+ * Copyright (C) 2011-2013 uEngine.
  *
- * This file is part of Flamingo Project.
+ * This file is part of IAM Project.
  */
 package org.opencloudengine.garuda.common.exception;
 

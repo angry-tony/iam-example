@@ -2,7 +2,7 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="cloudine" uri="http://www.uengine.io/tags" %>
+<%@ taglib prefix="uengine" uri="http://www.uengine.io/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>

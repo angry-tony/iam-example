@@ -40,7 +40,7 @@ public class RegisteServiceImpl implements RegisteService {
         registe.setToken(token);
 
         registeRepository.insert(registe);
-        mailService.registe(registe.getUser_id(), token, "Confirm Registration", fromUser, "Cloudine", email, null);
+        mailService.registe(registe.getUser_id(), token, "Confirm Registration", fromUser, "uEngine", email, null);
     }
 
     @Override

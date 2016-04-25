@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
- * Created by cloudine on 2015. 6. 3..
+ * Created by uengine on 2015. 6. 3..
  */
 public class OauthAccessToken implements Serializable {
 

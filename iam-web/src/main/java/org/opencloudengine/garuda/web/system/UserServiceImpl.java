@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
         registe.setToken(token);
 
         registeRepository.insert(registe);
-        mailService.passwd(registe.getUser_id(), token, "Forgot Password", fromUser, "Cloudine", email, null);
+        mailService.passwd(registe.getUser_id(), token, "Forgot Password", fromUser, "uEngine", email, null);
     }
 
     @Override

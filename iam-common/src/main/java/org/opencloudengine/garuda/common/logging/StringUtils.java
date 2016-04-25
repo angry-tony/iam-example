@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * String Utility.
  *
- * @author Cloudine Inc
+ * @author Seungpil, Park
  * @since 0.1
  */
 public class StringUtils {

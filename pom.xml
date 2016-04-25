@@ -144,12 +144,12 @@
 
     <issueManagement>
         <system>Github</system>
-        <url>https://github.com/cloudine/cloudine-io/issues</url>
+        <url>https://github.com/TheOpenCloudEngine/essencia/issues</url>
     </issueManagement>
 
     <organization>
-        <name>Cloudine Inc</name>
-        <url>http://www.cloudine.io</url>
+        <name>uEngein Inc</name>
+        <url>http://www.uengine.org</url>
     </organization>
 
     <developers>

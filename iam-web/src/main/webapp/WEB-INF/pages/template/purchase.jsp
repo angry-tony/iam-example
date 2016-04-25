@@ -14,7 +14,7 @@
             <div class="col-md-4 btn-buy animated fadeInRight">
                 <a href="/download" class="btn-u btn-u-lg"><i class="fa fa-cloud-download"></i><uengine:message code="main.download.button"></uengine:message></a>
 
-                <a href="/license/flamingo-trial" class="btn-u btn-u-lg"><i class="fa fa-cloud-download"></i><uengine:message code="main.trial.button"></uengine:message></a>
+                <a href="/license/iam-trial" class="btn-u btn-u-lg"><i class="fa fa-cloud-download"></i><uengine:message code="main.trial.button"></uengine:message></a>
             </div>
         </div>
     </div>

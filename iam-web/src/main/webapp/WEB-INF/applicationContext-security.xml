@@ -8,13 +8,6 @@
 
 
     <!-- REST 기반 인증 처리를 위한 Authentication Entry Point -->
-    <!--<http realm="Cloudine Protected Area"-->
-    <!--use-expressions="true"-->
-    <!--auto-config="false"-->
-    <!--create-session="never"-->
-    <!--entry-point-ref="restAuthenticationEntryPoint"-->
-    <!-->-->
-
     <http realm="uEngine Protected Area"
           use-expressions="true"
           auto-config="false"

@@ -25,9 +25,9 @@
                 <div class="col-md-3 md-margin-bottom-40">
                     <div class="headline"><h2><uengine:message code="common.title.useful"/></h2></div>
                     <ul class="list-unstyled link-list">
-                        <li><a href="https://www.facebook.com/groups/flamingo.workflow/">Facebook</a><i class="fa fa-facebook"></i></li>
-                        <li><a href="https://www.youtube.com/channel/UCB7HmfpSC9_N4e7ccfFBywQ">YouTube</a><i class="fa fa-youtube"></i></li>
-                        <li><a href="https://github.com/OpenCloudEngine/flamingo2">Github</a><i class="fa fa-github"></i></li>
+                        <li><a href="https://www.facebook.com/uEngineSolutions">Facebook</a><i class="fa fa-facebook"></i></li>
+                        <li><a href="https://www.youtube.com/results?search_query=%EC%9C%A0%EC%97%94%EC%A7%84">YouTube</a><i class="fa fa-youtube"></i></li>
+                        <li><a href="https://github.com/TheOpenCloudEngine">Github</a><i class="fa fa-github"></i></li>
 
                     </ul>
                 </div><!--/col-md-3-->
@@ -40,7 +40,7 @@
                         <uengine:message code="address"/><br/>
                         <uengine:message code="label.contactus.phone"/>: <uengine:message code="phone"/><br/>
                         <uengine:message code="label.contactus.fax"/>: <uengine:message code="fax"/><br/>
-                        <uengine:message code="label.contactus.email"/>: <a href="mailto:support@uengine.co.kr" class=""><uengine:message code="email"/></a>
+                        <uengine:message code="label.contactus.email"/>: <a href="mailto:sppark@uengine.org" class=""><uengine:message code="email"/></a>
                     </address>
                 </div><!--/col-md-3-->
                 <!-- End Address -->
@@ -62,7 +62,7 @@
                 <div class="col-md-6">
                     <ul class="footer-socials list-inline">
                         <li>
-                            <a href="https://www.facebook.com/groups/flamingo.workflow/" class="tooltips" data-toggle="tooltip" data-placement="top" title="" data-original-title="Facebook">
+                            <a href="https://www.facebook.com/uEngineSolutions" class="tooltips" data-toggle="tooltip" data-placement="top" title="" data-original-title="Facebook">
                                 <i class="fa fa-facebook"></i>
                             </a>
                         </li>

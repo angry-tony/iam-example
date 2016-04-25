@@ -312,6 +312,7 @@ public class OauthServiceImpl implements OauthService {
                     accessToken.setScopes(authorizeResponse.getScope());
                     accessToken.setToken(UUID.randomUUID().toString());
                     accessToken.setOauthUserId(authorizeResponse.getOauthUser().getId());
+                    accessToken.setGroupId(authorizeResponse.getManagement().getId());
                     accessToken.setClientId(authorizeResponse.getOauthClient().getId());
 
                     if (authorizeResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {

@@ -46,7 +46,6 @@ public class VersionConfigurer implements javax.servlet.ServletContextListener {
             IOUtils.closeQuietly(inputStream);
         }
 
-        // See : http://patorjk.com/software/taag/#p=display&f=Slant&t=Cloudine%20Inc
         StringBuilder builder = new StringBuilder();
         builder.append("   ________                ___               ____          \n" +
                 "  / ____/ /___  __  ______/ (_)___  ___     /  _/___  _____\n" +

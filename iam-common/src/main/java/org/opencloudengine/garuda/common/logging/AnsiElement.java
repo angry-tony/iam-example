@@ -57,9 +57,6 @@ public interface AnsiElement {
     @Override
     public String toString();
 
-    /**
-     * Internal default {@link kr.co.cloudine.service.friends.logging.AnsiElement} implementation.
-     */
     static class DefaultAnsiElement implements AnsiElement {
 
         private final String code;
