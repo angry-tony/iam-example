@@ -430,9 +430,124 @@ error_description 필드에 보다 자세한 Human-readable ASCII text 형식의
 
 발급받은 토큰을 갱신할 수 있습니다.
 
+어세스 토큰을 발급받을 때 함께 전달받은 refresh_token 을 사용하여 요청하도록 합니다.
+
 ```
-POST
+POST http://localhost:8080/oauth/access_token
+
+-- header "Content-Type: application/x-www-form-urlencoded"
 ```
+
+| Parameter     | Type   | Requied  |
+|---------------|--------|----------|
+| client_id     | String | TRUE     |
+| client_secret | String | TRUE     |
+| grant_type    | String | TRUE     |
+| refresh_token | String | TRUE     |
+
+ - client_id : 클라이언트 아이디
+ 
+ - client_secret : 클라이언트 시크릿
+ 
+ - grant_type : 'client_credentials' 를 사용합니다.
+ 
+ - refresh_token : 리프레쉬 토큰
+  
+  
+정상적으로 인증을 받을 경우 다음의 리스폰스를 받을 수 있습니다.
+
+```
+Response
+
+Status 200
+
+{
+  "expires_in": 3600,
+  "token_type": "Bearer",
+  "refresh_token": "183bb8d0-1a96-42eb-a600-d1a4625007f7",
+  "access_token": "789424ea-5363-46d2-8e49-65e27ce077bb"
+}
+```
+
+### Token Info
+
+토큰이 유효한지 확인하고, 토큰의 정보를 얻습니다.
+
+```
+GET http://localhost:8080/oauth/token_info
+```
+
+| Parameter     | Type   | Requied  |
+|---------------|--------|----------|
+| access_token  | String | TRUE     |
+
+
+```
+유저 인증을 거친 토큰인경우 
+
+Response
+
+Status 200
+
+{
+  "username": "user1",
+  "scope": "form-read",
+  "client": "9a1e6155-c735-4986-b654-b1269a955666",
+  "expires_in": 3446,
+  "additionalInformation": null,
+  "type": "user",
+  "refreshToken": "f19f4310-bee2-45bf-ab33-c46c5fe85750"
+}
+```
+
+```
+Client Credentials Grant Flow 토큰인경우 
+
+Response
+
+Status 200
+
+{
+  "scope": "form-read",
+  "client": "9a1e6155-c735-4986-b654-b1269a955666",
+  "expires_in": 3588,
+  "additionalInformation": null,
+  "type": "client",
+  "refreshToken": "808b6f9e-9a74-4fc2-8049-82863d2b4694"
+}
+```
+
+토큰이 만기되었거나 유효하지 않을 경우 400 으로 응답이 오며, 각 상황의 error 필드 문구는 다음과 같습니다.
+
+```
+Error Response
+
+Status 400
+
+ex)
+{
+  "error": "access_denied",
+  "error_description": "requested code has expired."
+}
+```
+
+ - invalid_request
+ 
+ - invalid_token
+ 
+ - unauthorized_client
+ 
+ - access_denied
+ 
+ - unsupported_response_type
+ 
+ - unsupported_grant_type
+ 
+ - invalid_scope
+ 
+ - server_error
+ 
+ - temporarily_unavailable
 
 ## REST API
 
