@@ -168,7 +168,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         newAccessToken.setScopes(accessToken.getScopes());
         newAccessToken.setToken(UUID.randomUUID().toString());
         newAccessToken.setOauthUserId(accessToken.getOauthUserId());
-        accessToken.setGroupId(management.getId());
+        newAccessToken.setGroupId(management.getId());
         newAccessToken.setClientId(oauthClient.getId());
         newAccessToken.setRefreshToken(UUID.randomUUID().toString());
 

@@ -425,6 +425,15 @@ ex)
  
 error_description 필드에 보다 자세한 Human-readable ASCII text 형식의 상황설명을 살필 수 있습니다.
 
+
+### Refresh Token
+
+발급받은 토큰을 갱신할 수 있습니다.
+
+```
+POST
+```
+
 ## REST API
 
 OCE IAM 의 /rest/console 주소를 통하여 살펴볼 수 있습니다.
