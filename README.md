@@ -59,7 +59,7 @@ GET /oauth/authorize
 예)
 
 ```
-http://localhost:8080/oauth/authorize?client_id=9a1e6155-c735-4986-b654-b1269a955666&response_type=code&scope=form-read&state=some_value&redirect_url=http://app.domain/some_redirect_url
+http://localhost:8080/oauth/authorize?client_id=9a1e6155-c735-4986-b654-b1269a955666&response_type=code&scope=form-read&state=some_value&redirect_uri=http://app.domain/some_redirect_uri
 ```
 
 #### Step 2
@@ -83,15 +83,15 @@ OCE IAM 은 입력받은 redirect_uri 로 GET 방식을 통해 code,state 값을
 예)
 
 ```
-http://app.domain/some_redirect_url?state=some_value&code=edc5f7e6-7f3f-4f97-94f0-87f6ca5370cd
+http://app.domain/some_redirect_uri?state=some_value&code=edc5f7e6-7f3f-4f97-94f0-87f6ca5370cd
 ```
 
-만약 Step 1 단계에서 에러가 생겼으며, redirect_url 이 명시되어있을 경우 redirect_url 로 GET 방식으로 에러메세지가 전송됩니다.
+만약 Step 1 단계에서 에러가 생겼으며, redirect_uri 이 명시되어있을 경우 redirect_uri 로 GET 방식으로 에러메세지가 전송됩니다.
 
 예)
 
 ```
-http://app.domain/some_redirect_url?error=access_denied&error_description=requested code has expired&state=some_value
+http://app.domain/some_redirect_uri?error=access_denied&error_description=requested code has expired&state=some_value
 ```
 
 에러 타입:
@@ -119,7 +119,7 @@ error_description 필드에 보다 자세한 Human-readable ASCII text 형식의
 
 #### Step 4
 
-어플리케이션 제작자는 해당 redirect_url 에서 GET 으로 위의 파라미터를 받은 후, code 를 통해 access_token 을 요청받는 로직을 구현하여야 합니다.
+어플리케이션 제작자는 해당 redirect_uri 에서 GET 으로 위의 파라미터를 받은 후, code 를 통해 access_token 을 요청받는 로직을 구현하여야 합니다.
 
 ```
 POST http://localhost:8080/oauth/access_token
@@ -233,7 +233,7 @@ GET /oauth/authorize
 예)
 
 ```
-http://localhost:8080/oauth/authorize?client_id=9a1e6155-c735-4986-b654-b1269a955666&response_type=token&scope=form-read&state=some_value&redirect_url=http://app.domain/some_redirect_url
+http://localhost:8080/oauth/authorize?client_id=9a1e6155-c735-4986-b654-b1269a955666&response_type=token&scope=form-read&state=some_value&redirect_uri=http://app.domain/some_redirect_uri
 ```
 
 #### Step 2
@@ -247,10 +247,10 @@ OCE IAM 은 입력받은 redirect_uri 로 GET 방식을 통해 scope,state,expir
 예)
 
 ```
-http://app.domain/some_redirect_url?scope=form-read&state=null&expires_in=3600&token_type=Bearer&access_token=12d1270b-0b7a-430e-adb0-3839c9a9e2e4
+http://app.domain/some_redirect_uri?scope=form-read&state=null&expires_in=3600&token_type=Bearer&access_token=12d1270b-0b7a-430e-adb0-3839c9a9e2e4
 ```
 
-위 과정에서 생긴 에러는 redirect_url 을 통해 GET 방식으로 에러메세지가 전송되게 됩니다.
+위 과정에서 생긴 에러는 redirect_uri 을 통해 GET 방식으로 에러메세지가 전송되게 됩니다.
 
 에러 타입은 Authorization Code 와 동일합니다.
 
@@ -449,7 +449,7 @@ POST http://localhost:8080/oauth/access_token
  
  - client_secret : 클라이언트 시크릿
  
- - grant_type : 'client_credentials' 를 사용합니다.
+ - grant_type : 'refresh_token' 를 사용합니다.
  
  - refresh_token : 리프레쉬 토큰
   
