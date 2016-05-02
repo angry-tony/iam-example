@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -85,15 +85,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">Additional Information <span
-                                        class="color-red">*</span></label>
-
-                                <div class="col-md-6">
-                                    <textarea rows="8" name="additionalInformation" class="form-control"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">
                                     <button id="submitBtn" type="submit" class="btn-u btn-u-primary">Create Scope
                                     </button>
@@ -132,9 +123,6 @@
                 },
                 description: {
                     required: true
-                },
-                additionalInformation: {
-                    required: true
                 }
             },
             messages: {
@@ -142,9 +130,6 @@
                     required: "<span style='color: red;'>Required filed</span>"
                 },
                 description: {
-                    required: "<span style='color: red;'>Required filed</span>"
-                },
-                additionalInformation: {
                     required: "<span style='color: red;'>Required filed</span>"
                 }
             },

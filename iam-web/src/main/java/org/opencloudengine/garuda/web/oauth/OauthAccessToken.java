@@ -1,5 +1,7 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import org.opencloudengine.garuda.couchdb.CouchDAO;
+
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -7,27 +9,17 @@ import java.sql.Timestamp;
 /**
  * Created by uengine on 2015. 6. 3..
  */
-public class OauthAccessToken implements Serializable {
+public class OauthAccessToken extends CouchDAO {
 
-    private Long id;
     private String type;
     private String scopes;
     private String token;
-    private Long oauthUserId;
-    private Long groupId;
-    private Long clientId;
+    private String oauthUserId;
+    private String managementId;
+    private String clientId;
     private String refreshToken;
-    private String additionalInformation;
-    private Timestamp regDate;
-    private Timestamp updDate;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Long regDate;
+    private Long updDate;
 
     public String getType() {
         return type;
@@ -53,27 +45,27 @@ public class OauthAccessToken implements Serializable {
         this.token = token;
     }
 
-    public Long getOauthUserId() {
+    public String getOauthUserId() {
         return oauthUserId;
     }
 
-    public void setOauthUserId(Long oauthUserId) {
+    public void setOauthUserId(String oauthUserId) {
         this.oauthUserId = oauthUserId;
     }
 
-    public Long getGroupId() {
-        return groupId;
+    public String getManagementId() {
+        return managementId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setManagementId(String managementId) {
+        this.managementId = managementId;
     }
 
-    public Long getClientId() {
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
@@ -85,42 +77,32 @@ public class OauthAccessToken implements Serializable {
         this.refreshToken = refreshToken;
     }
 
-    public String getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(String additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-
-    public Timestamp getRegDate() {
+    public Long getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Timestamp regDate) {
+    public void setRegDate(Long regDate) {
         this.regDate = regDate;
     }
 
-    public Timestamp getUpdDate() {
+    public Long getUpdDate() {
         return updDate;
     }
 
-    public void setUpdDate(Timestamp updDate) {
+    public void setUpdDate(Long updDate) {
         this.updDate = updDate;
     }
 
     @Override
     public String toString() {
         return "OauthAccessToken{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
+                "type='" + type + '\'' +
                 ", scopes='" + scopes + '\'' +
                 ", token='" + token + '\'' +
-                ", oauthUserId=" + oauthUserId +
-                ", groupId=" + groupId +
-                ", clientId=" + clientId +
+                ", oauthUserId='" + oauthUserId + '\'' +
+                ", managementId='" + managementId + '\'' +
+                ", clientId='" + clientId + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
-                ", additionalInformation='" + additionalInformation + '\'' +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';

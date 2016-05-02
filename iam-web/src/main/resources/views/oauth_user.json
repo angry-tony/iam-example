@@ -1,0 +1,21 @@
+{
+  "_id": "_design/oauth_user",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) {if(doc.docType == \"oauth_user\"){emit([doc._id],doc); }}"
+    },
+    "selectByManagementId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_user\"){emit([doc.managementId],doc); }}"
+    },
+    "selectByManagementIdAndUserName": {
+      "map": "function(doc) {if(doc.docType == \"oauth_user\"){emit([doc.managementId,doc.userName],doc); }}"
+    },
+    "selectByManagementIdAndCredential": {
+      "map": "function(doc) {if(doc.docType == \"oauth_user\"){emit([doc.managementId,doc.userName,doc.userPassword],doc); }}"
+    },
+    "selectByManagementIdAndId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_user\"){emit([doc.managementId,doc._id],doc); }}"
+    }
+  }
+}

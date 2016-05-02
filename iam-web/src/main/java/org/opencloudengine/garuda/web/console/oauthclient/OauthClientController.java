@@ -42,7 +42,7 @@ public class OauthClientController {
     public ModelAndView list(HttpSession session) {
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthClient> oauthClients = oauthClientService.selectByGroupId(management.getId());
+        List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
         ModelAndView mav = new ModelAndView("/console/client/list");
 
         mav.addObject("management", management);
@@ -54,7 +54,7 @@ public class OauthClientController {
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView newManagement(HttpSession session) {
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
 
         ModelAndView mav = new ModelAndView("/console/client/new");
 
@@ -84,12 +84,12 @@ public class OauthClientController {
 
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
 
         try {
 
             //같은 이름 검색
-            OauthClient existClient = oauthClientService.selectByGroupIdAndName(management.getId(), name);
+            OauthClient existClient = oauthClientService.selectByManagementIdAndName(management.get_id(), name);
             if (existClient != null) {
                 ModelAndView mav = new ModelAndView("/console/client/new");
                 mav.addObject("management", management);
@@ -99,12 +99,12 @@ public class OauthClientController {
             }
 
             //클라이언트 생성
-            oauthClientService.createClient(management.getId(), name, description, clientTrust, clientType, activeClient, authorizedGrantTypes,
-                    webServerRedirectUri, refreshTokenValidity, additionalInformation, codeLifetime,
+            oauthClientService.createClient(management.get_id(), name, description, clientTrust, clientType, activeClient, authorizedGrantTypes,
+                    webServerRedirectUri, refreshTokenValidity, codeLifetime,
                     refreshTokenLifetime, accessTokenLifetime, jwtTokenLifetime, scopes);
 
             //리스트 페이지 반환
-            List<OauthClient> oauthClients = oauthClientService.selectByGroupId(management.getId());
+            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
             mav.addObject("oauthClients", oauthClients);
@@ -122,19 +122,19 @@ public class OauthClientController {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView edit(HttpSession session,
-                             @RequestParam(defaultValue = "") Long id) throws IOException {
+                             @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
 
         //클라이언트 검색
-        OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), id);
+        OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
         if (oauthClient == null) {
             throw new ServiceException("Invalid oauth client id");
         }
 
         //스코프 검색
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(id);
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(_id);
         try {
 
             ModelAndView mav = new ModelAndView("/console/client/edit");
@@ -151,20 +151,20 @@ public class OauthClientController {
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView delete(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id) throws IOException {
+                               @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
 
         try {
             //클라이언트 검색
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), id);
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthClient == null) {
                 throw new ServiceException("Invalid oauth client id");
             }
 
-            oauthClientService.deleteById(id);
+            oauthClientService.deleteById(_id);
 
-            List<OauthClient> oauthClients = oauthClientService.selectByGroupId(management.getId());
+            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
             mav.addObject("oauthClients", oauthClients);
@@ -178,7 +178,7 @@ public class OauthClientController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView update(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id,
+                               @RequestParam(defaultValue = "") String _id,
                                @RequestParam(defaultValue = "") String name,
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") String clientTrust,
@@ -196,22 +196,22 @@ public class OauthClientController {
     ) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
 
         //클라이언트 검색
-        OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), id);
+        OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
         if (oauthClient == null) {
             throw new ServiceException("Invalid oauth client id");
         }
 
         //스코프 검색
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(id);
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(_id);
         try {
 
             //같은 이름 검색
-            OauthClient existClient = oauthClientService.selectByGroupIdAndName(management.getId(), name);
+            OauthClient existClient = oauthClientService.selectByManagementIdAndName(management.get_id(), name);
             if (existClient != null) {
-                if (existClient.getId() != id) {
+                if (!existClient.get_id().equals(_id)) {
                     ModelAndView mav = new ModelAndView("/console/client/edit");
                     mav.addObject("management", management);
                     mav.addObject("oauthClient", oauthClient);
@@ -221,11 +221,11 @@ public class OauthClientController {
                 }
             }
 
-            oauthClientService.updateById(id, name, description, clientTrust, clientType, activeClient, authorizedGrantTypes,
-                    webServerRedirectUri, refreshTokenValidity, additionalInformation, codeLifetime,
+            oauthClientService.updateById(_id, name, description, clientTrust, clientType, activeClient, authorizedGrantTypes,
+                    webServerRedirectUri, refreshTokenValidity, codeLifetime,
                     refreshTokenLifetime, accessTokenLifetime, jwtTokenLifetime, scopes);
 
-            List<OauthClient> oauthClients = oauthClientService.selectByGroupId(management.getId());
+            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
             mav.addObject("oauthClients", oauthClients);

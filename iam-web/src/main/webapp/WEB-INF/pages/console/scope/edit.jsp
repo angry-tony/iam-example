@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -68,7 +68,7 @@
                                 </c:when>
                             </c:choose>
 
-                            <input type="hidden" id="id" name="id" value="${oauthScope.id}">
+                            <input type="hidden" id="_id" name="_id" value="${oauthScope._id}">
 
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
@@ -85,16 +85,6 @@
                                 <div class="col-md-6">
                                     <input name="description" type="text" class="form-control"
                                            value="${oauthScope.description}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Additional Information <span
-                                        class="color-red">*</span></label>
-
-                                <div class="col-md-6">
-                                    <textarea rows="8" name="additionalInformation"
-                                              class="form-control">${oauthScope.additionalInformation}</textarea>
                                 </div>
                             </div>
 
@@ -156,7 +146,7 @@
         });
 
         $('#deleteConfirm').find('[name=delete]').click(function () {
-            window.location.href = '/console/scope/delete?id=' + $('#id').val();
+            window.location.href = '/console/scope/delete?_id=' + $('#_id').val();
         });
 
         var form = $('#oauthScopeForm');
@@ -172,9 +162,6 @@
                 },
                 description: {
                     required: true
-                },
-                additionalInformation: {
-                    required: true
                 }
             },
             messages: {
@@ -182,9 +169,6 @@
                     required: "<span style='color: red;'>Required filed</span>"
                 },
                 description: {
-                    required: "<span style='color: red;'>Required filed</span>"
-                },
-                additionalInformation: {
                     required: "<span style='color: red;'>Required filed</span>"
                 }
             },

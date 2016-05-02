@@ -33,29 +33,30 @@ public class RegisteServiceImpl implements RegisteService {
 
         User user = userRepository.selectByUserEmail(email);
         Registe registe = new Registe();
-        registe.setUser_id(user.getId());
+        registe.setUserId(user.get_id());
 
         String fromUser = config.getProperty("mail.contacts.address");
         String token = new String(Base64.encode(String.valueOf(System.currentTimeMillis()).getBytes()));
         registe.setToken(token);
 
         registeRepository.insert(registe);
-        mailService.registe(registe.getUser_id(), token, "Confirm Registration", fromUser, "uEngine", email, null);
+        mailService.registe(registe.getUserId(), token, "Confirm Registration", fromUser, "uEngine", email, null);
     }
 
     @Override
     public void completeRegiste(String user_id, String token) {
         Registe registe = new Registe();
-        registe.setUser_id(Long.parseLong(user_id));
+        registe.setUserId(user_id);
         registe.setToken(token);
-        Registe managedRegiste = registeRepository.selectByUserEmail(registe);
-        if(managedRegiste == null) throw new ServiceException("가입 확인 처리할 대상이 없습니다.");
+        Registe managedRegiste = registeRepository.selectByUserIdAndToken(registe);
+        if (managedRegiste == null) throw new ServiceException("가입 확인 처리할 대상이 없습니다.");
 
-        User user = userRepository.selectByUserId(registe.getUser_id());
+        User user = userRepository.selectByUserId(registe.getUserId());
         userRepository.updateByAck(user.getEmail());
 
-        try{
+        try {
             //zenService.upgradeZendeskUser( user.getEmail() );
-        }catch (Exception ex){} //별다른 작업을 하지 않아도 된다.
+        } catch (Exception ex) {
+        } //별다른 작업을 하지 않아도 된다.
     }
 }

@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -68,52 +68,19 @@
                                 </c:when>
                             </c:choose>
 
-                            <input type="hidden" id="id" name="id" value="${oauthUser.id}">
+                            <input type="hidden" id="_id" name="_id" value="${oauthUser._id}">
+
+                            <br>
+                            <h4>Require fields </h4>
+                            <p>userName: string</p>
+                            <p>userPassword: string</p>
+                            <p>level: number 0 ~ 5 </p>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
+                                <label class="col-md-2 control-label">Body <span class="color-red">*</span></label>
 
                                 <div class="col-md-6">
-                                    <input name="userName" type="text" class="form-control"
-                                           value="${oauthUser.userName}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Password <span class="color-red">*</span></label>
-
-                                <div class="col-md-6">
-                                    <input name="userPassword" type="text" class="form-control"
-                                           value="${oauthUser.userPassword}">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-lg-2 control-label">Level <span class="color-red">*</span></label>
-
-                                <div class="col-lg-9">
-                                    <select name="level" class="form-control">
-                                        <c:forEach var="i" begin="1" end="5">
-                                            <c:choose>
-                                                <c:when test="${i == oauthUser.level}">
-                                                    <option selected value="${i}">${i}</option>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <option value="${i}">${i}</option>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </c:forEach>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-md-2 control-label">Additional Information <span
-                                        class="color-red">*</span></label>
-
-                                <div class="col-md-6">
-                                    <textarea rows="8" name="additionalInformation"
-                                              class="form-control">${oauthUser.additionalInformation}</textarea>
+                                    <textarea name="body" rows="12" class="form-control"></textarea>
                                 </div>
                             </div>
 
@@ -175,42 +142,68 @@
         });
 
         $('#deleteConfirm').find('[name=delete]').click(function () {
-            window.location.href = '/console/user/delete?id=' + $('#id').val();
+            window.location.href = '/console/user/delete?_id=' + $('#_id').val();
         });
 
         var form = $('#oauthUserForm');
 
+        var userJson = '${oauthUserJson}'
+        var obj = JSON.parse(userJson);
+
+        var str = JSON.stringify(obj, null, 2);
+        form.find('[name=body]').val(str);
+
         //폼 발리데이션
+        $.validator.addMethod('userCheck', function (value, element, param) {
+            var user;
+            try {
+                user = JSON.parse(value);
+            } catch (e) {
+                return false;
+            }
+            if (!user['userName']) {
+                return false;
+            }
+            if (typeof user['userName'] !== 'string') {
+                return false;
+            }
+            if (user.userName.length < 1) {
+                return false;
+            }
+            if (!user['userPassword']) {
+                return false;
+            }
+            if (typeof user['userPassword'] !== 'string') {
+                return false;
+            }
+            if (user.userPassword.length < 1) {
+                return false;
+            }
+            if (!user['level']) {
+                return false;
+            }
+            if (typeof user['level'] !== 'number') {
+                return false;
+            }
+            if (user.level > 5 || user.level < 0) {
+                return false;
+            }
+            return true;
+        });
         form.validate({
 
             focusInvalid: false, // do not focus the last invalid input
             ignore: "",
             rules: {
-                userName: {
-                    required: true
-                },
-                userPassword: {
-                    required: true
-                },
-                level: {
-                    required: true
-                },
-                additionalInformation: {
-                    required: true
+                body: {
+                    required: true,
+                    userCheck: true
                 }
             },
             messages: {
-                userName: {
-                    required: "<span style='color: red;'>Required filed</span>"
-                },
-                userPassword: {
-                    required: "<span style='color: red;'>Required filed</span>"
-                },
-                level: {
-                    required: "<span style='color: red;'>Required filed</span>"
-                },
-                additionalInformation: {
-                    required: "<span style='color: red;'>Required filed</span>"
+                body: {
+                    required: "<span style='color: red;'>Required filed</span>",
+                    userCheck: "<span style='color: red;'>Invalid schema</span>"
                 }
             },
             invalidHandler: function () {

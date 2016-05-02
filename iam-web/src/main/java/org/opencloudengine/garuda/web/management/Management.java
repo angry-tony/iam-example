@@ -1,75 +1,65 @@
 package org.opencloudengine.garuda.web.management;
 
-import java.io.Serializable;
-import java.sql.Date;
+import org.opencloudengine.garuda.couchdb.CouchDAO;
 
 /**
  * Created by uengine on 2015. 6. 3..
  */
-public class Management implements Serializable {
+public class Management extends CouchDAO {
 
-    private long id;
-    private long userId;
-    private String groupName;
-    private String groupKey;
-    private String groupSecret;
-    private String groupJwtSecret;
+    private String userId;
+    private String managementName;
+    private String managementKey;
+    private String managementSecret;
+    private String managementJwtSecret;
     private Integer sessionTokenLifetime;
     private Integer scopeCheckLifetime;
     private String description;
-    private Date regDate;
-    private Date updDate;
+    private Long regDate;
+    private Long updDate;
 
     public Management() {
 
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public String getGroupName() {
-        return groupName;
+    public String getManagementName() {
+        return managementName;
     }
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
+    public void setManagementName(String managementName) {
+        this.managementName = managementName;
     }
 
-    public String getGroupKey() {
-        return groupKey;
+    public String getManagementKey() {
+        return managementKey;
     }
 
-    public void setGroupKey(String groupKey) {
-        this.groupKey = groupKey;
+    public void setManagementKey(String managementKey) {
+        this.managementKey = managementKey;
     }
 
-    public String getGroupSecret() {
-        return groupSecret;
+    public String getManagementSecret() {
+        return managementSecret;
     }
 
-    public void setGroupSecret(String groupSecret) {
-        this.groupSecret = groupSecret;
+    public void setManagementSecret(String managementSecret) {
+        this.managementSecret = managementSecret;
     }
 
-    public String getGroupJwtSecret() {
-        return groupJwtSecret;
+    public String getManagementJwtSecret() {
+        return managementJwtSecret;
     }
 
-    public void setGroupJwtSecret(String groupJwtSecret) {
-        this.groupJwtSecret = groupJwtSecret;
+    public void setManagementJwtSecret(String managementJwtSecret) {
+        this.managementJwtSecret = managementJwtSecret;
     }
 
     public Integer getSessionTokenLifetime() {
@@ -96,31 +86,30 @@ public class Management implements Serializable {
         this.description = description;
     }
 
-    public Date getRegDate() {
+    public Long getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Date regDate) {
+    public void setRegDate(Long regDate) {
         this.regDate = regDate;
     }
 
-    public Date getUpdDate() {
+    public Long getUpdDate() {
         return updDate;
     }
 
-    public void setUpdDate(Date updDate) {
+    public void setUpdDate(Long updDate) {
         this.updDate = updDate;
     }
 
     @Override
     public String toString() {
         return "Management{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", groupName='" + groupName + '\'' +
-                ", groupKey='" + groupKey + '\'' +
-                ", groupSecret='" + groupSecret + '\'' +
-                ", groupJwtSecret='" + groupJwtSecret + '\'' +
+                "userId='" + userId + '\'' +
+                ", managementName='" + managementName + '\'' +
+                ", managementKey='" + managementKey + '\'' +
+                ", managementSecret='" + managementSecret + '\'' +
+                ", managementJwtSecret='" + managementJwtSecret + '\'' +
                 ", sessionTokenLifetime=" + sessionTokenLifetime +
                 ", scopeCheckLifetime=" + scopeCheckLifetime +
                 ", description='" + description + '\'' +

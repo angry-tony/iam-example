@@ -28,32 +28,20 @@ import java.util.Map;
  */
 public interface UserRepository {
 
-    String NAMESPACE = UserRepository.class.getName();
-
-    User selectByUserId(Long id);
+    User selectByUserId(String id);
 
     User selectByUserEmail(String email);
 
-    List<Map> selectAll(Map conditionMap);
+    User insertByUser(User user);
 
-    Long selectUserIdByUserEmail(String email);
+    User insertByManager(User user);
 
-    String selectPasswordByUserEmail(String email);
+    User updateUserInfo(User user);
 
-    int exist(String email);
+    User updateByAck(String email);
 
-    int insertByUser(Map params);
+    User updatePassword(String email, String password);
 
-    int insertByManager(Map params);
-
-    int insertByAuth(Long userId);
-
-    int updateUserInfo(Map userMap);
-
-    int updateByAck(String email);
-
-    int updatePassword(Map params);
-
-    int deleteByEmail(String email);
+    void deleteByEmail(String email);
 
 }

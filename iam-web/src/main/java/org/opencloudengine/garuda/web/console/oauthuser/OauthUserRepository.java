@@ -7,21 +7,19 @@ import java.util.List;
 public interface OauthUserRepository {
     String NAMESPACE = OauthUserRepository.class.getName();
 
-    int insert(OauthUser oauthUser);
+    OauthUser insert(OauthUser oauthUser);
 
-    OauthUser selectById(Long id);
+    OauthUser selectById(String id);
 
-    List<OauthUser> selectByGroupId(Long groupId);
+    List<OauthUser> selectByManagementId(String managementId);
 
-    OauthUser selectByGroupIdAndUserName(Long groupId, String userName);
+    OauthUser selectByManagementIdAndUserName(String managementId, String userName);
 
-    OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword);
+    OauthUser selectByManagementIdAndCredential(String managementId, String userName, String userPassword);
 
-    OauthUser selectByGroupIdAndId(Long groupId, Long id);
+    OauthUser selectByManagementIdAndId(String managementId, String id);
 
-    int updateById(OauthUser oauthUser);
+    OauthUser updateById(OauthUser oauthUser);
 
-    int deleteById(Long id);
-
-    List<OauthUser> selectByCondition(OauthUser oauthUser);
+    void deleteById(String id);
 }

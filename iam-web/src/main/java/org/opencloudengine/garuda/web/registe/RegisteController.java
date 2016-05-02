@@ -1,22 +1,23 @@
 /**
  * Copyright (C) 2011 Flamingo Project (http://www.opencloudengine.org).
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.opencloudengine.garuda.web.registe;
 
 import org.opencloudengine.garuda.common.rest.Response;
+import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.DateUtils;
 import org.opencloudengine.garuda.util.EscapeUtils;
 import org.opencloudengine.garuda.util.ExceptionUtils;
@@ -86,13 +87,14 @@ public class RegisteController extends DefaultController {
             @RequestParam String email,
             @RequestParam String password,
             @RequestParam String confirmPassword) {
+
         String unescapedPassword = EscapeUtils.unescape(password);
 
         //계정은 있으나 메일확인을 받지 못한 경우
         if (userService.waitingConfirmation(email)) {
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/registe/reaffirm");
-            mav.addObject("responseEmail" , email);
+            mav.addObject("responseEmail", email);
             return mav;
         }
 
@@ -100,18 +102,18 @@ public class RegisteController extends DefaultController {
         if (userService.completeAccount(email)) {
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/registe/exist");
-            mav.addObject("responseEmail" , email);
+            mav.addObject("responseEmail", email);
             return mav;
         }
 
         //신규 계정일 경우 유저를 만들고 이메일 전송 후 화면 이동시킨다.
         String ipAddr = NetworkUtils.getIpAddr(request);
-        Map userMap = new HashMap();
-        userMap.put("email", email);
-        userMap.put("password", passwordEncoder.encode(unescapedPassword));
-        userMap.put("country" , NetworkUtils.getCountryCode(ipAddr));
-        userService.createUser(userMap);
-        Registe registe = new Registe();
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(unescapedPassword));
+        user.setCountry(NetworkUtils.getCountryCode(ipAddr));
+
+        userService.createUser(user);
         registeService.sendRegisteMail(email);
 
         ModelAndView mav = new ModelAndView();
@@ -144,7 +146,7 @@ public class RegisteController extends DefaultController {
      * 젠데스크에 유저를 추가한다.
      */
     @RequestMapping(value = "/confirm", method = RequestMethod.GET)
-    public ModelAndView confirm(HttpServletResponse res, @RequestParam String userid, @RequestParam String token) throws IOException{
+    public ModelAndView confirm(HttpServletResponse res, @RequestParam String userid, @RequestParam String token) throws IOException {
         long tokenTimestamp = Long.parseLong(new String(Base64.decodeBase64(token)));
 
         if (DateUtils.getDiffDays(new Date(), new Date(tokenTimestamp)) > 1) {
@@ -152,12 +154,12 @@ public class RegisteController extends DefaultController {
             mav.setViewName("/auth/error-401");
             return mav;
         }
-        try{
-            registeService.completeRegiste(userid , token);
+        try {
+            registeService.completeRegiste(userid, token);
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/registe/complete");
             return mav;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/auth/error-401");
             return mav;

@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2011 Flamingo Project (http://www.opencloudengine.org).
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,58 +54,44 @@ public class UserServiceImpl implements UserService {
     private MailService mailService;
 
     @Override
-    public boolean acknowledge(String email) {
-        return userRepository.updateByAck(email) > 0;
+    public void acknowledge(String email) {
+        userRepository.updateByAck(email);
     }
 
     @Override
-    public boolean createUser(Map userMap) {
-        String email = (String) userMap.get("email");
-        Long userId = null;
+    public User createUser(User user) {
+        String email = user.getEmail();
 
-        if (userRepository.exist(email) > 0) {
+        if (userRepository.selectByUserEmail(email) != null) {
             throw new ServiceException("이미 존재하는 사용자입니다.");
         }
-
-        if (userRepository.insertByUser(userMap) > 0) {
-            userId = userRepository.selectUserIdByUserEmail(email);
-        }
-        return userRepository.insertByAuth(userId) > 0;
+        user.setAuthority("ROLE_USER");
+        return userRepository.insertByUser(user);
     }
 
     @Override
-    public boolean updatePassword(Map userMap) {
-        return userRepository.updatePassword(userMap) > 0;
+    public User updatePassword(String email, String password) {
+        return userRepository.updatePassword(email, password);
     }
 
     @Override
-    public boolean deleteUser(String email) {
-        return userRepository.deleteByEmail(email) > 0;
+    public void deleteUser(String email) {
+        userRepository.deleteByEmail(email);
     }
 
     @Override
-    public boolean updateUserInfo(Map userMap) {
-        return userRepository.updateUserInfo(userMap) > 0;
+    public User updateUserInfo(User user) {
+        return userRepository.updateUserInfo(user);
     }
 
     @Override
-    public User getUser(String email) {
-        return userRepository.selectByUserEmail(email);
-    }
-
-    @Override
-    public User getUser(Long id) {
+    public User selectByUserId(String id) {
         return userRepository.selectByUserId(id);
     }
 
     @Override
-    public List<Map> getUserAll(Map conditionMap) {
-        return userRepository.selectAll(conditionMap);
-    }
-
-    @Override
-    public String getUserPassword(String email) {
-        return userRepository.selectPasswordByUserEmail(email);
+    public User selectByUserEmail(String email) {
+        return userRepository.selectByUserEmail(email);
     }
 
     @Override
@@ -132,22 +118,22 @@ public class UserServiceImpl implements UserService {
     public void sendPasswdMail(String email) {
         User user = userRepository.selectByUserEmail(email);
         Registe registe = new Registe();
-        registe.setUser_id(user.getId());
+        registe.setUserId(user.get_id());
 
         String fromUser = config.getProperty("mail.contacts.address");
         String token = new String(Base64.encode(String.valueOf(System.currentTimeMillis()).getBytes()));
         registe.setToken(token);
 
         registeRepository.insert(registe);
-        mailService.passwd(registe.getUser_id(), token, "Forgot Password", fromUser, "uEngine", email, null);
+        mailService.passwd(registe.get_id(), token, "Forgot Password", fromUser, "uEngine", email, null);
     }
 
     @Override
     public boolean reqPasswdExist(String user_id, String token) {
         Registe registe = new Registe();
-        registe.setUser_id(Long.parseLong(user_id));
+        registe.setUserId(user_id);
         registe.setToken(token);
-        Registe managedRegiste = registeRepository.selectByUserEmail(registe);
+        Registe managedRegiste = registeRepository.selectByUserIdAndToken(registe);
         if (managedRegiste == null)
             return false;
         return true;

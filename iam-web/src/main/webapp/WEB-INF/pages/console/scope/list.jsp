@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -81,7 +81,7 @@
                                                     ${oauthScope.description}
                                             </td>
                                             <td>
-                                                <a href="/console/scope/edit?id=${oauthScope.id}">Edit</a>
+                                                <a href="/console/scope/edit?_id=${oauthScope._id}">Edit</a>
                                             </td>
                                         </tr>
                                     </c:forEach>

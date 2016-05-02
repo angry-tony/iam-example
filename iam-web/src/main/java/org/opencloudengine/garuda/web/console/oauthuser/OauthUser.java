@@ -1,97 +1,64 @@
 package org.opencloudengine.garuda.web.console.oauthuser;
 
-import java.io.Serializable;
-import java.sql.Date;
+import org.opencloudengine.garuda.couchdb.CouchFlexibleDAO;
 
 /**
  * Created by uengine on 2015. 6. 3..
  */
-public class OauthUser implements Serializable {
+public class OauthUser extends CouchFlexibleDAO {
 
-    private Long id;
-    private Long groupId;
+    private String managementId;
     private String userName;
     private String userPassword;
     private Integer level;
-    private String additionalInformation;
-    private Date regDate;
-    private Date updDate;
+    private Long regDate;
+    private Long updDate;
 
-    public Long getId() {
-        return id;
+    public String getManagementId() {
+        return this.asString("managementId");
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setManagementId(String managementId) {
+        this.put("managementId", managementId);
     }
 
     public String getUserName() {
-        return userName;
+        return this.asString("userName");
     }
 
     public void setUserName(String userName) {
-        this.userName = userName;
+        this.put("userName", userName);
     }
 
     public String getUserPassword() {
-        return userPassword;
+        return this.asString("userPassword");
     }
 
     public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+        this.put("userPassword", userPassword);
     }
 
     public Integer getLevel() {
-        return level;
+        return this.asInteger("level");
     }
 
     public void setLevel(Integer level) {
-        this.level = level;
+        this.put("level", level);
     }
 
-    public String getAdditionalInformation() {
-        return additionalInformation;
+    public Long getRegDate() {
+        return this.asLong("regDate");
     }
 
-    public void setAdditionalInformation(String additionalInformation) {
-        this.additionalInformation = additionalInformation;
+    public void setRegDate(Long regDate) {
+        this.put("regDate", regDate);
     }
 
-    public Date getRegDate() {
-        return regDate;
+    public Long getUpdDate() {
+        return this.asLong("updDate");
     }
 
-    public void setRegDate(Date regDate) {
-        this.regDate = regDate;
-    }
-
-    public Date getUpdDate() {
-        return updDate;
-    }
-
-    public void setUpdDate(Date updDate) {
-        this.updDate = updDate;
-    }
-
-    @Override
-    public String toString() {
-        return "OauthUser{" +
-                "id=" + id +
-                ", groupId=" + groupId +
-                ", userName='" + userName + '\'' +
-                ", userPassword='" + userPassword + '\'' +
-                ", level=" + level +
-                ", additionalInformation='" + additionalInformation + '\'' +
-                ", regDate=" + regDate +
-                ", updDate=" + updDate +
-                '}';
+    public void setUpdDate(Long updDate) {
+        this.put("updDate", updDate);
     }
 }

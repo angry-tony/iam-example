@@ -20,6 +20,7 @@ public class AuthorizeResponse implements Serializable {
     private String code;
     private String accessToken;
     private String tokenType;
+    private String claim;
     private Integer expiresIn;
     private OauthClient oauthClient;
     private List<OauthScope> oauthScopes;
@@ -93,6 +94,14 @@ public class AuthorizeResponse implements Serializable {
         this.tokenType = tokenType;
     }
 
+    public String getClaim() {
+        return claim;
+    }
+
+    public void setClaim(String claim) {
+        this.claim = claim;
+    }
+
     public Integer getExpiresIn() {
         return expiresIn;
     }
@@ -160,6 +169,7 @@ public class AuthorizeResponse implements Serializable {
                 ", code='" + code + '\'' +
                 ", accessToken='" + accessToken + '\'' +
                 ", tokenType='" + tokenType + '\'' +
+                ", claim='" + claim + '\'' +
                 ", expiresIn=" + expiresIn +
                 ", oauthClient=" + oauthClient +
                 ", oauthScopes=" + oauthScopes +

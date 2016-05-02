@@ -1,58 +1,51 @@
 package org.opencloudengine.garuda.web.console.oauthclient;
 
+import org.opencloudengine.garuda.couchdb.CouchDAO;
+
 import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by uengine on 2016. 4. 15..
  */
-public class OauthClientScopes implements Serializable {
+public class OauthClientScopes extends CouchDAO {
 
-    private Long id;
-    private Long clientId;
-    private Long scopeId;
-    private Date regDate;
-    private Date updDate;
+    private String clientId;
+    private String scopeId;
+    private Long regDate;
+    private Long updDate;
     private String name;
     private String description;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getClientId() {
+    public String getClientId() {
         return clientId;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
-    public Long getScopeId() {
+    public String getScopeId() {
         return scopeId;
     }
 
-    public void setScopeId(Long scopeId) {
+    public void setScopeId(String scopeId) {
         this.scopeId = scopeId;
     }
 
-    public Date getRegDate() {
+    public Long getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Date regDate) {
+    public void setRegDate(Long regDate) {
         this.regDate = regDate;
     }
 
-    public Date getUpdDate() {
+    public Long getUpdDate() {
         return updDate;
     }
 
-    public void setUpdDate(Date updDate) {
+    public void setUpdDate(Long updDate) {
         this.updDate = updDate;
     }
 
@@ -75,9 +68,8 @@ public class OauthClientScopes implements Serializable {
     @Override
     public String toString() {
         return "OauthClientScopes{" +
-                "id=" + id +
-                ", clientId=" + clientId +
-                ", scopeId=" + scopeId +
+                "clientId='" + clientId + '\'' +
+                ", scopeId='" + scopeId + '\'' +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 ", name='" + name + '\'' +

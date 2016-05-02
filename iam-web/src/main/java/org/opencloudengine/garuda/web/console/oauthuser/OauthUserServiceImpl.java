@@ -40,64 +40,53 @@ public class OauthUserServiceImpl implements OauthUserService {
     OauthClientService clientService;
 
     @Override
-    public OauthUser selectById(Long id) {
+    public OauthUser selectById(String id) {
         return oauthUserRepository.selectById(id);
     }
 
     @Override
-    public List<OauthUser> selectByGroupId(Long groupId) {
-        return oauthUserRepository.selectByGroupId(groupId);
+    public List<OauthUser> selectByManagementId(String managementId) {
+        return oauthUserRepository.selectByManagementId(managementId);
     }
 
     @Override
-    public OauthUser selectByGroupIdAndUserName(Long groupId, String userName) {
-        return oauthUserRepository.selectByGroupIdAndUserName(groupId, userName);
+    public OauthUser selectByManagementIdAndUserName(String managementId, String userName) {
+        return oauthUserRepository.selectByManagementIdAndUserName(managementId, userName);
     }
 
     @Override
-    public OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword) {
-        return oauthUserRepository.selectByGroupIdAndCredential(groupId, userName, userPassword);
+    public OauthUser selectByManagementIdAndCredential(String managementId, String userName, String userPassword) {
+        return oauthUserRepository.selectByManagementIdAndCredential(managementId, userName, userPassword);
     }
 
     @Override
-    public OauthUser selectByGroupIdAndId(Long groupId, Long id) {
-        return oauthUserRepository.selectByGroupIdAndId(groupId, id);
+    public OauthUser selectByManagementIdAndId(String managementId, String id) {
+        return oauthUserRepository.selectByManagementIdAndId(managementId, id);
     }
 
     @Override
-    public int updateById(Long id, String userName, String userPassword, Integer level, String additionalInformation) {
+    public OauthUser updateById(String id, String userName, String userPassword, Integer level) {
         OauthUser oauthUser = new OauthUser();
-        oauthUser.setId(id);
+        oauthUser.set_id(id);
         oauthUser.setUserName(userName);
         oauthUser.setUserPassword(userPassword);
         oauthUser.setLevel(level);
-        oauthUser.setAdditionalInformation(additionalInformation);
         return oauthUserRepository.updateById(oauthUser);
     }
 
     @Override
-    public int updateById(OauthUser oauthUser) {
+    public OauthUser updateById(OauthUser oauthUser) {
         return oauthUserRepository.updateById(oauthUser);
     }
 
     @Override
-    public int deleteById(Long id) {
-        return oauthUserRepository.deleteById(id);
+    public void deleteById(String id) {
+        oauthUserRepository.deleteById(id);
     }
 
     @Override
-    public List<OauthUser> selectByCondition(OauthUser oauthUser) {
-        return oauthUserRepository.selectByCondition(oauthUser);
-    }
-
-    @Override
-    public OauthUser createUser(Long groupId, String userName, String userPassword, Integer level, String additionalInformation) {
-        OauthUser oauthUser = new OauthUser();
-        oauthUser.setGroupId(groupId);
-        oauthUser.setUserName(userName);
-        oauthUser.setUserPassword(userPassword);
-        oauthUser.setLevel(level);
-        oauthUser.setAdditionalInformation(additionalInformation);
+    public OauthUser createUser(String managementId, OauthUser oauthUser) {
+        oauthUser.setManagementId(managementId);
         oauthUserRepository.insert(oauthUser);
         return oauthUser;
     }
@@ -113,7 +102,7 @@ public class OauthUserServiceImpl implements OauthUserService {
         String managementKey = jwtClaimsSet.getIssuer();
 
         Management management = managementService.selectByKey(managementKey);
-        String sharedSecret = management.getGroupJwtSecret();
+        String sharedSecret = management.getManagementJwtSecret();
 
         Map context = (Map) jwtClaimsSet.getClaim("context");
         String userName = (String) context.get("userName");
@@ -141,7 +130,7 @@ public class OauthUserServiceImpl implements OauthUserService {
         String managementKey = jwtClaimsSet.getIssuer();
 
         Management management = managementService.selectByKey(managementKey);
-        String sharedSecret = management.getGroupJwtSecret();
+        String sharedSecret = management.getManagementJwtSecret();
 
         Map context = (Map) jwtClaimsSet.getClaim("context");
         String userName = (String) context.get("userName");
@@ -171,7 +160,7 @@ public class OauthUserServiceImpl implements OauthUserService {
             return null;
         }
 
-        OauthUser oauthUser = this.selectByGroupIdAndCredential(management.getId(), userName, userPassword);
+        OauthUser oauthUser = this.selectByManagementIdAndCredential(management.get_id(), userName, userPassword);
         if (oauthUser == null) {
             return null;
         }
@@ -183,10 +172,10 @@ public class OauthUserServiceImpl implements OauthUserService {
         Date expirationTime = new Date(new Date().getTime() + management.getSessionTokenLifetime() * 1000);
 
         //발급자
-        String issuer = management.getGroupKey();
+        String issuer = management.getManagementKey();
 
         //시그네이쳐 설정
-        String sharedSecret = management.getGroupJwtSecret();
+        String sharedSecret = management.getManagementJwtSecret();
         JWSSigner signer = new MACSigner(sharedSecret);
 
         //콘텍스트 설정
@@ -235,10 +224,10 @@ public class OauthUserServiceImpl implements OauthUserService {
         Date expirationTime = new Date(new Date().getTime() + management.getScopeCheckLifetime() * 1000);
 
         //발급자
-        String issuer = management.getGroupKey();
+        String issuer = management.getManagementKey();
 
         //시그네이쳐 설정
-        String sharedSecret = management.getGroupJwtSecret();
+        String sharedSecret = management.getManagementJwtSecret();
         JWSSigner signer = new MACSigner(sharedSecret);
 
         //콘텍스트 설정

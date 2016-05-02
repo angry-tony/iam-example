@@ -1,35 +1,27 @@
 package org.opencloudengine.garuda.web.console.oauthscope;
 
+import org.opencloudengine.garuda.couchdb.CouchDAO;
+
 import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by uengine on 2015. 6. 3..
  */
-public class OauthScope implements Serializable {
+public class OauthScope extends CouchDAO {
 
-    private Long id;
-    private Long groupId;
+    private String managementId;
     private String name;
     private String description;
-    private String additionalInformation;
-    private Date regDate;
-    private Date updDate;
+    private Long regDate;
+    private Long updDate;
 
-    public Long getId() {
-        return id;
+    public String getManagementId() {
+        return managementId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setManagementId(String managementId) {
+        this.managementId = managementId;
     }
 
     public String getName() {
@@ -48,38 +40,28 @@ public class OauthScope implements Serializable {
         this.description = description;
     }
 
-    public String getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(String additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-
-    public Date getRegDate() {
+    public Long getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(Date regDate) {
+    public void setRegDate(Long regDate) {
         this.regDate = regDate;
     }
 
-    public Date getUpdDate() {
+    public Long getUpdDate() {
         return updDate;
     }
 
-    public void setUpdDate(Date updDate) {
+    public void setUpdDate(Long updDate) {
         this.updDate = updDate;
     }
 
     @Override
     public String toString() {
         return "OauthScope{" +
-                "id=" + id +
-                ", groupId=" + groupId +
+                "managementId='" + managementId + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", additionalInformation='" + additionalInformation + '\'' +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';

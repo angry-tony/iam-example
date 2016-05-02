@@ -30,23 +30,23 @@ public class OauthClientServiceImpl implements OauthClientService {
     private String TRUST_CLIENT_TYPE = "trust";
 
     @Override
-    public OauthClient selectById(Long id) {
+    public OauthClient selectById(String id) {
         return oauthClientRepository.selectById(id);
     }
 
     @Override
-    public List<OauthClient> selectByGroupId(Long groupId) {
-        return oauthClientRepository.selectByGroupId(groupId);
+    public List<OauthClient> selectByManagementId(String managementId) {
+        return oauthClientRepository.selectByManagementId(managementId);
     }
 
     @Override
-    public OauthClient selectByGroupIdAndName(Long groupId, String name) {
-        return oauthClientRepository.selectByGroupIdAndName(groupId, name);
+    public OauthClient selectByManagementIdAndName(String managementId, String name) {
+        return oauthClientRepository.selectByManagementIdAndName(managementId, name);
     }
 
     @Override
-    public OauthClient selectByGroupIdAndId(Long groupId, Long id) {
-        return oauthClientRepository.selectByGroupIdAndId(groupId, id);
+    public OauthClient selectByManagementIdAndId(String managementId, String id) {
+        return oauthClientRepository.selectByManagementIdAndId(managementId, id);
     }
 
     @Override
@@ -60,17 +60,12 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    public List<OauthClient> selectByCondition(OauthClient oauthClient) {
-        return oauthClientRepository.selectByCondition(oauthClient);
-    }
-
-    @Override
-    public int updateById(Long id, String name, String description, String clientTrust, String clientType, String activeClient,
-                          String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity,
-                          String additionalInformation, Integer codeLifetime, Integer refreshTokenLifetime,
-                          Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
+    public OauthClient updateById(String id, String name, String description, String clientTrust, String clientType, String activeClient,
+                                  String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity,
+                                  Integer codeLifetime, Integer refreshTokenLifetime,
+                                  Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
         OauthClient oauthClient = new OauthClient();
-        oauthClient.setId(id);
+        oauthClient.set_id(id);
         oauthClient.setName(name);
         oauthClient.setDescription(description);
         oauthClient.setClientTrust(clientTrust);
@@ -79,23 +74,22 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setAuthorizedGrantTypes(authorizedGrantTypes);
         oauthClient.setWebServerRedirectUri(webServerRedirectUri);
         oauthClient.setRefreshTokenValidity(refreshTokenValidity);
-        oauthClient.setAdditionalInformation(additionalInformation);
         oauthClient.setCodeLifetime(codeLifetime);
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);
         oauthClient.setJwtTokenLifetime(jwtTokenLifetime);
 
-        int update = oauthClientRepository.updateById(oauthClient);
+        OauthClient update = oauthClientRepository.updateById(oauthClient);
 
         //스코프 처리
-        oauthScopeService.deleteClientScopes(oauthClient.getId());
+        oauthScopeService.deleteClientScopes(oauthClient.get_id());
         if (!StringUtils.isEmpty(scopes)) {
             String[] split = scopes.split(",");
             for (int i = 0; i < split.length; i++) {
                 String scope = split[i];
                 OauthClientScopes oauthClientScopes = new OauthClientScopes();
-                oauthClientScopes.setClientId(oauthClient.getId());
-                oauthClientScopes.setScopeId(Long.parseLong(scope));
+                oauthClientScopes.setClientId(oauthClient.get_id());
+                oauthClientScopes.setScopeId(scope);
                 oauthScopeService.insertClientScopes(oauthClientScopes);
             }
         }
@@ -103,18 +97,18 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    public int updateById(OauthClient oauthClient) {
+    public OauthClient updateById(OauthClient oauthClient) {
         return oauthClientRepository.updateById(oauthClient);
     }
 
     @Override
-    public OauthClient createClient(Long groupId, String name, String description, String clientTrust, String clientType, String activeClient,
+    public OauthClient createClient(String managementId, String name, String description, String clientTrust, String clientType, String activeClient,
                                     String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity,
-                                    String additionalInformation, Integer codeLifetime, Integer refreshTokenLifetime,
+                                    Integer codeLifetime, Integer refreshTokenLifetime,
                                     Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
 
         OauthClient oauthClient = new OauthClient();
-        oauthClient.setGroupId(groupId);
+        oauthClient.setManagementId(managementId);
 
         oauthClient.setClientKey(UUID.randomUUID().toString());
         oauthClient.setClientSecret(UUID.randomUUID().toString());
@@ -128,12 +122,11 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setAuthorizedGrantTypes(authorizedGrantTypes);
         oauthClient.setWebServerRedirectUri(webServerRedirectUri);
         oauthClient.setRefreshTokenValidity(refreshTokenValidity);
-        oauthClient.setAdditionalInformation(additionalInformation);
         oauthClient.setCodeLifetime(codeLifetime);
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);
         oauthClient.setJwtTokenLifetime(jwtTokenLifetime);
-        oauthClientRepository.insert(oauthClient);
+        OauthClient insert = oauthClientRepository.insert(oauthClient);
 
         //스코프 처리
         if (!StringUtils.isEmpty(scopes)) {
@@ -141,8 +134,8 @@ public class OauthClientServiceImpl implements OauthClientService {
             for (int i = 0; i < split.length; i++) {
                 String scope = split[i];
                 OauthClientScopes oauthClientScopes = new OauthClientScopes();
-                oauthClientScopes.setClientId(oauthClient.getId());
-                oauthClientScopes.setScopeId(Long.parseLong(scope));
+                oauthClientScopes.setClientId(insert.get_id());
+                oauthClientScopes.setScopeId(scope);
                 oauthScopeService.insertClientScopes(oauthClientScopes);
             }
         }
@@ -151,7 +144,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    public int deleteById(Long id) {
-        return oauthClientRepository.deleteById(id);
+    public void deleteById(String id) {
+        oauthClientRepository.deleteById(id);
     }
 }

@@ -41,7 +41,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void registe(Long userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
+    public void registe(String userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
         Map map = new HashMap();
         map.put("command", "registe");
         map.put("userId", userId);
@@ -57,7 +57,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void passwd(Long userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
+    public void passwd(String userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
         Map map = new HashMap();
         map.put("command", "passwd");
         map.put("userId", userId);

@@ -1,107 +1,171 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import com.cloudant.client.api.model.Response;
+import com.cloudant.client.api.views.Key;
+import com.cloudant.client.api.views.ViewRequestBuilder;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
+import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
+import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
-public class OauthTokenRepositoryImpl extends PersistentRepositoryImpl<String, Object> implements OauthTokenRepository {
+public class OauthTokenRepositoryImpl implements OauthTokenRepository {
 
-    @Override
-    public String getNamespace() {
-        return this.NAMESPACE;
-    }
+    private String CODE_NAMESPACE = "oauth_code";
+    private String TOKEN_NAMESPACE = "oauth_access_token";
 
     @Autowired
-    public OauthTokenRepositoryImpl(SqlSessionTemplate sqlSessionTemplate) {
-        super.setSqlSessionTemplate(sqlSessionTemplate);
+    CouchServiceFactory serviceFactory;
+
+    @Override
+    public OauthCode insertCode(OauthCode oauthCode) {
+        long time = new Date().getTime();
+        oauthCode.setDocType(CODE_NAMESPACE);
+        oauthCode.setRegDate(time);
+        oauthCode.setUpdDate(time);
+
+        Response response = serviceFactory.getDb().save(oauthCode);
+        oauthCode.set_id(response.getId());
+        oauthCode.set_rev(response.getRev());
+        return oauthCode;
     }
 
     @Override
-    public int insertCode(OauthCode oauthCode) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertCode", oauthCode);
-    }
-
-    @Override
-    public OauthCode selectCodeById(Long id) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectCodeById", id);
+    public OauthCode selectCodeById(String id) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(CODE_NAMESPACE, "selectCodeById");
+            Key.ComplexKey complex = new Key().complex(id);
+            return builder.newRequest(Key.Type.COMPLEX, OauthCode.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public OauthCode selectCodeByCode(String code) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectCodeByCode", code);
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(CODE_NAMESPACE, "selectCodeByCode");
+            Key.ComplexKey complex = new Key().complex(code);
+            return builder.newRequest(Key.Type.COMPLEX, OauthCode.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public OauthCode selectCodeByCodeAndClientId(String code, Long clientId) {
-        Map map = new HashMap();
-        map.put("code", code);
-        map.put("clientId", clientId);
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectCodeByCodeAndClientId", map);
+    public OauthCode selectCodeByCodeAndClientId(String code, String clientId) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(CODE_NAMESPACE, "selectCodeByCodeAndClientId");
+            Key.ComplexKey complex = new Key().complex(code).add(clientId);
+            return builder.newRequest(Key.Type.COMPLEX, OauthCode.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public List<OauthCode> selectCodeByCondition(OauthCode oauthCode) {
-        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectCodeByCondition", oauthCode);
+    public void deleteCodeById(String id) {
+        OauthCode oauthCode = this.selectCodeById(id);
+        serviceFactory.getDb().remove(oauthCode);
     }
 
     @Override
-    public int updateCodeById(Long id) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateCodeById", id);
+    public OauthAccessToken insertToken(OauthAccessToken oauthAccessToken) {
+        long time = new Date().getTime();
+        oauthAccessToken.setDocType(TOKEN_NAMESPACE);
+        oauthAccessToken.setRegDate(time);
+        oauthAccessToken.setUpdDate(time);
+
+        Response response = serviceFactory.getDb().save(oauthAccessToken);
+        oauthAccessToken.set_id(response.getId());
+        oauthAccessToken.set_rev(response.getRev());
+        return oauthAccessToken;
     }
 
     @Override
-    public int deleteCodeById(Long id) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteCodeById", id);
-    }
-
-    @Override
-    public int insertToken(OauthAccessToken oauthAccessToken) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insertToken", oauthAccessToken);
-    }
-
-    @Override
-    public OauthAccessToken selectTokenById(Long id) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenById", id);
+    public OauthAccessToken selectTokenById(String id) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenById");
+            Key.ComplexKey complex = new Key().complex(id);
+            return builder.newRequest(Key.Type.COMPLEX, OauthAccessToken.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public OauthAccessToken selectTokenByToken(String token) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByToken", token);
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenByToken");
+            Key.ComplexKey complex = new Key().complex(token);
+            return builder.newRequest(Key.Type.COMPLEX, OauthAccessToken.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public OauthAccessToken selectTokenByRefreshToken(String refreshToken) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByRefreshToken", refreshToken);
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenByRefreshToken");
+            Key.ComplexKey complex = new Key().complex(refreshToken);
+            return builder.newRequest(Key.Type.COMPLEX, OauthAccessToken.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id) {
-        Map map = new HashMap();
-        map.put("groupId", groupId);
-        map.put("id", id);
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectTokenByGroupIdAndId", map);
+    public OauthAccessToken selectTokenByManagementIdAndId(String managementId, String id) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenByManagementIdAndId");
+            Key.ComplexKey complex = new Key().complex(managementId).add(id);
+            return builder.newRequest(Key.Type.COMPLEX, OauthAccessToken.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken) {
-        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectTokenByCondition", oauthAccessToken);
+    public OauthAccessToken updateTokenById(OauthAccessToken oauthAccessToken) {
+        OauthAccessToken existToken = this.selectTokenById(oauthAccessToken.get_id());
+
+        existToken = (OauthAccessToken) JsonUtils.merge(existToken, oauthAccessToken);
+        long time = new Date().getTime();
+        existToken.setUpdDate(time);
+
+        Response update = serviceFactory.getDb().update(existToken);
+        existToken.set_rev(update.getRev());
+        return existToken;
     }
 
     @Override
-    public int updateTokenById(OauthAccessToken oauthAccessToken) {
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateTokenById", oauthAccessToken);
-    }
-
-    @Override
-    public int deleteTokenById(Long id) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteTokenById", id);
+    public void deleteTokenById(String id) {
+        OauthAccessToken accessToken = this.selectTokenById(id);
+        serviceFactory.getDb().remove(accessToken);
     }
 }

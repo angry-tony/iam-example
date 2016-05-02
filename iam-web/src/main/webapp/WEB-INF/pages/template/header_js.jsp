@@ -125,11 +125,11 @@ lang = (lang.length > 0) ? lang : config['default.locale'];</script>
     }
     var SESSION = {};
     SESSION.ISOCode = !isEmpty('${ISOCode}') ? '${ISOCode}' : undefined;
-    SESSION.ID = !isEmpty('${user.id}') ? parseInt('${user.id}') : undefined;
+    SESSION.ID = !isEmpty('${user._id}') ? '${user._id}' : undefined;
     SESSION.NAME = !isEmpty('${user.name}') ? '${user.name}' : undefined;
     SESSION.EMAIL = !isEmpty('${user.email}') ? '${user.email}' : undefined;
     SESSION.DESCRIPTION = !isEmpty('${user.description}') ? '${user.description}' : undefined;
-    SESSION.LEVEL = !isEmpty('${user.level}') ? parseInt('${user.level}') : undefined;
+    SESSION.LEVEL = !isEmpty('${user.level}') ? '${user.level}' : undefined;
 
 </script>
 

@@ -96,7 +96,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
 
             case "registe":
                 this.registe(
-                        map.get("userId") != null ? (Long) map.get("userId") : null,
+                        map.get("userId") != null ? (String) map.get("userId") : null,
                         map.get("token") != null ? map.get("token").toString() : null,
                         map.get("subject") != null ? map.get("subject").toString() : null,
                         map.get("fromUser") != null ? map.get("fromUser").toString() : null,
@@ -108,7 +108,7 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
 
             case "passwd":
                 this.passwd(
-                        map.get("userId") != null ? (Long) map.get("userId") : null,
+                        map.get("userId") != null ? (String) map.get("userId") : null,
                         map.get("token") != null ? map.get("token").toString() : null,
                         map.get("subject") != null ? map.get("subject").toString() : null,
                         map.get("fromUser") != null ? map.get("fromUser").toString() : null,
@@ -124,11 +124,11 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
     }
 
     @Async
-    public void passwd(Long userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
+    public void passwd(String userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
         Session session = setMailProperties(toUser);
 
         Map model = new HashMap();
-        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/auth/passwdConfirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
+        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/auth/passwdConfirm?userid={}&token={}", new Object[]{userId, token}).getMessage());
 
         String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/passwd.vm", "UTF-8", model);
 
@@ -151,11 +151,11 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
     }
 
     @Async
-    public void registe(Long userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
+    public void registe(String userId, String token, String subject, String fromUser, String fromName, final String toUser, InternetAddress[] toCC) {
         Session session = setMailProperties(toUser);
 
         Map model = new HashMap();
-        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/registe/confirm?userid={}&token={}", new Object[]{Long.toString(userId), token}).getMessage());
+        model.put("link", MessageFormatter.arrayFormat(redirectAddress + "/registe/confirm?userid={}&token={}", new Object[]{userId, token}).getMessage());
 
         String body = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "mail/registe.vm", "UTF-8", model);
 

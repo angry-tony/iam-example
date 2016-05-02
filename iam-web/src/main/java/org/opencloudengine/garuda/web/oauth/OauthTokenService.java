@@ -1,38 +1,37 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface OauthTokenService {
 
-    int insertCode(OauthCode oauthCode);
+    OauthCode insertCode(OauthCode oauthCode);
 
-    OauthCode selectCodeById(Long id);
+    OauthCode selectCodeById(String id);
 
     OauthCode selectCodeByCode(String code);
 
-    OauthCode selectCodeByCodeAndClientId(String code, Long clientId);
+    OauthCode selectCodeByCodeAndClientId(String code, String clientId);
 
-    List<OauthCode> selectCodeByCondition(OauthCode oauthCode);
-
-    int updateCodeById(Long id);
-
-    int deleteCodeById(Long id);
+    void deleteCodeById(String id);
 
     OauthAccessToken insertToken(OauthAccessToken oauthAccessToken);
 
-    OauthAccessToken selectTokenById(Long id);
+    OauthAccessToken selectTokenById(String id);
 
     OauthAccessToken selectTokenByToken(String token);
 
     OauthAccessToken selectTokenByRefreshToken(String refreshToken);
 
-    OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id);
+    OauthAccessToken selectTokenByManagementIdAndId(String managementId, String id);
 
-    List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken);
+    OauthAccessToken updateTokenById(OauthAccessToken oauthAccessToken);
 
-    int updateTokenById(OauthAccessToken oauthAccessToken);
+    void deleteTokenById(String id);
 
-    int deleteTokenById(Long id);
+    String generateJWTToken(OauthUser oauthUser, OauthClient oauthClient, OauthAccessToken accessToken, String claimJson, Integer lifetime, String type) throws Exception;
 }

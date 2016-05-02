@@ -64,7 +64,7 @@
                         <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
 
                         <div class="col-md-6">
-                            <input name="groupName" type="text" class="form-control" value="">
+                            <input name="managementName" type="text" class="form-control" value="">
                         </div>
                     </div>
 
@@ -123,7 +123,7 @@
             focusInvalid: false, // do not focus the last invalid input
             ignore: "",
             rules: {
-                groupName: {
+                managementName: {
                     required: true
                 },
                 description: {
@@ -137,7 +137,7 @@
                 }
             },
             messages: {
-                groupName: {
+                managementName: {
                     required: "<span style='color: red;'>Required filed</span>"
                 },
                 description: {

@@ -40,7 +40,7 @@ public class OauthScopeRestController {
         }
 
         try {
-            List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             if (oauthScopes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -51,7 +51,7 @@ public class OauthScopeRestController {
     }
 
     @RequestMapping(value = "/scope/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<OauthScope> getScope(HttpServletRequest request, @PathVariable("id") long id) {
+    public ResponseEntity<OauthScope> getScope(HttpServletRequest request, @PathVariable("id") String id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -59,7 +59,7 @@ public class OauthScopeRestController {
         }
 
         try {
-            OauthScope oauthScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope oauthScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), id);
             if (oauthScope == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -78,23 +78,23 @@ public class OauthScopeRestController {
 
         try {
 
-            OauthScope existScope = oauthScopeService.selectByGroupIdAndName(management.getId(), oauthScope.getName());
+            OauthScope existScope = oauthScopeService.selectByManagementIdAndName(management.get_id(), oauthScope.getName());
             if (existScope != null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
 
-            OauthScope createdScope = oauthScopeService.createScope(management.getId(), oauthScope.getName(), oauthScope.getDescription(), oauthScope.getAdditionalInformation());
+            OauthScope createdScope = oauthScopeService.createScope(management.get_id(), oauthScope.getName(), oauthScope.getDescription());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(ucBuilder.path("/rest/v1/scope/{id}").buildAndExpand(createdScope.getId()).toUri());
+            headers.setLocation(ucBuilder.path("/rest/v1/scope/{_id}").buildAndExpand(createdScope.get_id()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/scope/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<OauthScope> updateScope(HttpServletRequest request, @PathVariable("id") long id, @RequestBody OauthScope oauthScope) {
+    @RequestMapping(value = "/scope/{_id}", method = RequestMethod.PUT)
+    public ResponseEntity<OauthScope> updateScope(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthScope oauthScope) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -102,68 +102,39 @@ public class OauthScopeRestController {
         }
 
         try {
-            OauthScope currentScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope currentScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentScope == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            oauthScope.setId(currentScope.getId());
+            oauthScope.set_id(currentScope.get_id());
             oauthScopeService.updateById(oauthScope);
 
-            currentScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            currentScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
             return new ResponseEntity<>(currentScope, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/scope/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthScope> deleteScope(HttpServletRequest request, @PathVariable("id") long id) {
+    @RequestMapping(value = "/scope/{_id}", method = RequestMethod.DELETE)
+    public ResponseEntity<OauthScope> deleteScope(HttpServletRequest request, @PathVariable("_id") String _id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            OauthScope currentScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope currentScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentScope == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            oauthScopeService.deleteById(currentScope.getId());
+            oauthScopeService.deleteById(currentScope.get_id());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @RequestMapping(value = "/search/scope", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthScope>> searchScope(HttpServletRequest request,
-                                                      @RequestParam(required = false) String name,
-                                                      @RequestParam(required = false) String description,
-                                                      @RequestParam(required = false) String additionalInformation) {
-
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            OauthScope oauthScope = new OauthScope();
-            oauthScope.setGroupId(management.getId());
-            oauthScope.setName(name);
-            oauthScope.setDescription(description);
-            oauthScope.setAdditionalInformation(additionalInformation);
-
-            List<OauthScope> oauthScopes = oauthScopeService.selectByCondition(oauthScope);
-
-            if (oauthScopes.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(oauthScopes, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }

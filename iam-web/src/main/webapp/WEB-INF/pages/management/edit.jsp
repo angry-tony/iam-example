@@ -60,13 +60,13 @@
                         </c:when>
                     </c:choose>
 
-                    <input type="hidden" id="groupId" name="groupId" value="${management.id}">
+                    <input type="hidden" id="_id" name="_id" value="${management._id}">
 
                     <div class="form-group">
                         <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
 
                         <div class="col-md-6">
-                            <input name="groupName" type="text" class="form-control" value="${management.groupName}">
+                            <input name="managementName" type="text" class="form-control" value="${management.managementName}">
                         </div>
                     </div>
 
@@ -150,7 +150,7 @@
         });
 
         $('#deleteConfirm').find('[name=delete]').click(function () {
-            window.location.href = '/management/delete?groupId=' + $('#groupId').val();
+            window.location.href = '/management/delete?_id=' + $('#_id').val();
         });
 
         var form = $('#managementForm');
@@ -161,7 +161,7 @@
             focusInvalid: false, // do not focus the last invalid input
             ignore: "",
             rules: {
-                groupName: {
+                managementName: {
                     required: true
                 },
                 description: {
@@ -169,7 +169,7 @@
                 }
             },
             messages: {
-                groupName: {
+                managementName: {
                     required: "<span style='color: red;'>Required filed</span>"
                 },
                 description: {

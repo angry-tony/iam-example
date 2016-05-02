@@ -52,34 +52,19 @@
       "post": {
         "summary": "Create User",
         "description": "create user",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
         "parameters": [
           {
-            "name": "userName",
-            "in": "query",
-            "description": "user name",
+            "name": "user",
+            "in": "body",
+            "description": "user body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "userPassword",
-            "in": "query",
-            "description": "user password",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "level",
-            "in": "query",
-            "description": "user level",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
         ],
         "tags": [
@@ -112,17 +97,17 @@
         ]
       }
     },
-    "/user/{id}": {
+    "/user/{_id}": {
       "get": {
         "summary": "Get User",
         "description": "get user",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "user id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -162,39 +147,20 @@
         "description": "update user",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "user id",
             "required": true,
-            "type": "number"
-          },
-          {
-            "name": "userName",
-            "in": "query",
-            "description": "user name",
-            "required": false,
             "type": "string"
           },
           {
-            "name": "userPassword",
-            "in": "query",
-            "description": "user password",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "level",
-            "in": "query",
-            "description": "user level",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
+            "name": "user",
+            "in": "body",
+            "description": "user body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           }
         ],
         "tags": [
@@ -234,11 +200,11 @@
         "description": "delete user",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "user id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -271,76 +237,6 @@
         ]
       }
     },
-    "/search/user": {
-      "get": {
-        "summary": "Search access token",
-        "description": "Search access token",
-        "parameters": [
-          {
-            "name": "userName",
-            "in": "query",
-            "description": "userName",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "userPassword",
-            "in": "query",
-            "description": "userPassword",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "level",
-            "in": "query",
-            "description": "level",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "User"
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of user"
-          },
-          "204": {
-            "description": "NO_CONTENT"
-          },
-          "401": {
-            "description": "UNAUTHORIZED"
-          },
-          "400": {
-            "description": "BAD_REQUEST"
-          },
-          "405": {
-            "description": "METHOD_NOT_ALLOWED"
-          }
-        },
-        "security": [
-          {
-            "management_key": []
-          },
-          {
-            "management_secret": []
-          }
-        ]
-      }
-    },
-
-
-
-
-
-
     "/scope": {
       "get": {
         "summary": "List scope",
@@ -381,25 +277,13 @@
         "description": "create scope",
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "description": "name",
+            "name": "scope",
+            "in": "body",
+            "description": "scope body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/Scope"
+            }
           }
         ],
         "tags": [
@@ -432,17 +316,17 @@
         ]
       }
     },
-    "/scope/{id}": {
+    "/scope/{_id}": {
       "get": {
         "summary": "Get Scope",
         "description": "get scope",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -482,32 +366,20 @@
         "description": "update scope",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "name",
-            "required": false,
             "type": "string"
           },
           {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
+            "name": "scope",
+            "in": "body",
+            "description": "scope body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Scope"
+            }
           }
         ],
         "tags": [
@@ -547,11 +419,11 @@
         "description": "delete scope",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -584,68 +456,6 @@
         ]
       }
     },
-    "/search/scope": {
-      "get": {
-        "summary": "Search scope",
-        "description": "Search scope",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "description": "name",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Scope"
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of scope"
-          },
-          "204": {
-            "description": "NO_CONTENT"
-          },
-          "401": {
-            "description": "UNAUTHORIZED"
-          },
-          "400": {
-            "description": "BAD_REQUEST"
-          },
-          "405": {
-            "description": "METHOD_NOT_ALLOWED"
-          }
-        },
-        "security": [
-          {
-            "management_key": []
-          },
-          {
-            "management_secret": []
-          }
-        ]
-      }
-    },
-
-
-
-
-
     "/client": {
       "get": {
         "summary": "List client",
@@ -686,102 +496,13 @@
         "description": "create client",
         "parameters": [
           {
-            "name": "name",
-            "in": "query",
-            "description": "name",
+            "name": "client",
+            "in": "body",
+            "description": "client body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "clientTrust",
-            "in": "query",
-            "description": "clientTrust, 'trust' or '3th_party'",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "clientType",
-            "in": "query",
-            "description": "clientType, 'public' or 'confidential'",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "activeClient",
-            "in": "query",
-            "description": "activeClient, 'Y' or 'N'",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorizedGrantTypes",
-            "in": "query",
-            "description": "authorizedGrantTypes",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "webServerRedirectUri",
-            "in": "query",
-            "description": "webServerRedirectUri",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "refreshTokenValidity",
-            "in": "query",
-            "description": "refreshTokenValidity, 'Y' or 'N'",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "refreshTokenLifetime",
-            "in": "query",
-            "description": "refreshTokenLifetime",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "accessTokenLifetime",
-            "in": "query",
-            "description": "accessTokenLifetime",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "jwtTokenLifetime",
-            "in": "query",
-            "description": "jwtTokenLifetime",
-            "required": true,
-            "type": "number"
+            "schema": {
+              "$ref": "#/definitions/Client"
+            }
           }
         ],
         "tags": [
@@ -814,17 +535,17 @@
         ]
       }
     },
-    "/client/{id}": {
+    "/client/{_id}": {
       "get": {
         "summary": "Get Client",
         "description": "get client",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -864,109 +585,20 @@
         "description": "update client",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "name",
-            "required": false,
             "type": "string"
           },
           {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "clientTrust",
-            "in": "query",
-            "description": "clientTrust, 'trust' or '3th_party'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "clientType",
-            "in": "query",
-            "description": "clientType, 'public' or 'confidential'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "activeClient",
-            "in": "query",
-            "description": "activeClient, 'Y' or 'N'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "authorizedGrantTypes",
-            "in": "query",
-            "description": "authorizedGrantTypes",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "webServerRedirectUri",
-            "in": "query",
-            "description": "webServerRedirectUri",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "refreshTokenValidity",
-            "in": "query",
-            "description": "refreshTokenValidity, 'Y' or 'N'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "refreshTokenLifetime",
-            "in": "query",
-            "description": "refreshTokenLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "accessTokenLifetime",
-            "in": "query",
-            "description": "accessTokenLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "jwtTokenLifetime",
-            "in": "query",
-            "description": "jwtTokenLifetime",
-            "required": false,
-            "type": "number"
+            "name": "client",
+            "in": "body",
+            "description": "client body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Client"
+            }
           }
         ],
         "tags": [
@@ -1006,11 +638,11 @@
         "description": "delete client",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1043,10 +675,6 @@
         ]
       }
     },
-
-
-
-
     "/client/{clientId}/scope": {
       "get": {
         "summary": "List client's scope",
@@ -1057,7 +685,7 @@
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1103,14 +731,14 @@
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "scopeId",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1154,14 +782,14 @@
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "scopeId",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1205,14 +833,14 @@
             "in": "path",
             "description": "client id",
             "required": true,
-            "type": "number"
+            "type": "string"
           },
           {
             "name": "scopeId",
             "in": "path",
             "description": "scope id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1245,185 +873,19 @@
         ]
       }
     },
-    "/search/client": {
-      "get": {
-        "summary": "Search client",
-        "description": "Search client",
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "description": "name",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "in": "query",
-            "description": "description",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "clientTrust",
-            "in": "query",
-            "description": "clientTrust, 'trust' or '3th_party'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "clientType",
-            "in": "query",
-            "description": "clientType, 'public' or 'confidential'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "activeClient",
-            "in": "query",
-            "description": "activeClient, 'Y' or 'N'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "authorizedGrantTypes",
-            "in": "query",
-            "description": "authorizedGrantTypes",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "webServerRedirectUri",
-            "in": "query",
-            "description": "webServerRedirectUri",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "refreshTokenValidity",
-            "in": "query",
-            "description": "refreshTokenValidity, 'Y' or 'N'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "codeLifetime",
-            "in": "query",
-            "description": "codeLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "refreshTokenLifetime",
-            "in": "query",
-            "description": "refreshTokenLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "accessTokenLifetime",
-            "in": "query",
-            "description": "accessTokenLifetime",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "jwtTokenLifetime",
-            "in": "query",
-            "description": "jwtTokenLifetime",
-            "required": false,
-            "type": "number"
-          }
-        ],
-        "tags": [
-          "Client"
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of client"
-          },
-          "204": {
-            "description": "NO_CONTENT"
-          },
-          "401": {
-            "description": "UNAUTHORIZED"
-          },
-          "400": {
-            "description": "BAD_REQUEST"
-          },
-          "405": {
-            "description": "METHOD_NOT_ALLOWED"
-          }
-        },
-        "security": [
-          {
-            "management_key": []
-          },
-          {
-            "management_secret": []
-          }
-        ]
-      }
-    },
-
-
-
-
-
-
     "/token": {
       "post": {
         "summary": "Create access token",
         "description": "create access token",
         "parameters": [
           {
-            "name": "type",
-            "in": "query",
-            "description": "type, 'client' or 'user'",
+            "name": "access_token",
+            "in": "body",
+            "description": "access_token body",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "scopes",
-            "in": "query",
-            "description": "scopes",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "oauthUserId",
-            "in": "query",
-            "description": "user id, if type is 'user' then required",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "clientId",
-            "in": "query",
-            "description": "client id",
-            "required": true,
-            "type": "number"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/AccessToken"
+            }
           }
         ],
         "tags": [
@@ -1456,17 +918,17 @@
         ]
       }
     },
-    "/token/{id}": {
+    "/token/{_id}": {
       "get": {
         "summary": "Get Access Token",
         "description": "get access token",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "token id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1506,25 +968,20 @@
         "description": "update access token",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "token id",
             "required": true,
-            "type": "number"
-          },
-          {
-            "name": "scopes",
-            "in": "query",
-            "description": "scopes",
-            "required": false,
             "type": "string"
           },
           {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
+            "name": "access_token",
+            "in": "body",
+            "description": "access_token body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AccessToken"
+            }
           }
         ],
         "tags": [
@@ -1564,11 +1021,11 @@
         "description": "delete access token",
         "parameters": [
           {
-            "name": "id",
+            "name": "_id",
             "in": "path",
             "description": "token id",
             "required": true,
-            "type": "number"
+            "type": "string"
           }
         ],
         "tags": [
@@ -1600,91 +1057,6 @@
           }
         ]
       }
-    },
-    "/search/token": {
-      "get": {
-        "summary": "Search access token",
-        "description": "Search access token",
-        "parameters": [
-          {
-            "name": "type",
-            "in": "query",
-            "description": "type, 'client' or 'user'",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "scopes",
-            "in": "query",
-            "description": "scopes",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "token",
-            "in": "query",
-            "description": "token",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "oauthUserId",
-            "in": "query",
-            "description": "user id",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "clientId",
-            "in": "query",
-            "description": "client id",
-            "required": false,
-            "type": "number"
-          },
-          {
-            "name": "refreshToken",
-            "in": "query",
-            "description": "refreshToken",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "additionalInformation",
-            "in": "query",
-            "description": "additionalInformation",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Token"
-        ],
-        "responses": {
-          "200": {
-            "description": "An array of token"
-          },
-          "204": {
-            "description": "NO_CONTENT"
-          },
-          "401": {
-            "description": "UNAUTHORIZED"
-          },
-          "400": {
-            "description": "BAD_REQUEST"
-          },
-          "405": {
-            "description": "METHOD_NOT_ALLOWED"
-          }
-        },
-        "security": [
-          {
-            "management_key": []
-          },
-          {
-            "management_secret": []
-          }
-        ]
-      }
     }
   },
   "securityDefinitions": {
@@ -1697,6 +1069,91 @@
       "type": "apiKey",
       "name": "management-secret",
       "in": "header"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "userName": {
+          "type": "string"
+        },
+        "userPassword": {
+          "type": "string"
+        },
+        "level": {
+          "type": "number"
+        }
+      }
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "Client": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "clientTrust": {
+          "type": "string"
+        },
+        "clientType": {
+          "type": "string"
+        },
+        "activeClient": {
+          "type": "string"
+        },
+        "authorizedGrantTypes": {
+          "type": "string"
+        },
+        "webServerRedirectUri": {
+          "type": "string"
+        },
+        "refreshTokenValidity": {
+          "type": "string"
+        },
+        "codeLifetime": {
+          "type": "number"
+        },
+        "refreshTokenLifetime": {
+          "type": "number"
+        },
+        "accessTokenLifetime": {
+          "type": "number"
+        },
+        "jwtTokenLifetime": {
+          "type": "number"
+        }
+      }
+    },
+    "AccessToken": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "scopes": {
+          "type": "string"
+        },
+        "oauthUserId": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        }
+      }
     }
   }
 }

@@ -39,13 +39,13 @@ public class OauthClientScopeRestController {
 
     @RequestMapping(value = "/client/{clientId}/scope", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<OauthScope>> listAllClientScopes(
-            HttpServletRequest request, @PathVariable("clientId") long clientId) {
+            HttpServletRequest request, @PathVariable("clientId") String clientId) {
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), clientId);
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -62,7 +62,7 @@ public class OauthClientScopeRestController {
 
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<OauthScope> getClientScope(
-            HttpServletRequest request, @PathVariable("clientId") long clientId, @PathVariable("scopeId") long scopeId) {
+            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -70,7 +70,7 @@ public class OauthClientScopeRestController {
         }
 
         try {
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), clientId);
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -88,14 +88,14 @@ public class OauthClientScopeRestController {
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Void> createClientScope(
-            HttpServletRequest request, @PathVariable("clientId") long clientId, @PathVariable("scopeId") long scopeId, UriComponentsBuilder ucBuilder) {
+            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId, UriComponentsBuilder ucBuilder) {
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         try {
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), clientId);
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -123,14 +123,14 @@ public class OauthClientScopeRestController {
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<OauthScope> deleteClientScope(
-            HttpServletRequest request, @PathVariable("clientId") long clientId, @PathVariable("scopeId") long scopeId) {
+            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), clientId);
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

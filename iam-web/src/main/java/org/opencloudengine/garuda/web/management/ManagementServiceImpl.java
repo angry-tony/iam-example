@@ -25,68 +25,63 @@ public class ManagementServiceImpl implements ManagementService {
     ConfigurationHelper configurationHelper;
 
     @Override
-    public List<Management> selectByUserId(Long userId) {
+    public List<Management> selectByUserId(String userId) {
         return managementRepository.selectByUserId(userId);
     }
 
     @Override
-    public Management selectById(Long id) {
+    public Management selectById(String id) {
         return managementRepository.selectById(id);
     }
 
     @Override
-    public Management selectByKey(String groupKey) {
-        return managementRepository.selectByKey(groupKey);
+    public Management selectByKey(String managementKey) {
+        return managementRepository.selectByKey(managementKey);
     }
 
     @Override
-    public Management selectByUserIdAndId(Long userId, Long id) {
+    public Management selectByUserIdAndId(String userId, String id) {
         return managementRepository.selectByUserIdAndId(userId, id);
     }
 
     @Override
-    public Management selectByCredential(String groupKey, String groupSecret) {
-        return managementRepository.selectByCredential(groupKey, groupSecret);
+    public Management selectByCredential(String managementKey, String managementSecret) {
+        return managementRepository.selectByCredential(managementKey, managementSecret);
     }
 
     @Override
-    public List<Management> selectByCondition(Management management) {
-        return managementRepository.selectByCondition(management);
-    }
-
-    @Override
-    public int createManagement(Long userId, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
+    public Management createManagement(String userId, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
         Management management = new Management();
         management.setUserId(userId);
-        management.setGroupName(groupName);
+        management.setManagementName(managementName);
         management.setDescription(description);
         management.setSessionTokenLifetime(sessionTokenLifetime);
         management.setScopeCheckLifetime(scopeCheckLifetime);
 
         //클라이언트 키
-        String groupKey = UUID.randomUUID().toString();
-        String groupSecret = UUID.randomUUID().toString();
-        String groupJwtSecret = UUID.randomUUID().toString();
+        String Key = UUID.randomUUID().toString();
+        String Secret = UUID.randomUUID().toString();
+        String JwtSecret = UUID.randomUUID().toString();
 
-        management.setGroupKey(groupKey);
-        management.setGroupSecret(groupSecret);
-        management.setGroupJwtSecret(groupJwtSecret);
+        management.setManagementKey(Key);
+        management.setManagementSecret(Secret);
+        management.setManagementJwtSecret(JwtSecret);
 
         return managementRepository.insert(management);
     }
 
     @Override
-    public int deleteById(Long id) {
-        return managementRepository.deleteById(id);
+    public void deleteById(String id) {
+        managementRepository.deleteById(id);
     }
 
     @Override
-    public int updateById(Long userId, Long id, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
+    public Management updateById(String userId, String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
         Management management = this.selectByUserIdAndId(userId, id);
         if (management == null) {
-            throw new ServiceException("Invalid management groupId");
+            throw new ServiceException("Invalid management id");
         }
 
-        return managementRepository.updateById(id, groupName, description, sessionTokenLifetime, scopeCheckLifetime);
+        return managementRepository.updateById(id, managementName, description, sessionTokenLifetime, scopeCheckLifetime);
     }
 }

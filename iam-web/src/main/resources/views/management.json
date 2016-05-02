@@ -1,0 +1,21 @@
+{
+  "_id": "_design/management",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) {if(doc.docType == \"management\"){emit([doc._id],doc); }}"
+    },
+    "selectByKey": {
+      "map": "function(doc) {if(doc.docType == \"management\"){emit([doc.managementKey],doc); }}"
+    },
+    "selectByUserIdAndId": {
+      "map": "function(doc) {if(doc.docType == \"management\"){emit([doc.userId,doc._id],doc); }}"
+    },
+    "selectByUserId": {
+      "map": "function(doc) {if(doc.docType == \"management\"){emit([doc.userId],doc); }}"
+    },
+    "selectByCredential": {
+      "map": "function(doc) {if(doc.docType == \"management\"){emit([doc.managementKey,doc.managementSecret],doc); }}"
+    }
+  }
+}

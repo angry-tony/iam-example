@@ -3,25 +3,22 @@ package org.opencloudengine.garuda.web.console.oauthclient;
 import java.util.List;
 
 public interface OauthClientRepository {
-    String NAMESPACE = OauthClientRepository.class.getName();
 
-    int insert(OauthClient OauthClient);
+    OauthClient insert(OauthClient OauthClient);
 
-    OauthClient selectById(Long id);
+    OauthClient selectById(String id);
 
-    List<OauthClient> selectByGroupId(Long groupId);
+    List<OauthClient> selectByManagementId(String managementId);
 
-    OauthClient selectByGroupIdAndName(Long groupId, String name);
+    OauthClient selectByManagementIdAndName(String managementId, String name);
 
-    OauthClient selectByGroupIdAndId(Long groupId, Long id);
+    OauthClient selectByManagementIdAndId(String managementId, String id);
 
     OauthClient selectByClientKey(String clientKey);
 
     OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
 
-    List<OauthClient> selectByCondition(OauthClient oauthClient);
+    OauthClient updateById(OauthClient OauthClient);
 
-    int updateById(OauthClient OauthClient);
-
-    int deleteById(Long id);
+    void deleteById(String id);
 }

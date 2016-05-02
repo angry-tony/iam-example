@@ -1,15 +1,24 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.util.HttpUtils;
+import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthScopeToken;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +39,12 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     private OauthTokenRepository oauthTokenRepository;
 
     @Override
-    public int insertCode(OauthCode oauthCode) {
+    public OauthCode insertCode(OauthCode oauthCode) {
         return oauthTokenRepository.insertCode(oauthCode);
     }
 
     @Override
-    public OauthCode selectCodeById(Long id) {
+    public OauthCode selectCodeById(String id) {
         return oauthTokenRepository.selectCodeById(id);
     }
 
@@ -45,23 +54,13 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
-    public OauthCode selectCodeByCodeAndClientId(String code, Long clientId) {
+    public OauthCode selectCodeByCodeAndClientId(String code, String clientId) {
         return oauthTokenRepository.selectCodeByCodeAndClientId(code, clientId);
     }
 
     @Override
-    public List<OauthCode> selectCodeByCondition(OauthCode oauthCode) {
-        return oauthTokenRepository.selectCodeByCondition(oauthCode);
-    }
-
-    @Override
-    public int updateCodeById(Long id) {
-        return oauthTokenRepository.updateCodeById(id);
-    }
-
-    @Override
-    public int deleteCodeById(Long id) {
-        return oauthTokenRepository.deleteCodeById(id);
+    public void deleteCodeById(String id) {
+        oauthTokenRepository.deleteCodeById(id);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
-    public OauthAccessToken selectTokenById(Long id) {
+    public OauthAccessToken selectTokenById(String id) {
         return oauthTokenRepository.selectTokenById(id);
     }
 
@@ -86,22 +85,70 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
-    public OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id) {
-        return oauthTokenRepository.selectTokenByGroupIdAndId(groupId, id);
+    public OauthAccessToken selectTokenByManagementIdAndId(String managementId, String id) {
+        return oauthTokenRepository.selectTokenByManagementIdAndId(managementId, id);
     }
 
     @Override
-    public List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken) {
-        return oauthTokenRepository.selectTokenByCondition(oauthAccessToken);
-    }
-
-    @Override
-    public int updateTokenById(OauthAccessToken oauthAccessToken) {
+    public OauthAccessToken updateTokenById(OauthAccessToken oauthAccessToken) {
         return oauthTokenRepository.updateTokenById(oauthAccessToken);
     }
 
     @Override
-    public int deleteTokenById(Long id) {
-        return oauthTokenRepository.deleteTokenById(id);
+    public void deleteTokenById(String id) {
+        oauthTokenRepository.deleteTokenById(id);
+    }
+
+    @Override
+    public String generateJWTToken(OauthUser oauthUser, OauthClient oauthClient, OauthAccessToken accessToken, String claimJson, Integer lifetime, String type) throws Exception {
+
+        //발급 시간
+        Date issueTime = new Date();
+
+        //만료시간
+        Date expirationTime = new Date(new Date().getTime() + lifetime * 1000);
+
+        //발급자
+        String issuer = config.getProperty("security.jwt.issuer");
+
+        //시그네이쳐 설정
+        String sharedSecret = config.getProperty("security.jwt.secret");
+        JWSSigner signer = new MACSigner(sharedSecret);
+
+        //콘텍스트 설정
+        Map context = new HashMap();
+
+        if(type.equals("user")){
+            context.put("managementId", accessToken.getManagementId());
+            context.put("clientId", accessToken.getClientId());
+            context.put("clientKey", oauthClient.getClientKey());
+            context.put("userId", accessToken.getOauthUserId());
+            context.put("userName", oauthUser.getUserName());
+            context.put("type", accessToken.getType());
+            context.put("scopes", accessToken.getScopes());
+            context.put("refreshToken", accessToken.getRefreshToken());
+        }else{
+            context.put("managementId", accessToken.getManagementId());
+            context.put("clientId", accessToken.getClientId());
+            context.put("clientKey", oauthClient.getClientKey());
+            context.put("type", accessToken.getType());
+            context.put("scopes", accessToken.getScopes());
+            context.put("refreshToken", accessToken.getRefreshToken());
+        }
+
+        JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
+        JWTClaimsSet claimsSet = builder
+                .issuer(issuer)
+                .issueTime(issueTime)
+                .expirationTime(expirationTime)
+                .claim("context", context)
+                .claim("claim", StringUtils.isEmpty(claimJson) ? new HashMap<>() : JsonUtils.marshal(claimJson))
+                .build();
+
+        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+
+        signedJWT.sign(signer);
+
+        return signedJWT.serialize();
     }
 }

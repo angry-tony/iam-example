@@ -1,0 +1,24 @@
+{
+  "_id": "_design/oauth_client",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc._id],doc); }}"
+    },
+    "selectByManagementId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc.managementId],doc); }}"
+    },
+    "selectByManagementIdAndName": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc.managementId,doc.name],doc); }}"
+    },
+    "selectByManagementIdAndId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc.managementId,doc._id],doc); }}"
+    },
+    "selectByClientKey": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc.clientKey],doc); }}"
+    },
+    "selectByClientKeyAndSecret": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client\"){emit([doc.clientKey,doc.clientSecret],doc); }}"
+    }
+  }
+}

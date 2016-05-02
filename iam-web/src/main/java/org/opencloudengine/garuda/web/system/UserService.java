@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,73 +32,28 @@ public interface UserService {
      * 이메일 확인 후 사용자의 가입 신청을 처리한다.
      *
      * @param email 사용자메일
-     * @return true or false
      */
-    boolean acknowledge(String email);
+    void acknowledge(String email);
 
     /**
      * 이메일 확인 전 사용자의 가입 신청을 처리한다.
      *
-     * @param userMap User Map
-     * @return true or false
+     * @param user User Map
+     * @return User
      */
-    boolean createUser(Map userMap);
+    User createUser(User user);
 
-    /**
-     * 사용자의 비밀번호를 변경한다.
-     *
-     * @param userMap User Map
-     * @return true or false
-     */
-    boolean updatePassword(Map userMap);
 
-    /**
-     * 사용자를 삭제한다.
-     *
-     * @param email 사용자메일
-     * @return true or false
-     */
-    boolean deleteUser(String email);
+    User updatePassword(String email, String password);
 
-    /**
-     * 사용자 정보를 수정한다.
-     *
-     * @param userMap User Map
-     * @return true or false
-     */
-    boolean updateUserInfo(Map userMap);
+    void deleteUser(String email);
 
-    /**
-     * 사용자 정보를 가져온다.
-     *
-     * @param email 사용자메일
-     * @return User Information
-     */
-    User getUser(String email);
+    User updateUserInfo(User user);
 
-    /**
-     * 사용자 정보를 가져온다.
-     *
-     * @param id 사용자아이디
-     * @return User Information
-     */
-    User getUser(Long id);
+    User selectByUserId(String id);
 
-    /**
-     * 등록된 모든 사용자 정보를 가져온다.
-     *
-     * @param conditionMap 조회 조건
-     * @return User List
-     */
-    List<Map> getUserAll(Map conditionMap);
+    User selectByUserEmail(String email);
 
-    /**
-     * 사용자의 비밀번호를 가져온다.
-     *
-     * @param email 사용자메일
-     * @return 비밀번호
-     */
-    String getUserPassword(String email);
 
     /**
      * 사용자가 이메일 확인 대기중일 경우 true

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 
 @Service
@@ -63,6 +64,8 @@ public class OauthServiceImpl implements OauthService {
         authorizeResponse.setRedirectUri(request.getParameter("redirect_uri"));
         authorizeResponse.setScope(request.getParameter("scope"));
         authorizeResponse.setState(request.getParameter("state"));
+        authorizeResponse.setTokenType(request.getParameter("token_type"));
+        authorizeResponse.setClaim(request.getParameter("claim"));
 
         //필요한 값을 검증한다.
         if (StringUtils.isEmpty(authorizeResponse.getClientId())) {
@@ -91,8 +94,8 @@ public class OauthServiceImpl implements OauthService {
         authorizeResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         authorizeResponse.setManagement(management);
 
         //클라이언트의 리스폰트 타입 허용 범위를 체크한다.
@@ -119,6 +122,24 @@ public class OauthServiceImpl implements OauthService {
                 return authorizeResponse;
         }
 
+        //클레임을 검증한다.
+        String claim = authorizeResponse.getClaim();
+        if (responseType.equals("token")) {
+            if (!StringUtils.isEmpty(authorizeResponse.getTokenType())) {
+                if (authorizeResponse.getTokenType().equals("JWT")) {
+                    if (!StringUtils.isEmpty(authorizeResponse.getClaim())) {
+                        try {
+                            JsonUtils.unmarshal(claim);
+                        } catch (IOException ex) {
+                            authorizeResponse.setError(OauthConstant.INVALID_REQUEST);
+                            authorizeResponse.setError_description("claim for jwt must be a url encoded json object string format");
+                            return authorizeResponse;
+                        }
+                    }
+                }
+            }
+        }
+
         //리다이렉트 유알엘을 검증한다.
         if (StringUtils.isEmpty(authorizeResponse.getRedirectUri())) {
             authorizeResponse.setRedirectUri(oauthClient.getWebServerRedirectUri());
@@ -130,7 +151,7 @@ public class OauthServiceImpl implements OauthService {
         }
 
         //스코프를 검증한다.
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.getId());
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.get_id());
         List<OauthScope> requestScopes = new ArrayList<OauthScope>();
         List<String> enabelScopesNames = new ArrayList<>();
         for (int i = 0; i < clientScopes.size(); i++) {
@@ -170,6 +191,8 @@ public class OauthServiceImpl implements OauthService {
         accessTokenResponse.setPassword(request.getParameter("password"));
         accessTokenResponse.setAssertion(request.getParameter("assertion"));
         accessTokenResponse.setRefreshToken(request.getParameter("refresh_token"));
+        accessTokenResponse.setTokenType(request.getParameter("token_type"));
+        accessTokenResponse.setClaim(request.getParameter("claim"));
         accessTokenResponse.setResponse(response);
 
         //grant_type을 검증한다.
@@ -255,7 +278,8 @@ public class OauthServiceImpl implements OauthService {
 
     @Override
     public AuthorizeResponse fetchAuthorize(String managementKey, String clientKey, String userName,
-                                            String scopes, String responseType, String redirectUri, String state) {
+                                            String scopes, String responseType, String redirectUri, String state,
+                                            String tokenType, String claim) {
 
         AuthorizeResponse authorizeResponse = new AuthorizeResponse();
 
@@ -264,10 +288,12 @@ public class OauthServiceImpl implements OauthService {
         authorizeResponse.setScope(scopes);
         authorizeResponse.setState(state);
         authorizeResponse.setResponseType(responseType);
+        authorizeResponse.setTokenType(tokenType);
+        authorizeResponse.setClaim(URLDecoder.decode(claim));
         authorizeResponse.setOauthClient(oauthClientService.selectByClientKey(clientKey));
-        authorizeResponse.setOauthScopes(oauthScopeService.selectClientScopes(authorizeResponse.getOauthClient().getId()));
+        authorizeResponse.setOauthScopes(oauthScopeService.selectClientScopes(authorizeResponse.getOauthClient().get_id()));
         authorizeResponse.setManagement(managementService.selectByKey(managementKey));
-        authorizeResponse.setOauthUser(oauthUserService.selectByGroupIdAndUserName(authorizeResponse.getManagement().getId(), userName));
+        authorizeResponse.setOauthUser(oauthUserService.selectByManagementIdAndUserName(authorizeResponse.getManagement().get_id(), userName));
         return authorizeResponse;
     }
 
@@ -286,9 +312,9 @@ public class OauthServiceImpl implements OauthService {
                 //2. 코드와 스테이트를 리턴
                 case "code":
                     OauthCode oauthCode = new OauthCode();
-                    oauthCode.setGroupId(authorizeResponse.getManagement().getId());
-                    oauthCode.setClientId(authorizeResponse.getOauthClient().getId());
-                    oauthCode.setOauthUserId(authorizeResponse.getOauthUser().getId());
+                    oauthCode.setManagementId(authorizeResponse.getManagement().get_id());
+                    oauthCode.setClientId(authorizeResponse.getOauthClient().get_id());
+                    oauthCode.setOauthUserId(authorizeResponse.getOauthUser().get_id());
                     oauthCode.setCode(UUID.randomUUID().toString());
                     oauthCode.setScopes(authorizeResponse.getScope());
 
@@ -304,6 +330,7 @@ public class OauthServiceImpl implements OauthService {
                 //리스레쉬토큰이 허용될 경우 리프레쉬 토큰도 만든다.
                 //access_token,token_type,expires_in,scope,state 리턴
                 //토큰 타입은 bearer 이다.
+                //토큰 타입이 JWT 일 경우 jwt 토큰 제너레이션
                 case "token":
 
                     OauthAccessToken accessToken = new OauthAccessToken();
@@ -311,19 +338,30 @@ public class OauthServiceImpl implements OauthService {
                     accessToken.setType("user");
                     accessToken.setScopes(authorizeResponse.getScope());
                     accessToken.setToken(UUID.randomUUID().toString());
-                    accessToken.setOauthUserId(authorizeResponse.getOauthUser().getId());
-                    accessToken.setGroupId(authorizeResponse.getManagement().getId());
-                    accessToken.setClientId(authorizeResponse.getOauthClient().getId());
+                    accessToken.setOauthUserId(authorizeResponse.getOauthUser().get_id());
+                    accessToken.setManagementId(authorizeResponse.getManagement().get_id());
+                    accessToken.setClientId(authorizeResponse.getOauthClient().get_id());
 
                     if (authorizeResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
                         accessToken.setRefreshToken(UUID.randomUUID().toString());
                     }
 
+                    if (authorizeResponse.getTokenType().equals("JWT")) {
+                        String jwtToken = oauthTokenService.generateJWTToken(
+                                authorizeResponse.getOauthUser(), authorizeResponse.getOauthClient(),
+                                accessToken, authorizeResponse.getClaim(), authorizeResponse.getOauthClient().getJwtTokenLifetime(), "user");
+                        accessToken.setToken(jwtToken);
+
+                        params.put("token_type", "JWT");
+                        params.put("expires_in", authorizeResponse.getOauthClient().getJwtTokenLifetime());
+                    } else {
+                        params.put("token_type", "Bearer");
+                        params.put("expires_in", authorizeResponse.getOauthClient().getAccessTokenLifetime());
+                    }
+
                     oauthTokenService.insertToken(accessToken);
 
                     params.put("access_token", accessToken.getToken());
-                    params.put("token_type", "Bearer");
-                    params.put("expires_in", authorizeResponse.getOauthClient().getAccessTokenLifetime());
                     params.put("scope", authorizeResponse.getScope());
                     params.put("state", authorizeResponse.getState());
 

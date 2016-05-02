@@ -24,6 +24,7 @@ public class AccessTokenResponse implements Serializable {
     private String password;
     private String accessToken;
     private String tokenType;
+    private String claim;
     private String assertion;
     private Integer expiresIn;
     private String refreshToken;
@@ -124,6 +125,14 @@ public class AccessTokenResponse implements Serializable {
         this.tokenType = tokenType;
     }
 
+    public String getClaim() {
+        return claim;
+    }
+
+    public void setClaim(String claim) {
+        this.claim = claim;
+    }
+
     public String getAssertion() {
         return assertion;
     }
@@ -218,6 +227,7 @@ public class AccessTokenResponse implements Serializable {
                 ", password='" + password + '\'' +
                 ", accessToken='" + accessToken + '\'' +
                 ", tokenType='" + tokenType + '\'' +
+                ", claim='" + claim + '\'' +
                 ", assertion='" + assertion + '\'' +
                 ", expiresIn=" + expiresIn +
                 ", refreshToken='" + refreshToken + '\'' +

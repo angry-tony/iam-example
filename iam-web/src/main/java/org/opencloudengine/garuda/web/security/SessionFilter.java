@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2011 Flamingo Project (http://www.opencloudengine.org).
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,7 +57,7 @@ public class SessionFilter implements Filter {
         HttpSession session = req.getSession(false);
 
         //session에 User 객체가 있는경우 SessionUtils 유저 등록
-        if (session != null && session.getAttribute("user") != null ) {
+        if (session != null && session.getAttribute("user") != null) {
             User user = (User) session.getAttribute("user");
 
             SessionUtils.put(user);
@@ -69,22 +69,22 @@ public class SessionFilter implements Filter {
         else {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             //로그인에 성공한 상태인 경우에 한해 session에  User 객체를 넣어준다.
-            if (!(auth instanceof AnonymousAuthenticationToken)) {
+            if (!(auth instanceof AnonymousAuthenticationToken) && auth != null) {
                 ApplicationContext context = ApplicationContextRegistry.getApplicationContext();
                 UserService userService = context.getBean(UserService.class);
                 AESPasswordEncoder passwordEncoder = context.getBean(AESPasswordEncoder.class);
-                org.springframework.security.core.userdetails.User user
-                        = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-                Collection<GrantedAuthority> authorities = user.getAuthorities();
+
+                String email = (String) auth.getPrincipal();
+                CustomUserDetails details = (CustomUserDetails) auth.getDetails();
+                Collection<? extends GrantedAuthority> authorities = details.getAuthorities();
 
                 boolean admin = false;
                 for (GrantedAuthority authority : authorities) {
                     String authString = authority.getAuthority();
-                    if(authString.equals("ROLE_ADMIN"))
+                    if (authString.equals("ROLE_ADMIN"))
                         admin = true;
                 }
-                String email = user.getUsername();
-                User managedUser = userService.getUser(email);
+                User managedUser = userService.selectByUserEmail(email);
                 managedUser.setAdmin(admin);
                 managedUser.setPassword(passwordEncoder.decode(managedUser.getPassword()));
                 session.setAttribute("user", managedUser);
@@ -92,7 +92,7 @@ public class SessionFilter implements Filter {
                 SessionUtils.put(managedUser);
                 filterChain.doFilter(request, response);
                 SessionUtils.remove();
-            }else{
+            } else {
                 filterChain.doFilter(request, response);
             }
         }

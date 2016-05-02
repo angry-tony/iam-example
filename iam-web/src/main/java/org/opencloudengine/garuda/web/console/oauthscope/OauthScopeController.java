@@ -39,7 +39,7 @@ public class OauthScopeController {
     public ModelAndView list(HttpSession session) {
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
         ModelAndView mav = new ModelAndView("/console/scope/list");
 
         mav.addObject("management", management);
@@ -62,14 +62,13 @@ public class OauthScopeController {
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView create(HttpSession session,
                                @RequestParam(defaultValue = "") String name,
-                               @RequestParam(defaultValue = "") String description,
-                               @RequestParam(defaultValue = "") String additionalInformation
+                               @RequestParam(defaultValue = "") String description
     ) throws IOException {
         Management management = (Management) session.getAttribute("management");
 
         try {
             //같은 스코프 검색
-            OauthScope existScope = oauthScopeService.selectByGroupIdAndName(management.getId(), name);
+            OauthScope existScope = oauthScopeService.selectByManagementIdAndName(management.get_id(), name);
             if (existScope != null) {
                 ModelAndView mav = new ModelAndView("/console/scope/new");
                 mav.addObject("duplicate", true);
@@ -77,10 +76,10 @@ public class OauthScopeController {
             }
 
             //스코프 생성
-            oauthScopeService.createScope(management.getId(), name, description, additionalInformation);
+            oauthScopeService.createScope(management.get_id(), name, description);
 
             //리스트 페이지 반환
-            List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
             mav.addObject("management", management);
             mav.addObject("oauthScopes", oauthScopes);
@@ -97,12 +96,12 @@ public class OauthScopeController {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView edit(HttpSession session,
-                             @RequestParam(defaultValue = "") Long id) throws IOException {
+                             @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
         try {
             //스코프 검색
-            OauthScope oauthScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope oauthScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthScope == null) {
                 throw new ServiceException("Invalid oauth scope id");
             }
@@ -119,20 +118,20 @@ public class OauthScopeController {
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView delete(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id) throws IOException {
+                               @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
 
         try {
             //스코프 검색
-            OauthScope oauthScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope oauthScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthScope == null) {
                 throw new ServiceException("Invalid oauth scope id");
             }
 
-            oauthScopeService.deleteById(id);
+            oauthScopeService.deleteById(_id);
 
-            List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
             mav.addObject("management", management);
             mav.addObject("oauthScopes", oauthScopes);
@@ -146,7 +145,7 @@ public class OauthScopeController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView update(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id,
+                               @RequestParam(defaultValue = "") String _id,
                                @RequestParam(defaultValue = "") String name,
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") String additionalInformation) throws IOException {
@@ -155,15 +154,15 @@ public class OauthScopeController {
 
         try {
             //스코프 검색
-            OauthScope oauthScope = oauthScopeService.selectByGroupIdAndId(management.getId(), id);
+            OauthScope oauthScope = oauthScopeService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthScope == null) {
                 throw new ServiceException("Invalid oauth scope id");
             }
 
-            //같은 스코프 검색
-            OauthScope existScope = oauthScopeService.selectByGroupIdAndName(management.getId(), name);
+            //같은 이름의 스코프 검색
+            OauthScope existScope = oauthScopeService.selectByManagementIdAndName(management.get_id(), name);
             if (existScope != null) {
-                if (existScope.getId() != id) {
+                if (!existScope.get_id().equals(_id)) {
                     ModelAndView mav = new ModelAndView("/console/scope/edit");
                     mav.addObject("management", management);
                     mav.addObject("oauthScope", oauthScope);
@@ -172,9 +171,9 @@ public class OauthScopeController {
                 }
             }
 
-            oauthScopeService.updateById(id, name, description, additionalInformation);
+            oauthScopeService.updateById(_id, name, description);
 
-            List<OauthScope> oauthScopes = oauthScopeService.selectByGroupId(management.getId());
+            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
             mav.addObject("management", management);
             mav.addObject("oauthScopes", oauthScopes);

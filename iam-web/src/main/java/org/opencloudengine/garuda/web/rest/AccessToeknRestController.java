@@ -38,8 +38,8 @@ public class AccessToeknRestController {
     @Autowired
     private RestAuthService restAuthService;
 
-    @RequestMapping(value = "/token/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<OauthAccessToken> getToken(HttpServletRequest request, @PathVariable("id") long id) {
+    @RequestMapping(value = "/token/{_id}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<OauthAccessToken> getToken(HttpServletRequest request, @PathVariable("_id") String _id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -47,7 +47,7 @@ public class AccessToeknRestController {
         }
 
         try {
-            OauthAccessToken accessToken = oauthTokenService.selectTokenByGroupIdAndId(management.getId(), id);
+            OauthAccessToken accessToken = oauthTokenService.selectTokenByManagementIdAndId(management.get_id(), _id);
             if (accessToken == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -65,31 +65,30 @@ public class AccessToeknRestController {
         }
 
         try {
-            Long clientId = oauthAccessToken.getClientId();
-            OauthClient oauthClient = oauthClientService.selectByGroupIdAndId(management.getId(), clientId);
+            String clientId = oauthAccessToken.getClientId();
+            OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-
             if (oauthClient.getRefreshTokenValidity().equals("Y")) {
                 oauthAccessToken.setRefreshToken(UUID.randomUUID().toString());
             }
-            oauthAccessToken.setGroupId(management.getId());
+            oauthAccessToken.setManagementId(management.get_id());
             oauthAccessToken.setToken(UUID.randomUUID().toString());
 
             OauthAccessToken createdToken = oauthTokenService.insertToken(oauthAccessToken);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(ucBuilder.path("/rest/v1/token/{id}").buildAndExpand(createdToken.getId()).toUri());
+            headers.setLocation(ucBuilder.path("/rest/v1/token/{_id}").buildAndExpand(createdToken.get_id()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/token/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<OauthAccessToken> updateToken(HttpServletRequest request, @PathVariable("id") long id, @RequestBody OauthAccessToken oauthAccessToken) {
+    @RequestMapping(value = "/token/{_id}", method = RequestMethod.PUT)
+    public ResponseEntity<OauthAccessToken> updateToken(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthAccessToken oauthAccessToken) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -97,80 +96,41 @@ public class AccessToeknRestController {
         }
 
         try {
-            OauthAccessToken currentToken = oauthTokenService.selectTokenByGroupIdAndId(management.getId(), id);
+            OauthAccessToken currentToken = oauthTokenService.selectTokenByManagementIdAndId(management.get_id(), _id);
 
             if (currentToken == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             currentToken.setScopes(oauthAccessToken.getScopes());
-            currentToken.setAdditionalInformation(oauthAccessToken.getAdditionalInformation());
 
             oauthTokenService.updateTokenById(currentToken);
 
-            currentToken = oauthTokenService.selectTokenByGroupIdAndId(management.getId(), id);
+            currentToken = oauthTokenService.selectTokenByManagementIdAndId(management.get_id(), _id);
             return new ResponseEntity<>(currentToken, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/token/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthAccessToken> deleteToken(HttpServletRequest request, @PathVariable("id") long id) {
+    @RequestMapping(value = "/token/{_id}", method = RequestMethod.DELETE)
+    public ResponseEntity<OauthAccessToken> deleteToken(HttpServletRequest request, @PathVariable("_id") String _id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            OauthAccessToken currentToken = oauthTokenService.selectTokenByGroupIdAndId(management.getId(), id);
+            OauthAccessToken currentToken = oauthTokenService.selectTokenByManagementIdAndId(management.get_id(), _id);
 
             if (currentToken == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            oauthTokenService.deleteTokenById(currentToken.getId());
+            oauthTokenService.deleteTokenById(currentToken.get_id());
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @RequestMapping(value = "/search/token", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthAccessToken>> searchToken(HttpServletRequest request,
-                                                              @RequestParam(required = false) String type,
-                                                              @RequestParam(required = false) String scopes,
-                                                              @RequestParam(required = false) String token,
-                                                              @RequestParam(required = false) Long oauthUserId,
-                                                              @RequestParam(required = false) Long clientId,
-                                                              @RequestParam(required = false) String refreshToken,
-                                                              @RequestParam(required = false) String additionalInformation
-    ) {
-
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            OauthAccessToken accessToken = new OauthAccessToken();
-            accessToken.setGroupId(management.getId());
-            accessToken.setType(type);
-            accessToken.setScopes(scopes);
-            accessToken.setToken(token);
-            accessToken.setOauthUserId(oauthUserId);
-            accessToken.setClientId(clientId);
-            accessToken.setRefreshToken(refreshToken);
-            accessToken.setAdditionalInformation(additionalInformation);
-
-            List<OauthAccessToken> oauthAccessTokens = oauthTokenService.selectTokenByCondition(accessToken);
-
-            if (oauthAccessTokens.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(oauthAccessTokens, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }

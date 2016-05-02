@@ -70,13 +70,13 @@
                             <c:forEach items="${managements}" var="management" varStatus="status">
                                 <tr>
                                     <td name="groupName">
-                                        <a href="/management/session?groupId=${management.id}">${management.groupName}</a>
+                                        <a href="/management/session?_id=${management._id}">${management.managementName}</a>
                                     </td>
                                     <td>
                                             ${management.description}
                                     </td>
                                     <td>
-                                        <a href="/management/edit?groupId=${management.id}">Edit</a>
+                                        <a href="/management/edit?_id=${management._id}">Edit</a>
                                     </td>
                                 </tr>
                             </c:forEach>

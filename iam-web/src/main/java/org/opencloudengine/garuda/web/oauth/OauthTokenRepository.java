@@ -5,36 +5,29 @@ import org.opencloudengine.garuda.web.management.Management;
 import java.util.List;
 
 public interface OauthTokenRepository {
-    String NAMESPACE = OauthTokenRepository.class.getName();
 
-    int insertCode(OauthCode oauthCode);
+    OauthCode insertCode(OauthCode oauthCode);
 
-    OauthCode selectCodeById(Long id);
+    OauthCode selectCodeById(String id);
 
     OauthCode selectCodeByCode(String code);
 
-    OauthCode selectCodeByCodeAndClientId(String code, Long clientId);
+    OauthCode selectCodeByCodeAndClientId(String code, String clientId);
 
-    List<OauthCode> selectCodeByCondition(OauthCode oauthCode);
+    void deleteCodeById(String id);
 
-    int updateCodeById(Long id);
+    OauthAccessToken insertToken(OauthAccessToken oauthAccessToken);
 
-    int deleteCodeById(Long id);
-
-    int insertToken(OauthAccessToken oauthAccessToken);
-
-    OauthAccessToken selectTokenById(Long id);
+    OauthAccessToken selectTokenById(String id);
 
     OauthAccessToken selectTokenByToken(String token);
 
     OauthAccessToken selectTokenByRefreshToken(String refreshToken);
 
-    OauthAccessToken selectTokenByGroupIdAndId(Long groupId, Long id);
+    OauthAccessToken selectTokenByManagementIdAndId(String managementId, String id);
 
-    List<OauthAccessToken> selectTokenByCondition(OauthAccessToken oauthAccessToken);
+    OauthAccessToken updateTokenById(OauthAccessToken oauthAccessToken);
 
-    int updateTokenById(OauthAccessToken oauthAccessToken);
-
-    int deleteTokenById(Long id);
+    void deleteTokenById(String id);
 
 }

@@ -11,7 +11,8 @@ public interface OauthService {
     void responseAuthorize(AuthorizeResponse authorizeResponse);
 
     AuthorizeResponse fetchAuthorize(String managementKey, String clientKey, String userName,
-                                     String scopes, String responseType, String redirectUri, String state);
+                                     String scopes, String responseType, String redirectUri, String state,
+                                     String tokenType, String claim);
 
     void processAuthorize(AuthorizeResponse authorizeResponse, HttpServletResponse response) throws IOException;
 

@@ -28,11 +28,17 @@ import java.sql.Timestamp;
  */
 public class User implements Serializable {
 
-    private Long id;
+    private String _id;
+
+    private String _rev;
+
+    private String docType;
 
     private String email;
 
     private String password;
+
+    private String authority;
 
     private Boolean enabled;
 
@@ -40,11 +46,11 @@ public class User implements Serializable {
 
     private String description;
 
-    private Timestamp registerDate;
+    private Long regDate;
 
-    private Timestamp updateDate;
+    private Long updDate;
 
-    private Short level;
+    private String level;
 
     private String firstName;
 
@@ -77,12 +83,28 @@ public class User implements Serializable {
     public User() {
     }
 
-    public Long getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public String get_rev() {
+        return _rev;
+    }
+
+    public void set_rev(String _rev) {
+        this._rev = _rev;
+    }
+
+    public String getDocType() {
+        return docType;
+    }
+
+    public void setDocType(String docType) {
+        this.docType = docType;
     }
 
     public String getEmail() {
@@ -99,6 +121,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
     public Boolean getEnabled() {
@@ -125,27 +155,27 @@ public class User implements Serializable {
         this.description = description;
     }
 
-    public Timestamp getRegisterDate() {
-        return registerDate;
+    public Long getRegDate() {
+        return regDate;
     }
 
-    public void setRegisterDate(Timestamp registerDate) {
-        this.registerDate = registerDate;
+    public void setRegDate(Long regDate) {
+        this.regDate = regDate;
     }
 
-    public Timestamp getUpdateDate() {
-        return updateDate;
+    public Long getUpdDate() {
+        return updDate;
     }
 
-    public void setUpdateDate(Timestamp updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdDate(Long updDate) {
+        this.updDate = updDate;
     }
 
-    public Short getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(Short level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -253,7 +283,6 @@ public class User implements Serializable {
         this.taxid = taxid;
     }
 
-
     public boolean isAdmin() {
         return admin;
     }
@@ -262,32 +291,5 @@ public class User implements Serializable {
         this.admin = admin;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", enabled=" + enabled +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", registerDate=" + registerDate +
-                ", updateDate=" + updateDate +
-                ", level=" + level +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", organization='" + organization + '\'' +
-                ", country='" + country + '\'' +
-                ", countryName='" + countryName + '\'' +
-                ", address1='" + address1 + '\'' +
-                ", address2='" + address2 + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zip='" + zip + '\'' +
-                ", phone='" + phone + '\'' +
-                ", officePhone='" + officePhone + '\'' +
-                ", taxid='" + taxid + '\'' +
-                ", admin=" + admin +
-                '}';
-    }
+
 }

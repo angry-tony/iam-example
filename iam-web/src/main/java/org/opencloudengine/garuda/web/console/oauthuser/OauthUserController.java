@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.console.oauthuser;
 
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.common.security.SessionUtils;
+import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
 import org.opencloudengine.garuda.web.system.UserService;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 @Controller
@@ -39,7 +41,7 @@ public class OauthUserController {
     public ModelAndView list(HttpSession session) {
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthUser> oauthUsers = oauthUserService.selectByGroupId(management.getId());
+        List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
         ModelAndView mav = new ModelAndView("/console/user/list");
 
         mav.addObject("management", management);
@@ -61,16 +63,17 @@ public class OauthUserController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView create(HttpSession session,
-                               @RequestParam(defaultValue = "") String userName,
-                               @RequestParam(defaultValue = "") String userPassword,
-                               @RequestParam(defaultValue = "5") Integer level,
-                               @RequestParam(defaultValue = "") String additionalInformation
+                               @RequestParam(defaultValue = "") String body
     ) throws IOException {
         Management management = (Management) session.getAttribute("management");
 
         try {
+            Map map = JsonUtils.unmarshal(body);
+            OauthUser oauthUser = new OauthUser();
+            oauthUser.putAll(map);
+
             //같은 유저 검색
-            OauthUser existUser = oauthUserService.selectByGroupIdAndUserName(management.getId(), userName);
+            OauthUser existUser = oauthUserService.selectByManagementIdAndUserName(management.get_id(), oauthUser.getUserName());
             if (existUser != null) {
                 ModelAndView mav = new ModelAndView("/console/user/new");
                 mav.addObject("duplicate", true);
@@ -78,10 +81,10 @@ public class OauthUserController {
             }
 
             //유저 생성
-            oauthUserService.createUser(management.getId(), userName, userPassword, level, additionalInformation);
+            oauthUserService.createUser(management.get_id(), oauthUser);
 
             //리스트 페이지 반환
-            List<OauthUser> oauthUsers = oauthUserService.selectByGroupId(management.getId());
+            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
             mav.addObject("oauthUsers", oauthUsers);
@@ -98,12 +101,12 @@ public class OauthUserController {
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView edit(HttpSession session,
-                             @RequestParam(defaultValue = "") Long id) throws IOException {
+                             @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
         try {
             //유저 검색
-            OauthUser oauthUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser oauthUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthUser == null) {
                 throw new ServiceException("Invalid oauth user id");
             }
@@ -111,6 +114,15 @@ public class OauthUserController {
             ModelAndView mav = new ModelAndView("/console/user/edit");
             mav.addObject("management", management);
             mav.addObject("oauthUser", oauthUser);
+
+            Map<String, Object> map = JsonUtils.convertClassToMap(oauthUser);
+            map.remove("_id");
+            map.remove("_rev");
+            map.remove("docType");
+            map.remove("managementId");
+            map.remove("regDate");
+            map.remove("updDate");
+            mav.addObject("oauthUserJson", JsonUtils.marshal(map));
             return mav;
         } catch (Exception ex) {
             throw new ServiceException("Invalid oauth user id");
@@ -120,20 +132,20 @@ public class OauthUserController {
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView delete(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id) throws IOException {
+                               @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
 
         try {
             //유저 검색
-            OauthUser oauthUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser oauthUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthUser == null) {
                 throw new ServiceException("Invalid oauth user id");
             }
 
-            oauthUserService.deleteById(id);
+            oauthUserService.deleteById(_id);
 
-            List<OauthUser> oauthUsers = oauthUserService.selectByGroupId(management.getId());
+            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
             mav.addObject("oauthUsers", oauthUsers);
@@ -147,25 +159,28 @@ public class OauthUserController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView update(HttpSession session,
-                               @RequestParam(defaultValue = "") Long id,
-                               @RequestParam(defaultValue = "") String userName,
-                               @RequestParam(defaultValue = "") String userPassword,
-                               @RequestParam(defaultValue = "5") Integer level,
-                               @RequestParam(defaultValue = "") String additionalInformation) throws IOException {
+                               @RequestParam(defaultValue = "") String _id,
+                               @RequestParam(defaultValue = "") String body) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
 
         try {
+            //유저 객체
+            Map map = JsonUtils.unmarshal(body);
+            OauthUser updateUser = new OauthUser();
+            updateUser.putAll(map);
+            updateUser.set_id(_id);
+
             //유저 검색
-            OauthUser oauthUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser oauthUser = oauthUserService.selectByManagementIdAndId(management.get_id(), updateUser.get_id());
             if (oauthUser == null) {
                 throw new ServiceException("Invalid oauth user id");
             }
 
-            //같은 유저 검색
-            OauthUser existUser = oauthUserService.selectByGroupIdAndUserName(management.getId(), userName);
+            //같은 이름 유저 검색
+            OauthUser existUser = oauthUserService.selectByManagementIdAndUserName(management.get_id(), updateUser.getUserName());
             if (existUser != null) {
-                if (existUser.getId() != id) {
+                if (!existUser.get_id().equals(updateUser.get_id())) {
                     ModelAndView mav = new ModelAndView("/console/user/edit");
                     mav.addObject("management", management);
                     mav.addObject("oauthUser", oauthUser);
@@ -173,10 +188,10 @@ public class OauthUserController {
                     return mav;
                 }
             }
+            oauthUserService.updateById(updateUser);
+            //oauthUserService.updateById(_id, userName, userPassword, level);
 
-            oauthUserService.updateById(id, userName, userPassword, level, additionalInformation);
-
-            List<OauthUser> oauthUsers = oauthUserService.selectByGroupId(management.getId());
+            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
             mav.addObject("oauthUsers", oauthUsers);

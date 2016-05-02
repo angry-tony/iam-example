@@ -1,0 +1,18 @@
+{
+  "_id": "_design/oauth_scope",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) {if(doc.docType == \"oauth_scope\"){emit([doc._id],doc); }}"
+    },
+    "selectByManagementId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_scope\"){emit([doc.managementId],doc); }}"
+    },
+    "selectByManagementIdAndName": {
+      "map": "function(doc) {if(doc.docType == \"oauth_scope\"){emit([doc.managementId,doc.name],doc); }}"
+    },
+    "selectByManagementIdAndId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_scope\"){emit([doc.managementId,doc._id],doc); }}"
+    }
+  }
+}

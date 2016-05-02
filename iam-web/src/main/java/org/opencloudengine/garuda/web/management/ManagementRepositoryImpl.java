@@ -1,81 +1,130 @@
 package org.opencloudengine.garuda.web.management;
 
+import com.cloudant.client.api.model.Response;
+import com.cloudant.client.api.views.Key;
+import com.cloudant.client.api.views.ViewRequestBuilder;
+import com.cloudant.client.api.views.ViewResponse;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
+import org.opencloudengine.garuda.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
-public class ManagementRepositoryImpl extends PersistentRepositoryImpl<String, Object> implements ManagementRepository {
+public class ManagementRepositoryImpl implements ManagementRepository {
 
-    @Override
-    public String getNamespace() {
-        return this.NAMESPACE;
-    }
+    private String NAMESPACE = "management";
 
     @Autowired
-    public ManagementRepositoryImpl(SqlSessionTemplate sqlSessionTemplate) {
-        super.setSqlSessionTemplate(sqlSessionTemplate);
+    CouchServiceFactory serviceFactory;
+
+    @Override
+    public Management insert(Management management) {
+        long time = new Date().getTime();
+        management.setDocType(NAMESPACE);
+        management.setRegDate(time);
+        management.setUpdDate(time);
+
+        Response response = serviceFactory.getDb().save(management);
+        management.set_id(response.getId());
+        management.set_rev(response.getRev());
+        return management;
     }
 
     @Override
-    public int insert(Management management) {
-        return this.getSqlSessionTemplate().insert(this.getNamespace() + ".insert", management);
+    public Management selectById(String id) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectById");
+            Key.ComplexKey complex = new Key().complex(id);
+            return builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Management selectById(Long id) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectById", id);
+    public Management selectByKey(String managementKey) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByKey");
+            Key.ComplexKey complex = new Key().complex(managementKey);
+            return builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Management selectByKey(String groupKey) {
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByKey", groupKey);
+    public Management selectByUserIdAndId(String userId, String id) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByUserIdAndId");
+            Key.ComplexKey complex = new Key().complex(userId).add(id);
+            return builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Management selectByUserIdAndId(Long userId, Long id) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        map.put("id", id);
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByUserIdAndId", map);
+    public List<Management> selectByUserId(String userId) {
+        List<Management> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByUserId");
+            Key.ComplexKey complex = new Key().complex(userId);
+            List<ViewResponse.Row<Key.ComplexKey, Management>> rows = builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, Management> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+        } catch (Exception ex) {
+            return list;
+        }
     }
 
     @Override
-    public List<Management> selectByUserId(Long userId) {
-        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByUserId", userId);
+    public Management selectByCredential(String managementKey, String managementSecret) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByCredential");
+            Key.ComplexKey complex = new Key().complex(managementKey).add(managementSecret);
+            return builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
-    public Management selectByCredential(String groupKey, String groupSecret) {
-        Map map = new HashMap();
-        map.put("groupKey", groupKey);
-        map.put("groupSecret", groupSecret);
-        return this.getSqlSessionTemplate().selectOne(this.getNamespace() + ".selectByCredential", map);
+    public Management updateById(String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
+
+        Management management = this.selectById(id);
+        management.setManagementName(managementName);
+        management.setDescription(description);
+        management.setSessionTokenLifetime(sessionTokenLifetime);
+        management.setScopeCheckLifetime(scopeCheckLifetime);
+
+        long time = new Date().getTime();
+        management.setUpdDate(time);
+
+        Response update = serviceFactory.getDb().update(management);
+        management.set_rev(update.getRev());
+        return management;
     }
 
     @Override
-    public List<Management> selectByCondition(Management management) {
-        return this.getSqlSessionTemplate().selectList(this.getNamespace() + ".selectByCondition", management);
-    }
-
-    @Override
-    public int updateById(Long id, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
-        Map map = new HashMap();
-        map.put("id", id);
-        map.put("groupName", groupName);
-        map.put("description", description);
-        map.put("sessionTokenLifetime", sessionTokenLifetime);
-        map.put("scopeCheckLifetime", scopeCheckLifetime);
-        return this.getSqlSessionTemplate().update(this.getNamespace() + ".updateById", map);
-    }
-
-    @Override
-    public int deleteById(Long id) {
-        return this.getSqlSessionTemplate().delete(this.getNamespace() + ".deleteById", id);
+    public void deleteById(String id) {
+        Management management = this.selectById(id);
+        serviceFactory.getDb().remove(management);
     }
 }

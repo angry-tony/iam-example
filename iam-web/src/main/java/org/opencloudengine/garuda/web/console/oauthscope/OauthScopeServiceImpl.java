@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,84 +23,77 @@ public class OauthScopeServiceImpl implements OauthScopeService {
     ConfigurationHelper configurationHelper;
 
     @Override
-    public OauthScope selectById(Long id) {
+    public OauthScope selectById(String id) {
         return oauthScopeRepository.selectById(id);
     }
 
     @Override
-    public List<OauthScope> selectByGroupId(Long groupId) {
-        return oauthScopeRepository.selectByGroupId(groupId);
+    public List<OauthScope> selectByManagementId(String managementId) {
+        return oauthScopeRepository.selectByManagementId(managementId);
     }
 
     @Override
-    public OauthScope selectByGroupIdAndName(Long groupId, String name) {
-        return oauthScopeRepository.selectByGroupIdAndName(groupId, name);
+    public OauthScope selectByManagementIdAndName(String managementId, String name) {
+        return oauthScopeRepository.selectByManagementIdAndName(managementId, name);
     }
 
     @Override
-    public OauthScope selectByGroupIdAndId(Long groupId, Long id) {
-        return oauthScopeRepository.selectByGroupIdAndId(groupId, id);
+    public OauthScope selectByManagementIdAndId(String managementId, String id) {
+        return oauthScopeRepository.selectByManagementIdAndId(managementId, id);
     }
 
     @Override
-    public List<OauthScope> selectByCondition(OauthScope oauthScope) {
-        return oauthScopeRepository.selectByCondition(oauthScope);
-    }
-
-    @Override
-    public int updateById(Long id, String name, String description, String additionalInformation) {
+    public OauthScope updateById(String id, String name, String description) {
         OauthScope OauthScope = new OauthScope();
-        OauthScope.setId(id);
+        OauthScope.set_id(id);
         OauthScope.setName(name);
         OauthScope.setDescription(description);
-        OauthScope.setAdditionalInformation(additionalInformation);
         return oauthScopeRepository.updateById(OauthScope);
     }
 
     @Override
-    public int updateById(OauthScope oauthScope) {
+    public OauthScope updateById(OauthScope oauthScope) {
         return oauthScopeRepository.updateById(oauthScope);
     }
 
     @Override
-    public int deleteById(Long id) {
-        return oauthScopeRepository.deleteById(id);
+    public void deleteById(String id) {
+        oauthScopeRepository.deleteById(id);
     }
 
     @Override
-    public OauthScope createScope(Long groupId, String name, String description, String additionalInformation) {
+    public OauthScope createScope(String managementId, String name, String description) {
         OauthScope OauthScope = new OauthScope();
-        OauthScope.setGroupId(groupId);
+        OauthScope.setManagementId(managementId);
         OauthScope.setName(name);
         OauthScope.setDescription(description);
-        OauthScope.setAdditionalInformation(additionalInformation);
         oauthScopeRepository.insert(OauthScope);
 
         return OauthScope;
     }
 
     @Override
-    public int insertClientScopes(OauthClientScopes oauthClientScopes) {
+    public OauthClientScopes insertClientScopes(OauthClientScopes oauthClientScopes) {
         return oauthScopeRepository.insertClientScopes(oauthClientScopes);
     }
 
     @Override
-    public List<OauthScope> selectClientScopes(Long clientId) {
+    public List<OauthScope> selectClientScopes(String clientId) {
         return oauthScopeRepository.selectClientScopes(clientId);
     }
 
     @Override
-    public OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId) {
+    public OauthScope selectClientScopesByScopeId(String clientId, String scopeId) {
         return oauthScopeRepository.selectClientScopesByScopeId(clientId, scopeId);
     }
 
     @Override
-    public int deleteClientScopes(Long clientId) {
-        return oauthScopeRepository.deleteClientScopes(clientId);
+    public void deleteClientScopes(String clientId){
+        oauthScopeRepository.deleteClientScopes(clientId);
     }
 
     @Override
-    public int deleteClientScopesByScopeId(Long clientId, Long scopeId) {
-        return oauthScopeRepository.deleteClientScopesByScopeId(clientId, scopeId);
+    public void deleteClientScopesByScopeId(String clientId, String scopeId) {
+        oauthScopeRepository.deleteClientScopesByScopeId(clientId, scopeId);
     }
 }

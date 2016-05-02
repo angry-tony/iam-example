@@ -1,10 +1,9 @@
 package org.opencloudengine.garuda.web.registe;
 
-import org.opencloudengine.garuda.common.repository.PersistentRepository;
+public interface RegisteRepository {
 
-public interface RegisteRepository extends PersistentRepository<Registe, Long> {
+    Registe selectByUserIdAndToken(Registe registe);
 
-    public static final String NAMESPACE = RegisteRepository.class.getName();
+    Registe insert(Registe registe);
 
-    Registe selectByUserEmail(Registe registe);
 }

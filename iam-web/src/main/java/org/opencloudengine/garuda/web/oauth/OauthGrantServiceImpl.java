@@ -49,6 +49,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
     @Override
     public void processTokenInfo(AccessTokenResponse accessTokenResponse) throws Exception {
 
+        //수행해야 할 것. UUID 인지 아닌지 확인.
+        //JWT 밸리데이트 과정 추가.
         Map map = new HashMap();
 
         //필요한 값을 검증한다.
@@ -57,53 +59,111 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
-        OauthAccessToken accessToken = oauthTokenService.selectTokenByToken(accessTokenResponse.getAccessToken());
-        if (accessToken == null) {
-            accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
-            accessTokenResponse.setError_description("Requested access_token is not exist.");
-            this.processRedirect(accessTokenResponse);
-            return;
+        String token = accessTokenResponse.getAccessToken();
+        boolean matches = token.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}");
+
+        //Bearer 토큰일경우
+        if(matches){
+            OauthAccessToken accessToken = oauthTokenService.selectTokenByToken(accessTokenResponse.getAccessToken());
+            if (accessToken == null) {
+                accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+                accessTokenResponse.setError_description("Requested access_token is not exist.");
+                this.processRedirect(accessTokenResponse);
+                return;
+            }
+
+            OauthClient oauthClient = oauthClientService.selectById(accessToken.getClientId());
+            OauthUser oauthUser = oauthUserService.selectById(accessToken.getOauthUserId());
+
+            //코드의 발급시간을 확인한다.
+            Long regDate = accessToken.getRegDate();
+            Date currentTime = new Date();
+            Date expirationTime = new Date(regDate + oauthClient.getAccessTokenLifetime() * 1000);
+            long diff = (long) Math.floor((expirationTime.getTime() - currentTime.getTime()) / 1000);
+
+            if (diff <= 0) {
+                accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+                accessTokenResponse.setError_description("requested access_token has expired.");
+                this.processRedirect(accessTokenResponse);
+                return;
+            } else {
+                map.put("expires_in", diff);
+            }
+
+            map.put("client", oauthClient.getClientKey());
+            if (oauthUser != null) {
+                map.put("username", oauthUser.getUserName());
+            }
+            if (!StringUtils.isEmpty(accessToken.getRefreshToken())) {
+                map.put("refreshToken", accessToken.getRefreshToken());
+            }
+            map.put("type", accessToken.getType());
+            map.put("scope", accessToken.getScopes());
+
+            String marshal = JsonUtils.marshal(map);
+            String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+            System.out.println(prettyPrint);
+
+            HttpServletResponse response = accessTokenResponse.getResponse();
+            response.setStatus(200);
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
+            response.setHeader("Cache-Control", "no-store");
+            response.setHeader("Pragma", "no-cache");
+            response.getWriter().write(prettyPrint);
         }
 
-        OauthClient oauthClient = oauthClientService.selectById(accessToken.getClientId());
-        OauthUser oauthUser = oauthUserService.selectById(accessToken.getOauthUserId());
+        //JWT 토큰일경우
+        else{
 
-        //코드의 발급시간을 확인한다.
-        Timestamp regDate = accessToken.getRegDate();
-        Date currentTime = new Date();
-        Date expirationTime = new Date(regDate.getTime() + oauthClient.getAccessTokenLifetime() * 1000);
-        long diff = (long) Math.floor((expirationTime.getTime() - currentTime.getTime()) / 1000);
+            JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(token);
 
-        if (diff <= 0) {
-            accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
-            accessTokenResponse.setError_description("requested access_token has expired.");
-            this.processRedirect(accessTokenResponse);
-            return;
-        } else {
-            map.put("expires_in", diff);
+            //이슈어 확인
+            String issuer = jwtClaimsSet.getIssuer();
+            if(!config.getProperty("security.jwt.issuer").equals(issuer)){
+                accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+                accessTokenResponse.setError_description("Invalid issuer.");
+                this.processRedirect(accessTokenResponse);
+                return;
+            }
+
+            String sharedSecret = config.getProperty("security.jwt.secret");
+
+            boolean validated = JwtUtils.validateToken(token, sharedSecret);
+            if(!validated){
+                accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+                accessTokenResponse.setError_description("Invalid token secret.");
+                this.processRedirect(accessTokenResponse);
+                return;
+            }
+
+            //코드의 발급시간을 확인한다.
+            Date currentTime = new Date();
+            Date expirationTime = jwtClaimsSet.getExpirationTime();
+            long diff = (long) Math.floor((expirationTime.getTime() - currentTime.getTime()) / 1000);
+
+            if (diff <= 0) {
+                accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
+                accessTokenResponse.setError_description("requested access_token has expired.");
+                this.processRedirect(accessTokenResponse);
+                return;
+            } else {
+                map.put("expires_in", diff);
+            }
+
+            Map<String, Object> claims = jwtClaimsSet.getClaims();
+            map.putAll(claims);
+
+            String marshal = JsonUtils.marshal(map);
+            String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+            System.out.println(prettyPrint);
+
+            HttpServletResponse response = accessTokenResponse.getResponse();
+            response.setStatus(200);
+            response.setHeader("Content-Type", "application/json;charset=UTF-8");
+            response.setHeader("Cache-Control", "no-store");
+            response.setHeader("Pragma", "no-cache");
+            response.getWriter().write(prettyPrint);
         }
-
-        map.put("client", oauthClient.getClientKey());
-        if (oauthUser != null) {
-            map.put("username", oauthUser.getUserName());
-        }
-        if (!StringUtils.isEmpty(accessToken.getRefreshToken())) {
-            map.put("refreshToken", accessToken.getRefreshToken());
-        }
-        map.put("type", accessToken.getType());
-        map.put("scope", accessToken.getScopes());
-        map.put("additionalInformation", accessToken.getAdditionalInformation());
-
-        String marshal = JsonUtils.marshal(map);
-        String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-        System.out.println(prettyPrint);
-
-        HttpServletResponse response = accessTokenResponse.getResponse();
-        response.setStatus(200);
-        response.setHeader("Content-Type", "application/json;charset=UTF-8");
-        response.setHeader("Cache-Control", "no-store");
-        response.setHeader("Pragma", "no-cache");
-        response.getWriter().write(prettyPrint);
     }
 
     @Override
@@ -111,6 +171,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         //필요한 값을 검증한다.
         String[] params = new String[]{"client_id", "client_secret", "grant_type", "refresh_token"};
         if (!this.checkParameters(params, accessTokenResponse)) {
+            return;
+        }
+
+        //클레임을 검증한다.
+        if (!this.checkClaim(accessTokenResponse)) {
             return;
         }
 
@@ -122,12 +187,12 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         accessTokenResponse.setManagement(management);
 
         //클라이언트가 리프레쉬 토큰을 허용하는지 알아본다.
-        if(!oauthClient.getRefreshTokenValidity().equals("Y")){
+        if (!oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type refresh_token");
             this.processRedirect(accessTokenResponse);
@@ -136,7 +201,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
         //어세스 토큰을 찾는다.
         OauthAccessToken accessToken = oauthTokenService.selectTokenByRefreshToken(accessTokenResponse.getRefreshToken());
-        if(accessToken == null){
+        if (accessToken == null) {
             accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
             accessTokenResponse.setError_description("Requested refresh_token is not exist.");
             this.processRedirect(accessTokenResponse);
@@ -144,7 +209,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //어세스 토큰의 발급자 확인
-        if(!accessToken.getClientId().equals(oauthClient.getId())){
+        if (!accessToken.getClientId().equals(oauthClient.get_id())) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("client does not have authority to requested refresh_token.");
             this.processRedirect(accessTokenResponse);
@@ -152,8 +217,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //어세스 토큰의 발급시간을 확인한다.
-        Timestamp regDate = accessToken.getRegDate();
-        Date expirationTime = new Date(regDate.getTime() + oauthClient.getRefreshTokenLifetime() * 1000);
+        Long regDate = accessToken.getRegDate();
+        Date expirationTime = new Date(regDate + oauthClient.getRefreshTokenLifetime() * 1000);
         int compareTo = new Date().compareTo(expirationTime);
         if (compareTo > 0) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
@@ -162,26 +227,24 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
-        //새로운 어세스토큰을 만들고 저장한다.
-        OauthAccessToken newAccessToken = new OauthAccessToken();
-        newAccessToken.setType("user");
-        newAccessToken.setScopes(accessToken.getScopes());
-        newAccessToken.setToken(UUID.randomUUID().toString());
-        newAccessToken.setOauthUserId(accessToken.getOauthUserId());
-        newAccessToken.setGroupId(management.getId());
-        newAccessToken.setClientId(oauthClient.getId());
-        newAccessToken.setRefreshToken(UUID.randomUUID().toString());
+        //스코프 설정
+        accessTokenResponse.setScope(accessToken.getScopes());
 
-        oauthTokenService.insertToken(newAccessToken);
+        //유저 설정,토큰 타입 설정
+        String type;
+        if (accessToken.getType().equals("user")) {
+            type = "user";
+            OauthUser oauthUser = oauthUserService.selectById(accessToken.getOauthUserId());
+            accessTokenResponse.setOauthUser(oauthUser);
+        } else {
+            type = "client";
+        }
 
-        //리스폰스에 리턴값을 세팅한다.
-        accessTokenResponse.setTokenType("Bearer");
-        accessTokenResponse.setAccessToken(newAccessToken.getToken());
-        accessTokenResponse.setRefreshToken(newAccessToken.getRefreshToken());
-        accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
+        //어세스 토큰을 만들고 저장한다.
+        AccessTokenResponse tokenResponse = this.insertAccessToken(accessTokenResponse, type);
 
         //리스폰스를 수행한다.
-        this.processRedirect(accessTokenResponse);
+        this.processRedirect(tokenResponse);
     }
 
     @Override
@@ -193,6 +256,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
+        //클레임을 검증한다.
+        if (!this.checkClaim(accessTokenResponse)) {
+            return;
+        }
+
         //클라이언트를 검증한다.
         OauthClient oauthClient = oauthClientService.selectByClientKey(accessTokenResponse.getClientId());
         if (!this.checkClient(oauthClient, accessTokenResponse)) {
@@ -201,8 +269,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         accessTokenResponse.setManagement(management);
 
         //클라이언트의 그런트 타입 허용 범위를 체크한다.
@@ -234,7 +302,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //코드를 찾는다.
-        OauthCode oauthCode = oauthTokenService.selectCodeByCodeAndClientId(accessTokenResponse.getCode(), oauthClient.getId());
+        OauthCode oauthCode = oauthTokenService.selectCodeByCodeAndClientId(accessTokenResponse.getCode(), oauthClient.get_id());
         if (oauthCode == null) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested code is not exist.");
@@ -242,8 +310,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
         //코드의 발급시간을 확인한다.
-        Timestamp regDate = oauthCode.getRegDate();
-        Date expirationTime = new Date(regDate.getTime() + oauthClient.getCodeLifetime() * 1000);
+        Long regDate = oauthCode.getRegDate();
+        Date expirationTime = new Date(regDate + oauthClient.getCodeLifetime() * 1000);
         int compareTo = new Date().compareTo(expirationTime);
         if (compareTo > 0) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
@@ -262,30 +330,10 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
         accessTokenResponse.setOauthUser(oauthUser);
 
+        accessTokenResponse.setScope(oauthCode.getScopes());
 
-        //어세스토큰을 만든고 저장한다.
-        OauthAccessToken accessToken = new OauthAccessToken();
-        accessToken.setType("user");
-        accessToken.setScopes(oauthCode.getScopes());
-        accessToken.setToken(UUID.randomUUID().toString());
-        accessToken.setOauthUserId(oauthUser.getId());
-        accessToken.setGroupId(management.getId());
-        accessToken.setClientId(oauthClient.getId());
-
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessToken.setRefreshToken(UUID.randomUUID().toString());
-        }
-        oauthTokenService.insertToken(accessToken);
-
-
-        //리스폰스에 리턴값을 세팅한다.
-        accessTokenResponse.setTokenType("Bearer");
-        accessTokenResponse.setAccessToken(accessToken.getToken());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
-        }
-        accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
-
+        //어세스 토큰을 만들고 저장한다.
+        this.insertAccessToken(accessTokenResponse, "user");
 
         //리스폰스를 수행한다.
         this.processRedirect(accessTokenResponse);
@@ -299,6 +347,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
+        //클레임을 검증한다.
+        if (!this.checkClaim(accessTokenResponse)) {
+            return;
+        }
+
         //클라이언트를 검증한다.
         OauthClient oauthClient = oauthClientService.selectByClientKey(accessTokenResponse.getClientId());
         if (!this.checkClient(oauthClient, accessTokenResponse)) {
@@ -307,8 +360,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         accessTokenResponse.setManagement(management);
 
         //클라이언트의 그런트 타입 허용 범위를 체크한다.
@@ -321,7 +374,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //스코프를 검증한다.
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.getId());
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.get_id());
         List<OauthScope> requestScopes = new ArrayList<OauthScope>();
         List<String> enabelScopesNames = new ArrayList<>();
         for (int i = 0; i < clientScopes.size(); i++) {
@@ -345,7 +398,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthScopes(requestScopes);
 
         //유저를 찾는다.
-        OauthUser oauthUser = oauthUserService.selectByGroupIdAndCredential(management.getId(), accessTokenResponse.getUsername(), accessTokenResponse.getPassword());
+        OauthUser oauthUser = oauthUserService.selectByManagementIdAndCredential(management.get_id(), accessTokenResponse.getUsername(), accessTokenResponse.getPassword());
         if (oauthUser == null) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested user is not exist.");
@@ -355,28 +408,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthUser(oauthUser);
 
 
-        //어세스토큰을 만들고 저장한다.
-        OauthAccessToken accessToken = new OauthAccessToken();
-        accessToken.setType("user");
-        accessToken.setScopes(accessTokenResponse.getScope());
-        accessToken.setToken(UUID.randomUUID().toString());
-        accessToken.setOauthUserId(oauthUser.getId());
-        accessToken.setGroupId(management.getId());
-        accessToken.setClientId(oauthClient.getId());
-
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessToken.setRefreshToken(UUID.randomUUID().toString());
-        }
-        oauthTokenService.insertToken(accessToken);
-
-
-        //리스폰스에 리턴값을 세팅한다.
-        accessTokenResponse.setTokenType("Bearer");
-        accessTokenResponse.setAccessToken(accessToken.getToken());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
-        }
-        accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
+        //어세스 토큰을 만들고 저장한다.
+        this.insertAccessToken(accessTokenResponse, "user");
 
         //리스폰스를 수행한다.
         this.processRedirect(accessTokenResponse);
@@ -390,6 +423,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
+        //클레임을 검증한다.
+        if (!this.checkClaim(accessTokenResponse)) {
+            return;
+        }
+
         //클라이언트를 검증한다.
         OauthClient oauthClient = oauthClientService.selectByClientKey(accessTokenResponse.getClientId());
         if (!this.checkClient(oauthClient, accessTokenResponse)) {
@@ -398,8 +436,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         accessTokenResponse.setManagement(management);
 
         //클라이언트의 그런트 타입 허용 범위를 체크한다.
@@ -412,7 +450,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //스코프를 검증한다.
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.getId());
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.get_id());
         List<OauthScope> requestScopes = new ArrayList<OauthScope>();
         List<String> enabelScopesNames = new ArrayList<>();
         for (int i = 0; i < clientScopes.size(); i++) {
@@ -436,27 +474,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthScopes(requestScopes);
 
 
-        //어세스토큰을 만들고 저장한다.
-        OauthAccessToken accessToken = new OauthAccessToken();
-        accessToken.setType("client");
-        accessToken.setScopes(accessTokenResponse.getScope());
-        accessToken.setToken(UUID.randomUUID().toString());
-        accessToken.setGroupId(management.getId());
-        accessToken.setClientId(oauthClient.getId());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessToken.setRefreshToken(UUID.randomUUID().toString());
-        }
-
-        oauthTokenService.insertToken(accessToken);
-
-
-        //리스폰스에 리턴값을 세팅한다.
-        accessTokenResponse.setTokenType("Bearer");
-        accessTokenResponse.setAccessToken(accessToken.getToken());
-        accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
-            accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
-        }
+        //어세스 토큰을 만들고 저장한다.
+        this.insertAccessToken(accessTokenResponse, "client");
 
         //리스폰스를 수행한다.
         this.processRedirect(accessTokenResponse);
@@ -528,8 +547,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthClient(oauthClient);
 
         //매니지먼트를 등록한다.
-        Long groupId = oauthClient.getGroupId();
-        Management management = managementService.selectById(groupId);
+        String managementId = oauthClient.getManagementId();
+        Management management = managementService.selectById(managementId);
         accessTokenResponse.setManagement(management);
 
         //클라이언트의 그런트 타입 허용 범위를 체크한다.
@@ -542,7 +561,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //스코프를 검증한다.
-        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.getId());
+        List<OauthScope> clientScopes = oauthScopeService.selectClientScopes(oauthClient.get_id());
         List<OauthScope> requestScopes = new ArrayList<OauthScope>();
         List<String> enabelScopesNames = new ArrayList<>();
         for (int i = 0; i < clientScopes.size(); i++) {
@@ -571,8 +590,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setType("client");
         accessToken.setScopes(accessTokenResponse.getScope());
         accessToken.setToken(UUID.randomUUID().toString());
-        accessToken.setGroupId(management.getId());
-        accessToken.setClientId(oauthClient.getId());
+        accessToken.setManagementId(management.get_id());
+        accessToken.setClientId(oauthClient.get_id());
         if (oauthClient.getRefreshTokenValidity().equals("Y")) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
         }
@@ -781,5 +800,77 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         return true;
+    }
+
+    private boolean checkClaim(AccessTokenResponse accessTokenResponse) {
+        String claim = accessTokenResponse.getClaim();
+        if (!StringUtils.isEmpty(accessTokenResponse.getTokenType())) {
+            if (accessTokenResponse.getTokenType().equals("JWT")) {
+                if (!StringUtils.isEmpty(accessTokenResponse.getClaim())) {
+                    try {
+                        JsonUtils.unmarshal(claim);
+                    } catch (IOException ex) {
+                        accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
+                        accessTokenResponse.setError_description("claim for jwt must be a json object string format");
+                        this.processRedirect(accessTokenResponse);
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private AccessTokenResponse insertAccessToken(AccessTokenResponse accessTokenResponse, String type) throws Exception {
+        //어세스토큰을 만들고 저장한다.
+        OauthAccessToken accessToken = new OauthAccessToken();
+
+        if (type.equals("user")) {
+            accessToken.setType("user");
+            accessToken.setOauthUserId(accessTokenResponse.getOauthUser().get_id());
+        } else {
+            accessToken.setType("client");
+        }
+        accessToken.setScopes(accessTokenResponse.getScope());
+        accessToken.setToken(UUID.randomUUID().toString());
+        accessToken.setManagementId(accessTokenResponse.getManagement().get_id());
+        accessToken.setClientId(accessTokenResponse.getOauthClient().get_id());
+
+        if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+            accessToken.setRefreshToken(UUID.randomUUID().toString());
+        }
+
+        //토큰 타입이 명시되지 않으면 배리어이다.
+        if (accessTokenResponse.getTokenType() == null) {
+            accessTokenResponse.setTokenType("Bearer");
+        }
+
+        if (accessTokenResponse.getTokenType().equals("JWT")) {
+            String jwtToken = oauthTokenService.generateJWTToken(accessTokenResponse.getOauthUser(),
+                    accessTokenResponse.getOauthClient(),
+                    accessToken, accessTokenResponse.getClaim(),
+                    accessTokenResponse.getOauthClient().getJwtTokenLifetime(), type);
+            accessToken.setToken(jwtToken);
+
+            //리스폰스에 리턴값을 세팅한다.
+            accessTokenResponse.setTokenType("JWT");
+            accessTokenResponse.setAccessToken(accessToken.getToken());
+            if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+                accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
+            }
+            accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getJwtTokenLifetime());
+        } else {
+            //리스폰스에 리턴값을 세팅한다.
+            accessTokenResponse.setTokenType("Bearer");
+            accessTokenResponse.setAccessToken(accessToken.getToken());
+            if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+                accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
+            }
+            accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getAccessTokenLifetime());
+        }
+
+        oauthTokenService.insertToken(accessToken);
+
+        return accessTokenResponse;
     }
 }

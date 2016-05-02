@@ -28,16 +28,16 @@ public class RestAuthServiceImpl implements RestAuthService {
     public Management managementParser(HttpServletRequest request) {
 
         Map<String, String> headers = this.getHeaders(request);
-        String groupKey = headers.get("management-key");
-        String groupSecret = headers.get("management-secret");
+        String managementKey = headers.get("management-key");
+        String managementSecret = headers.get("management-secret");
 
         String clientKey = headers.get("client-key");
         String clientSecret = headers.get("client-secret");
 
 
         //매니지먼트 키와 시크릿으로 헤더 파악
-        if (!StringUtils.isEmpty(groupKey) && !StringUtils.isEmpty(groupSecret)) {
-            return managementService.selectByCredential(groupKey, groupSecret);
+        if (!StringUtils.isEmpty(managementKey) && !StringUtils.isEmpty(managementSecret)) {
+            return managementService.selectByCredential(managementKey, managementSecret);
         }
         //클라이언트 키와 시크릿 헤더 파악
         else if (!StringUtils.isEmpty(clientKey) && !StringUtils.isEmpty(clientSecret)) {
@@ -49,7 +49,7 @@ public class RestAuthServiceImpl implements RestAuthService {
             if (!oauthClient.getClientTrust().equals("trust")) {
                 return null;
             }
-            return managementService.selectById(oauthClient.getGroupId());
+            return managementService.selectById(oauthClient.getManagementId());
 
         } else {
             return null;

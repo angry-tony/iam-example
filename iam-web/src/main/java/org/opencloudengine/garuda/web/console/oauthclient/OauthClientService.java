@@ -4,29 +4,27 @@ import java.util.List;
 
 public interface OauthClientService {
 
-    OauthClient selectById(Long id);
+    OauthClient selectById(String id);
 
-    List<OauthClient> selectByGroupId(Long groupId);
+    List<OauthClient> selectByManagementId(String managementId);
 
-    OauthClient selectByGroupIdAndName(Long groupId, String name);
+    OauthClient selectByManagementIdAndName(String managementId, String name);
 
-    OauthClient selectByGroupIdAndId(Long groupId, Long id);
+    OauthClient selectByManagementIdAndId(String managementId, String id);
 
     OauthClient selectByClientKey(String clientKey);
 
     OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
 
-    List<OauthClient> selectByCondition(OauthClient oauthClient);
+    OauthClient updateById(String id, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
+                           String webServerRedirectUri, String refreshTokenValidity, Integer codeLifetime,
+                           Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
 
-    int updateById(Long id, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
-                   String webServerRedirectUri, String refreshTokenValidity, String additionalInformation, Integer codeLifetime,
-                   Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
+    OauthClient updateById(OauthClient oauthClient);
 
-    int updateById(OauthClient oauthClient);
+    void deleteById(String id);
 
-    int deleteById(Long id);
-
-    OauthClient createClient(Long groupId, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
-                     String webServerRedirectUri, String refreshTokenValidity, String additionalInformation, Integer codeLifetime,
-                     Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
+    OauthClient createClient(String managementId, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
+                             String webServerRedirectUri, String refreshTokenValidity, Integer codeLifetime,
+                             Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
 }

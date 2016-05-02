@@ -18,8 +18,10 @@
 package org.opencloudengine.garuda.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.opencloudengine.garuda.common.exception.ServiceException;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,36 @@ public class JsonUtils {
     public static Map<String, Object> convertClassToMap(Object obj) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.convertValue(obj, Map.class);
+    }
+
+    public static <T> T merge(Object obj, Object update) {
+        if (!obj.getClass().isAssignableFrom(update.getClass())) {
+            throw new ServiceException(obj.getClass().getName() +
+                    "is not assignable from" + update.getClass().getName());
+        }
+
+        Method[] methods = obj.getClass().getMethods();
+
+        for (Method fromMethod : methods) {
+            if (fromMethod.getDeclaringClass().equals(obj.getClass())
+                    && fromMethod.getName().startsWith("get")) {
+
+                String fromName = fromMethod.getName();
+                String toName = fromName.replace("get", "set");
+
+                try {
+                    Method toMetod = obj.getClass().getMethod(toName, fromMethod.getReturnType());
+                    Object value = fromMethod.invoke(update, (Object[]) null);
+                    if (value != null) {
+                        toMetod.invoke(obj, value);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return (T) obj;
     }
 
 }

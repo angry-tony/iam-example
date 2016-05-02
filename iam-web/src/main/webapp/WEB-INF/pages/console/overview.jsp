@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -62,7 +62,7 @@
 
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" readonly="true"
-                                           value="${management.groupKey}">
+                                           value="${management.managementKey}">
                                 </div>
                             </div>
 
@@ -71,7 +71,7 @@
 
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" readonly="true"
-                                           value="${management.groupSecret}">
+                                           value="${management.managementSecret}">
                                 </div>
                             </div>
 
@@ -80,7 +80,7 @@
 
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" readonly="true"
-                                           value="${management.groupJwtSecret}">
+                                           value="${management.managementJwtSecret}">
                                 </div>
                             </div>
                         </form>

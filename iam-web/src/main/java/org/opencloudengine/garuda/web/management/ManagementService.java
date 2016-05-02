@@ -7,21 +7,19 @@ import java.util.Map;
 
 public interface ManagementService {
 
-    List<Management> selectByUserId(Long userId);
+    List<Management> selectByUserId(String userId);
 
-    Management selectById(Long id);
+    Management selectById(String id);
 
-    Management selectByKey(String groupKey);
+    Management selectByKey(String managementKey);
 
-    Management selectByUserIdAndId(Long userId, Long id);
+    Management selectByUserIdAndId(String userId, String id);
 
-    Management selectByCredential(String groupKey, String groupSecret);
+    Management selectByCredential(String managementKey, String managementSecret);
 
-    List<Management> selectByCondition(Management management);
+    Management createManagement(String userId, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 
-    int createManagement(Long userId, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
+    void deleteById(String id);
 
-    int deleteById(Long id);
-
-    int updateById(Long userId, Long id, String groupName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
+    Management updateById(String userId, String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 }

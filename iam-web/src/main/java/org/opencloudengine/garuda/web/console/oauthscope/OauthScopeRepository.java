@@ -2,34 +2,33 @@ package org.opencloudengine.garuda.web.console.oauthscope;
 
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface OauthScopeRepository {
     String NAMESPACE = OauthScopeRepository.class.getName();
 
-    int insert(OauthScope oauthUser);
+    OauthScope insert(OauthScope oauthUser);
 
-    OauthScope selectById(Long id);
+    OauthScope selectById(String id);
 
-    List<OauthScope> selectByGroupId(Long groupId);
+    List<OauthScope> selectByManagementId(String managementId);
 
-    OauthScope selectByGroupIdAndName(Long groupId, String name);
+    OauthScope selectByManagementIdAndName(String managementId, String name);
 
-    OauthScope selectByGroupIdAndId(Long groupId, Long id);
+    OauthScope selectByManagementIdAndId(String managementId, String id);
 
-    List<OauthScope> selectByCondition(OauthScope oauthScope);
+    OauthScope updateById(OauthScope oauthScope);
 
-    int updateById(OauthScope oauthScope);
+    void deleteById(String id);
 
-    int deleteById(Long id);
+    OauthClientScopes insertClientScopes(OauthClientScopes oauthClientScopes);
 
-    int insertClientScopes(OauthClientScopes oauthClientScopes);
+    List<OauthScope> selectClientScopes(String clientId);
 
-    List<OauthScope> selectClientScopes(Long clientId);
+    OauthScope selectClientScopesByScopeId(String clientId, String scopeId);
 
-    OauthScope selectClientScopesByScopeId(Long clientId, Long scopeId);
+    void deleteClientScopes(String clientId);
 
-    int deleteClientScopes(Long clientId);
-
-    int deleteClientScopesByScopeId(Long clientId, Long scopeId);
+    void deleteClientScopesByScopeId(String clientId, String scopeId);
 }

@@ -4,23 +4,20 @@ import java.util.List;
 import java.util.Map;
 
 public interface ManagementRepository {
-    String NAMESPACE = ManagementRepository.class.getName();
 
-    int insert(Management management);
+    Management insert(Management management);
 
-    Management selectById(Long id);
+    Management selectById(String id);
 
-    Management selectByKey(String groupKey);
+    Management selectByKey(String managementKey);
 
-    Management selectByUserIdAndId(Long userId, Long id);
+    Management selectByUserIdAndId(String userId, String id);
 
-    List<Management> selectByUserId(Long userId);
+    List<Management> selectByUserId(String userId);
 
-    Management selectByCredential(String groupKey, String groupSecret);
+    Management selectByCredential(String managementKey, String managementSecret);
 
-    List<Management> selectByCondition(Management management);
+    Management updateById(String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 
-    int updateById(Long id, String groupName, String description,Integer sessionTokenLifetime, Integer scopeCheckLifetime);
-
-    int deleteById(Long id);
+    void deleteById(String id);
 }

@@ -37,7 +37,7 @@ public class OauthUserRestController {
         }
 
         try {
-            List<OauthUser> users = oauthUserService.selectByGroupId(management.getId());
+            List<OauthUser> users = oauthUserService.selectByManagementId(management.get_id());
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -47,8 +47,8 @@ public class OauthUserRestController {
         }
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<OauthUser> getUser(HttpServletRequest request, @PathVariable("id") long id) {
+    @RequestMapping(value = "/user/{_id}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<OauthUser> getUser(HttpServletRequest request, @PathVariable("_id") String _id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -56,7 +56,7 @@ public class OauthUserRestController {
         }
 
         try {
-            OauthUser oauthUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser oauthUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthUser == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
@@ -75,23 +75,23 @@ public class OauthUserRestController {
 
         try {
 
-            OauthUser existUser = oauthUserService.selectByGroupIdAndUserName(management.getId(), oauthUser.getUserName());
+            OauthUser existUser = oauthUserService.selectByManagementIdAndUserName(management.get_id(), oauthUser.getUserName());
             if (existUser != null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
             }
 
-            OauthUser createdUser = oauthUserService.createUser(management.getId(), oauthUser.getUserName(), oauthUser.getUserPassword(), oauthUser.getLevel(), oauthUser.getAdditionalInformation());
+            OauthUser createdUser = oauthUserService.createUser(management.get_id(), oauthUser);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(ucBuilder.path("/rest/v1/user/{id}").buildAndExpand(createdUser.getId()).toUri());
+            headers.setLocation(ucBuilder.path("/rest/v1/user/{_id}").buildAndExpand(createdUser.get_id()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<OauthUser> updateUser(HttpServletRequest request, @PathVariable("id") long id, @RequestBody OauthUser oauthUser) {
+    @RequestMapping(value = "/user/{_id}", method = RequestMethod.PUT)
+    public ResponseEntity<OauthUser> updateUser(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthUser oauthUser) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -99,71 +99,40 @@ public class OauthUserRestController {
         }
 
         try {
-            OauthUser currentUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser currentUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentUser == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            oauthUser.setId(currentUser.getId());
-            oauthUserService.updateById(oauthUser.getId(),oauthUser.getUserName(),oauthUser.getUserPassword(),oauthUser.getLevel(),oauthUser.getAdditionalInformation());
-            //oauthUserService.updateById(oauthUser);
+            oauthUser.set_id(currentUser.get_id());
+            oauthUserService.updateById(oauthUser);
 
-            currentUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            currentUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
             return new ResponseEntity<>(currentUser, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthUser> deleteUser(HttpServletRequest request, @PathVariable("id") long id) {
+    @RequestMapping(value = "/user/{_id}", method = RequestMethod.DELETE)
+    public ResponseEntity<OauthUser> deleteUser(HttpServletRequest request, @PathVariable("_id") String _id) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            OauthUser currentUser = oauthUserService.selectByGroupIdAndId(management.getId(), id);
+            OauthUser currentUser = oauthUserService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentUser == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            oauthUserService.deleteById(currentUser.getId());
+            oauthUserService.deleteById(currentUser.get_id());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
-
-    @RequestMapping(value = "/search/user", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthUser>> searchUser(HttpServletRequest request,
-                                                @RequestParam(required = false) String userName,
-                                                @RequestParam(required = false) String userPassword,
-                                                @RequestParam(required = false) Integer level,
-                                                @RequestParam(required = false) String additionalInformation) {
-
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            OauthUser oauthUser = new OauthUser();
-            oauthUser.setGroupId(management.getId());
-            oauthUser.setUserName(userName);
-            oauthUser.setUserPassword(userPassword);
-            oauthUser.setLevel(level);
-            oauthUser.setAdditionalInformation(additionalInformation);
-
-            List<OauthUser> users = oauthUserService.selectByCondition(oauthUser);
-            if (users.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(users, HttpStatus.OK);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }

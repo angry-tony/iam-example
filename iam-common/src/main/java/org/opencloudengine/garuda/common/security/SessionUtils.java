@@ -48,9 +48,9 @@ public class SessionUtils {
         users.remove();
     }
 
-    public static Long getId() {
+    public static String getId() {
         User user = users.get();
-        return user.getId();
+        return user.get_id();
     }
 
     public static String getPasswd() {
@@ -68,7 +68,7 @@ public class SessionUtils {
         return user.getEmail();
     }
 
-    public static int getLevel() {
+    public static String getLevel() {
         User user = users.get();
         return user.getLevel();
     }

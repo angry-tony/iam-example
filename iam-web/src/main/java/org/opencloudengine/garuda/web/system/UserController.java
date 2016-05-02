@@ -1,22 +1,23 @@
 /**
  * Copyright (C) 2011 Flamingo Project (http://www.opencloudengine.org).
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.opencloudengine.garuda.web.system;
 
 import org.opencloudengine.garuda.common.security.SessionUtils;
+import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.DateUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.configuration.DefaultController;
@@ -84,14 +85,14 @@ public class UserController extends DefaultController {
      */
     @RequestMapping(value = "/sendPasswd", method = RequestMethod.POST)
     public ModelAndView registerRequest(
-            @RequestParam String email ) {
+            @RequestParam String email) {
 
-        try{
+        try {
             //계정은 없는 경우
-            if (userService.getUser(email) == null) {
+            if (userService.selectByUserEmail(email) == null) {
                 ModelAndView mav = new ModelAndView();
                 mav.setViewName("/auth/sendPasswdFail");
-                mav.addObject("responseEmail" , email);
+                mav.addObject("responseEmail", email);
                 return mav;
             }
             //계정이 있을 경우 패스워드변경 페이지 이메일 전송 후 화면 이동시킨다.
@@ -101,13 +102,14 @@ public class UserController extends DefaultController {
             mav.setViewName("/auth/sendPasswdSuccess");
             return mav;
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/auth/sendPasswdFail");
-            mav.addObject("responseEmail" , email);
+            mav.addObject("responseEmail", email);
             return mav;
         }
     }
+
     @RequestMapping(value = "/passwdConfirm", method = RequestMethod.GET)
     public ModelAndView confirm(HttpServletResponse res, @RequestParam String userid, @RequestParam String token) throws IOException {
         long tokenTimestamp = Long.parseLong(new String(Base64.decodeBase64(token)));
@@ -116,17 +118,17 @@ public class UserController extends DefaultController {
             mav.setViewName("/auth/error-401");
             return mav;
         }
-        try{
-            if(userService.reqPasswdExist(userid , token)){
+        try {
+            if (userService.reqPasswdExist(userid, token)) {
                 ModelAndView mav = new ModelAndView();
                 mav.setViewName("/auth/repasswd");
                 return mav;
-            }else{
+            } else {
                 ModelAndView mav = new ModelAndView();
                 mav.setViewName("/auth/error-401");
                 return mav;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/auth/error-401");
             return mav;
@@ -148,10 +150,7 @@ public class UserController extends DefaultController {
             return mav;
         }
 
-        Map map = new HashMap();
-        map.put("email", email);
-        map.put("password", passwordEncoder.encode(newPassword));
-        userService.updatePassword(map);
+        userService.updatePassword(email, passwordEncoder.encode(newPassword));
 
         ModelAndView mav = new ModelAndView();
         mav.setViewName("/auth/passwdChanged");
@@ -161,14 +160,13 @@ public class UserController extends DefaultController {
     /**
      * 사용자 정보를 수정한다.( 패스워드 제외 )
      *
-     * @param userString 사용자 정보 JsonString
+     * @param user 사용자
      */
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.POST)
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
-    public ModelAndView updateUserInfo(@RequestBody String userString) {
+    public ModelAndView updateUserInfo(@RequestBody User user) {
         try {
-            Map userMap = JsonUtils.unmarshal(userString);
-            userService.updateUserInfo(userMap);
+            userService.updateUserInfo(user);
             ModelAndView mav = new ModelAndView();
             mav.setViewName("/auth/reviewUserInfo");
             return mav;

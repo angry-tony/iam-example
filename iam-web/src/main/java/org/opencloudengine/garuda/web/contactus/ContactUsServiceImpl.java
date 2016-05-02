@@ -15,14 +15,14 @@ public class ContactUsServiceImpl implements ContactUsService {
     private Properties config;
 
     @Autowired
-    private ContactUsRepository repository;
+    private ContactUsRepository contactUsRepository;
 
     @Autowired
     private MailService mailService;
 
     @Override
     public void sendContactMail(ContactUs contactUs) {
-        repository.insert(contactUs);
+        contactUsRepository.insert(contactUs);
         String toUser = config.getProperty("mail.contacts.address");
         mailService.sendBySmtp(contactUs.getSubject(), contactUs.getMessage(), contactUs.getEmail(), contactUs.getName(), toUser, contactUs.getTelephone(), null);
     }

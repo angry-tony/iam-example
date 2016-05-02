@@ -4,25 +4,23 @@ import java.util.List;
 
 public interface OauthUserService {
 
-    OauthUser selectById(Long id);
+    OauthUser selectById(String id);
 
-    List<OauthUser> selectByGroupId(Long groupId);
+    List<OauthUser> selectByManagementId(String managementId);
 
-    OauthUser selectByGroupIdAndUserName(Long groupId, String userName);
+    OauthUser selectByManagementIdAndUserName(String managementId, String userName);
 
-    OauthUser selectByGroupIdAndCredential(Long groupId, String userName, String userPassword);
+    OauthUser selectByManagementIdAndCredential(String managementId, String userName, String userPassword);
 
-    OauthUser selectByGroupIdAndId(Long groupId, Long id);
+    OauthUser selectByManagementIdAndId(String managementId, String id);
 
-    int updateById(Long id, String userName, String userPassword, Integer level, String additionalInformation);
+    OauthUser updateById(String id, String userName, String userPassword, Integer level);
 
-    int updateById(OauthUser oauthUser);
+    OauthUser updateById(OauthUser oauthUser);
 
-    int deleteById(Long id);
+    void deleteById(String id);
 
-    List<OauthUser> selectByCondition(OauthUser oauthUser);
-
-    OauthUser createUser(Long groupId, String userName, String userPassword, Integer level, String additionalInformation);
+    OauthUser createUser(String managementId, OauthUser oauthUser);
 
     OauthSessionToken validateSessionToken(String sessionToken) throws Exception;
 

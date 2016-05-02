@@ -29,7 +29,7 @@
     <!--=== Breadcrumbs ===-->
     <div class="breadcrumbs">
         <div class="container">
-            <h1 class="pull-left">Management Console - ${management.groupName}</h1>
+            <h1 class="pull-left">Management Console - ${management.managementName}</h1>
             <ul class="pull-right breadcrumb">
                 <li><a href="index.html">HOME</a></li>
                 <li class="active">Management Console</li>
@@ -85,7 +85,7 @@
                                                     ${oauthClient.clientType}
                                             </td>
                                             <td>
-                                                <a href="/console/client/edit?id=${oauthClient.id}">Edit</a>
+                                                <a href="/console/client/edit?_id=${oauthClient._id}">Edit</a>
                                             </td>
                                         </tr>
                                     </c:forEach>

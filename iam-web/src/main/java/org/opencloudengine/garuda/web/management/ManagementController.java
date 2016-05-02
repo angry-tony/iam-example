@@ -54,13 +54,13 @@ public class ManagementController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView create(HttpSession session,
-                               @RequestParam(defaultValue = "") String groupName,
+                               @RequestParam(defaultValue = "") String managementName,
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") Integer sessionTokenLifetime,
                                @RequestParam(defaultValue = "") Integer scopeCheckLifetime) throws IOException {
 
         try {
-            managementService.createManagement(SessionUtils.getId(), groupName, description, sessionTokenLifetime, scopeCheckLifetime);
+            managementService.createManagement(SessionUtils.getId(), managementName, description, sessionTokenLifetime, scopeCheckLifetime);
             ModelAndView mav = new ModelAndView("/management/list");
 
             List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
@@ -76,10 +76,10 @@ public class ManagementController {
     @RequestMapping(value = "/session", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView session(HttpSession session,
-                                @RequestParam(defaultValue = "") Long groupId) throws IOException {
+                                @RequestParam(defaultValue = "") String _id) throws IOException {
 
         try {
-            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), groupId);
+            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), _id);
             if (management != null) {
                 session.setAttribute("management", management);
                 ModelAndView mav = new ModelAndView("/console/overview");
@@ -87,65 +87,65 @@ public class ManagementController {
                 return mav;
             } else {
                 session.removeAttribute("management");
-                throw new ServiceException("Invalid management groupId");
+                throw new ServiceException("Invalid management managementId");
             }
         } catch (Exception ex) {
             session.removeAttribute("management");
-            throw new ServiceException("Invalid management groupId");
+            throw new ServiceException("Invalid management managementId");
         }
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView edit(HttpSession session,
-                             @RequestParam(defaultValue = "") Long groupId) throws IOException {
+                             @RequestParam(defaultValue = "") String _id) throws IOException {
 
         try {
-            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), groupId);
+            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), _id);
             if (management != null) {
                 ModelAndView mav = new ModelAndView("/management/edit");
                 mav.addObject("management", management);
                 return mav;
             } else {
-                throw new ServiceException("Invalid management groupId");
+                throw new ServiceException("Invalid management managementId");
             }
         } catch (Exception ex) {
-            throw new ServiceException("Invalid management groupId");
+            throw new ServiceException("Invalid management managementId");
         }
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView delete(HttpSession session,
-                               @RequestParam(defaultValue = "") Long groupId) throws IOException {
+                               @RequestParam(defaultValue = "") String _id) throws IOException {
 
         try {
-            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), groupId);
+            Management management = managementService.selectByUserIdAndId(SessionUtils.getId(), _id);
             if (management != null) {
-                managementService.deleteById(groupId);
+                managementService.deleteById(_id);
                 ModelAndView mav = new ModelAndView("/management/list");
                 List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
                 mav.addObject("managements", managements);
                 return mav;
             } else {
-                throw new ServiceException("Invalid groupId");
+                throw new ServiceException("Invalid managementId");
             }
         } catch (Exception ex) {
-            throw new ServiceException("Invalid groupId");
+            throw new ServiceException("Invalid managementId");
         }
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView update(HttpSession session,
-                               @RequestParam(defaultValue = "") Long groupId,
-                               @RequestParam(defaultValue = "") String groupName,
+                               @RequestParam(defaultValue = "") String _id,
+                               @RequestParam(defaultValue = "") String managementName,
                                @RequestParam(defaultValue = "") String description,
                                @RequestParam(defaultValue = "") Integer sessionTokenLifetime,
                                @RequestParam(defaultValue = "") Integer scopeCheckLifetime) throws IOException {
 
         try {
-            managementService.updateById(SessionUtils.getId(), groupId, groupName, description, sessionTokenLifetime, scopeCheckLifetime);
+            managementService.updateById(SessionUtils.getId(), _id, managementName, description, sessionTokenLifetime, scopeCheckLifetime);
 
             ModelAndView mav = new ModelAndView("/management/list");
             List<Management> managements = managementService.selectByUserId(SessionUtils.getId());

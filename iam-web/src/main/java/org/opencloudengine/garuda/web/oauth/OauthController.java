@@ -191,10 +191,12 @@ public class OauthController {
                          @RequestParam(defaultValue = "") String scopes,
                          @RequestParam(defaultValue = "") String responseType,
                          @RequestParam(defaultValue = "") String redirectUri,
-                         @RequestParam(defaultValue = "") String state
+                         @RequestParam(defaultValue = "") String state,
+                         @RequestParam(defaultValue = "") String tokenType,
+                         @RequestParam(defaultValue = "") String claim
     ) throws IOException {
 
-        AuthorizeResponse authorizeResponse = oauthService.fetchAuthorize(managementKey, clientKey, userName, scopes, responseType, redirectUri, state);
+        AuthorizeResponse authorizeResponse = oauthService.fetchAuthorize(managementKey, clientKey, userName, scopes, responseType, redirectUri, state, tokenType, claim);
         oauthService.processAuthorize(authorizeResponse, response);
     }
 
@@ -211,8 +213,4 @@ public class OauthController {
 
         oauthService.processTokenInfo(request, response);
     }
-
-    //TODO 어플리케이션 정리
-
-    //TODO 다큐멘테이션과 동영상 제작
 }

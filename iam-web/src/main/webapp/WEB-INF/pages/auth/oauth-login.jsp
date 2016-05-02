@@ -41,13 +41,15 @@
 
     $(function () {
         var authorizeResponse = ${jsonAuthorizeResponse};
-        var managementKey = authorizeResponse.management.groupKey;
+        var managementKey = authorizeResponse.management.managementKey;
         var clientKey = authorizeResponse.clientId;
         var userName = undefined;
         var scopes = authorizeResponse.scope;
         var responseType = authorizeResponse.responseType;
         var redirectUri = authorizeResponse.redirectUri;
         var state = authorizeResponse.state;
+        var tokenType = authorizeResponse.tokenType;
+        var claim = authorizeResponse.claim;
         var redirectData = {
             managementKey: managementKey,
             clientKey: clientKey,
@@ -55,8 +57,15 @@
             scopes: scopes,
             responseType: responseType,
             redirectUri: redirectUri,
-            state: state
+            state: state,
+            tokenType: tokenType ? tokenType : '',
+            claim: claim ? encodeURIComponent(claim) : ''
         };
+
+        if(redirectData.tokenType){
+            console.log(redirectData.tokenType);
+        }
+        console.log(redirectData);
 
         var checkSession = function () {
             var session_token = Cookies.get(managementKey);

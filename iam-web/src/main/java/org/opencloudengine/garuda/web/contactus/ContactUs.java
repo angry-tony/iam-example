@@ -1,35 +1,22 @@
 package org.opencloudengine.garuda.web.contactus;
 
+import org.opencloudengine.garuda.couchdb.CouchDAO;
+
 import java.util.Date;
 
 import static org.opencloudengine.garuda.common.logging.StringUtils.isEmpty;
 
-public class ContactUs {
+public class ContactUs extends CouchDAO{
 
-    long id;
-    String name;
-    String email;
-    String telephone;
-    String subject;
-    String message;
-    Date registration;
+    private String name;
+    private String email;
+    private String telephone;
+    private String subject;
+    private String message;
+    private Long regDate;
+    private Long updDate;
 
     public ContactUs() {
-    }
-
-    public boolean isValid() {
-        if (isEmpty(name) || isEmpty(email) || isEmpty(subject) || isEmpty(message) || isEmpty(telephone)) {
-            return false;
-        }
-        return true;
-    }
-
-    public void trim() {
-        this.name = name.trim();
-        this.email = email.trim();
-        this.subject = subject.trim();
-        this.message = message.trim();
-        this.telephone = telephone.trim();
     }
 
     public String getName() {
@@ -48,6 +35,14 @@ public class ContactUs {
         this.email = email;
     }
 
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -64,41 +59,32 @@ public class ContactUs {
         this.message = message;
     }
 
-    public long getId() {
-        return id;
+    public Long getRegDate() {
+        return regDate;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setRegDate(Long regDate) {
+        this.regDate = regDate;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public Long getUpdDate() {
+        return updDate;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public Date getRegistration() {
-        return registration;
-    }
-
-    public void setRegistration(Date registration) {
-        this.registration = registration;
+    public void setUpdDate(Long updDate) {
+        this.updDate = updDate;
     }
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ContactUs{");
-        sb.append("id=").append(id);
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", email='").append(email).append('\'');
-        sb.append(", telephone='").append(telephone).append('\'');
-        sb.append(", subject='").append(subject).append('\'');
-        sb.append(", message='").append(message).append('\'');
-        sb.append(", registration=").append(registration);
-        sb.append('}');
-        return sb.toString();
+        return "ContactUs{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", subject='" + subject + '\'' +
+                ", message='" + message + '\'' +
+                ", regDate=" + regDate +
+                ", updDate=" + updDate +
+                '}';
     }
 }
