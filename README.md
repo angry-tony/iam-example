@@ -134,6 +134,8 @@ POST http://localhost:8080/oauth/access_token
 | grant_type    | String | TRUE     |
 | redirect_uri  | String | OPTIONAL |
 | code          | String | TRUE     |
+| token_type    | String | OPTIONAL |
+| claim         | String | OPTIONAL |
 
  - client_id : 클라이언트 아이디
  
@@ -144,12 +146,17 @@ POST http://localhost:8080/oauth/access_token
  - redirect_uri : Web Server Redirect Uri 값을 지정하지 않았다면 redirect_uri 을 필수적으로 넣어야 합니다. Web Server Redirect Uri 를 등재하였을 경우 redirect_uri 값과 미리 등재된 값이 같아야 합니다.
  
  - code : 전달받은 코드
+ 
+ - token_type : 'JWT' 를 사용할 경우 어세스토큰이 jwt 형식으로 발급됩니다.
+ 
+ - claim : JWT 토큰 발급을 요청할 경우 토큰에 추가될 claim 정보
   
   
 정상적으로 인증을 받을 경우 다음의 리스폰스를 받을 수 있습니다.
 
+
 ```
-Response
+Response - Bearer
 
 Status 200
 
@@ -158,6 +165,18 @@ Status 200
   "token_type": "Bearer",
   "refresh_token": "efb59b36-2ba0-4137-90de-fb33cd232e7d",
   "access_token": "500de888-ac56-4421-9557-deb34f59dc17"
+}
+
+
+Response - Jwt
+
+Status 200
+
+{
+  "expires_in": 3600,
+  "token_type": "JWT",
+  "refresh_token": "efb59b36-2ba0-4137-90de-fb33cd232e7d",
+  "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxNzI5NDcsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJjbGllbnRLZXkiOiJmY2Y1YWZkNy1iZTUwLTRkYWMtOTQ5Zi1kNGFiNzY4YjQ4NWQiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjZkZmM0OGVlLTgwMDgtNDE4NC05ZTE0LTQzZWI5N2Y4ODA0YyIsInR5cGUiOiJjbGllbnQiLCJjbGllbnRJZCI6Ijk3ZWQ4ZjMwZGEwMTQ4MDBiOTJhMjRkOGJlZDZkNWE1In0sImlzcyI6Im9jZS5pYW0iLCJjbGFpbSI6e30sImlhdCI6MTQ2MjE2OTM0N30.WcqsMpLywstnBZGHchdS5QXOP11Hd13g34nYoV7ZV4Y"
 }
 ```
 
@@ -221,6 +240,8 @@ GET /oauth/authorize
 | redirect_uri  | String | OPTIONAL |
 | scope         | String | TRUE     |
 | state         | String | OPTIONAL |
+| token_type    | String | OPTIONAL |
+| claim         | String | OPTIONAL |
 
 
  - response_type : 'token' 를 사용합니다.
@@ -247,7 +268,12 @@ OCE IAM 은 입력받은 redirect_uri 로 GET 방식을 통해 scope,state,expir
 예)
 
 ```
+Response - Bearer
 http://app.domain/some_redirect_uri?scope=form-read&state=null&expires_in=3600&token_type=Bearer&access_token=12d1270b-0b7a-430e-adb0-3839c9a9e2e4
+
+
+Response - Jwt
+http://app.domain/some_redirect_uri?scope=form-read&state=null&expires_in=3600&token_type=JWT&access_token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxNzI5NDcsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJjbGllbnRLZXkiOiJmY2Y1YWZkNy1iZTUwLTRkYWMtOTQ5Zi1kNGFiNzY4YjQ4NWQiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjZkZmM0OGVlLTgwMDgtNDE4NC05ZTE0LTQzZWI5N2Y4ODA0YyIsInR5cGUiOiJjbGllbnQiLCJjbGllbnRJZCI6Ijk3ZWQ4ZjMwZGEwMTQ4MDBiOTJhMjRkOGJlZDZkNWE1In0sImlzcyI6Im9jZS5pYW0iLCJjbGFpbSI6e30sImlhdCI6MTQ2MjE2OTM0N30.WcqsMpLywstnBZGHchdS5QXOP11Hd13g34nYoV7ZV4Y
 ```
 
 위 과정에서 생긴 에러는 redirect_uri 을 통해 GET 방식으로 에러메세지가 전송되게 됩니다.
@@ -278,6 +304,8 @@ POST http://localhost:8080/oauth/access_token
 | username      | String | TRUE     |
 | password      | String | TRUE     |
 | scope         | String | OPTIONAL |
+| token_type    | String | OPTIONAL |
+| claim         | String | OPTIONAL |
 
  - client_id : 클라이언트 아이디
  
@@ -290,12 +318,16 @@ POST http://localhost:8080/oauth/access_token
  - password : 인증받을 사용자의 패스워드
  
  - scope : 스코프
+ 
+ - token_type : 'JWT' 를 사용할 경우 어세스토큰이 jwt 형식으로 발급됩니다.
+
+ - claim : JWT 토큰 발급을 요청할 경우 토큰에 추가될 claim 정보
   
   
 정상적으로 인증을 받을 경우 다음의 리스폰스를 받을 수 있습니다.
 
 ```
-Response
+Response - Bearer
 
 Status 200
 
@@ -304,6 +336,18 @@ Status 200
   "token_type": "Bearer",
   "refresh_token": "183bb8d0-1a96-42eb-a600-d1a4625007f7",
   "access_token": "789424ea-5363-46d2-8e49-65e27ce077bb"
+}
+
+
+Response - Jwt
+
+Status 200
+
+{
+  "expires_in": 3600,
+  "token_type": "JWT",
+  "refresh_token": "efb59b36-2ba0-4137-90de-fb33cd232e7d",
+  "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxNzI5NDcsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJjbGllbnRLZXkiOiJmY2Y1YWZkNy1iZTUwLTRkYWMtOTQ5Zi1kNGFiNzY4YjQ4NWQiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjZkZmM0OGVlLTgwMDgtNDE4NC05ZTE0LTQzZWI5N2Y4ODA0YyIsInR5cGUiOiJjbGllbnQiLCJjbGllbnRJZCI6Ijk3ZWQ4ZjMwZGEwMTQ4MDBiOTJhMjRkOGJlZDZkNWE1In0sImlzcyI6Im9jZS5pYW0iLCJjbGFpbSI6e30sImlhdCI6MTQ2MjE2OTM0N30.WcqsMpLywstnBZGHchdS5QXOP11Hd13g34nYoV7ZV4Y"
 }
 ```
 
@@ -365,6 +409,8 @@ POST http://localhost:8080/oauth/access_token
 | client_secret | String | TRUE     |
 | grant_type    | String | TRUE     |
 | scope         | String | OPTIONAL |
+| token_type    | String | OPTIONAL |
+| claim         | String | OPTIONAL |
 
  - client_id : 클라이언트 아이디
  
@@ -373,12 +419,16 @@ POST http://localhost:8080/oauth/access_token
  - grant_type : 'client_credentials' 를 사용합니다.
  
  - scope : 스코프
+ 
+ - token_type : 'JWT' 를 사용할 경우 어세스토큰이 jwt 형식으로 발급됩니다.
+  
+ - claim : JWT 토큰 발급을 요청할 경우 토큰에 추가될 claim 정보
   
   
 정상적으로 인증을 받을 경우 다음의 리스폰스를 받을 수 있습니다.
 
 ```
-Response
+Response - Bearer
 
 Status 200
 
@@ -387,6 +437,18 @@ Status 200
   "token_type": "Bearer",
   "refresh_token": "183bb8d0-1a96-42eb-a600-d1a4625007f7",
   "access_token": "789424ea-5363-46d2-8e49-65e27ce077bb"
+}
+
+
+Response - Jwt
+
+Status 200
+
+{
+  "expires_in": 3600,
+  "token_type": "JWT",
+  "refresh_token": "efb59b36-2ba0-4137-90de-fb33cd232e7d",
+  "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxNzI5NDcsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJjbGllbnRLZXkiOiJmY2Y1YWZkNy1iZTUwLTRkYWMtOTQ5Zi1kNGFiNzY4YjQ4NWQiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjZkZmM0OGVlLTgwMDgtNDE4NC05ZTE0LTQzZWI5N2Y4ODA0YyIsInR5cGUiOiJjbGllbnQiLCJjbGllbnRJZCI6Ijk3ZWQ4ZjMwZGEwMTQ4MDBiOTJhMjRkOGJlZDZkNWE1In0sImlzcyI6Im9jZS5pYW0iLCJjbGFpbSI6e30sImlhdCI6MTQ2MjE2OTM0N30.WcqsMpLywstnBZGHchdS5QXOP11Hd13g34nYoV7ZV4Y"
 }
 ```
 
@@ -444,6 +506,8 @@ POST http://localhost:8080/oauth/access_token
 | client_secret | String | TRUE     |
 | grant_type    | String | TRUE     |
 | refresh_token | String | TRUE     |
+| token_type    | String | OPTIONAL |
+| claim         | String | OPTIONAL |
 
  - client_id : 클라이언트 아이디
  
@@ -452,12 +516,16 @@ POST http://localhost:8080/oauth/access_token
  - grant_type : 'refresh_token' 를 사용합니다.
  
  - refresh_token : 리프레쉬 토큰
+ 
+ - token_type : 'JWT' 를 사용할 경우 어세스토큰이 jwt 형식으로 발급됩니다.
+  
+ - claim : JWT 토큰 발급을 요청할 경우 토큰에 추가될 claim 정보
   
   
 정상적으로 인증을 받을 경우 다음의 리스폰스를 받을 수 있습니다.
 
 ```
-Response
+Response - Bearer
 
 Status 200
 
@@ -466,6 +534,18 @@ Status 200
   "token_type": "Bearer",
   "refresh_token": "183bb8d0-1a96-42eb-a600-d1a4625007f7",
   "access_token": "789424ea-5363-46d2-8e49-65e27ce077bb"
+}
+
+
+Response - Jwt
+
+Status 200
+
+{
+  "expires_in": 3600,
+  "token_type": "JWT",
+  "refresh_token": "efb59b36-2ba0-4137-90de-fb33cd232e7d",
+  "access_token": "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxNzI5NDcsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJjbGllbnRLZXkiOiJmY2Y1YWZkNy1iZTUwLTRkYWMtOTQ5Zi1kNGFiNzY4YjQ4NWQiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjZkZmM0OGVlLTgwMDgtNDE4NC05ZTE0LTQzZWI5N2Y4ODA0YyIsInR5cGUiOiJjbGllbnQiLCJjbGllbnRJZCI6Ijk3ZWQ4ZjMwZGEwMTQ4MDBiOTJhMjRkOGJlZDZkNWE1In0sImlzcyI6Im9jZS5pYW0iLCJjbGFpbSI6e30sImlhdCI6MTQ2MjE2OTM0N30.WcqsMpLywstnBZGHchdS5QXOP11Hd13g34nYoV7ZV4Y"
 }
 ```
 
@@ -481,6 +561,15 @@ GET http://localhost:8080/oauth/token_info
 |---------------|--------|----------|
 | access_token  | String | TRUE     |
 
+Jwt 토큰인경우 iam 시스템의 secretKey 를 사용하기 때문에, 클라이언트에서는 토큰의 밸리데이션을 수행할 수 없습니다.
+
+대신에 토큰 파싱은 가능하며, claim object 의 정보를 사용할 목적인 경우 별도로 token_info 를 거치지 않아도 됩니다.
+
+하지만 토큰이 유효한지 체크하기 위해서는 token_info 을 거쳐야 합니다.
+
+OCE-IAM 이 JWT 토큰의 유효체크를 할 때는 DB 스캔 과정없이 처리합니다. 
+
+#### Bearer 토큰정보
 
 ```
 유저 인증을 거친 토큰인경우 
@@ -516,6 +605,63 @@ Status 200
   "refreshToken": "808b6f9e-9a74-4fc2-8049-82863d2b4694"
 }
 ```
+
+#### Jwt 토큰정보
+
+```
+유저 인증을 거친 토큰인경우 
+
+Response
+
+Status 200
+
+{
+  "exp": 1462173460000,
+  "context": {
+    "scopes": "form:create",
+    "clientKey": "fcf5afd7-be50-4dac-949f-d4ab768b485d",
+    "userId": "1543c5ac2c5049b18058662da236f011",
+    "userName": "user1",
+    "managementId": "5e3432ad172644ea8041fe67eb8f5cbd",
+    "type": "user",
+    "refreshToken": "e8795856-4a7c-44f5-b6a3-4567e658e487",
+    "clientId": "97ed8f30da014800b92a24d8bed6d5a5"
+  },
+  "iss": "oce.iam",
+  "expires_in": 3590,
+  "claim": {
+    "aaa": "bbb"
+  },
+  "iat": 1462169860000
+}
+```
+
+```
+Client Credentials Grant Flow 토큰인경우 
+
+Response
+
+Status 200
+
+{
+  "exp": 1462172578000,
+  "context": {
+    "scopes": "form:create",
+    "clientKey": "fcf5afd7-be50-4dac-949f-d4ab768b485d",
+    "managementId": "5e3432ad172644ea8041fe67eb8f5cbd",
+    "type": "client",
+    "refreshToken": "4549295d-897a-4d9d-b193-a72a15f2816b",
+    "clientId": "97ed8f30da014800b92a24d8bed6d5a5"
+  },
+  "iss": "oce.iam",
+  "expires_in": 3567,
+  "claim": {
+    "aaa": "bbb"
+  },
+  "iat": 1462168978000
+}
+```
+
 
 토큰이 만기되었거나 유효하지 않을 경우 400 으로 응답이 오며, 각 상황의 error 필드 문구는 다음과 같습니다.
 
