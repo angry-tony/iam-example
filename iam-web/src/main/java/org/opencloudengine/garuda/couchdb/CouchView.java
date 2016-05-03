@@ -69,6 +69,11 @@ public class CouchView implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
 
+        String property = config.getProperty("couch.db.autoview");
+        if(property.equals("false")){
+            return;
+        }
+
         URL url = getClass().getResource("/views");
         File views = ResourceUtils.getFile(url);
         if (!views.exists()) {
