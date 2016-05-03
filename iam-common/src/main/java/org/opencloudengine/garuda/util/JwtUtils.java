@@ -17,19 +17,13 @@
  */
 package org.opencloudengine.garuda.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import net.minidev.json.JSONObject;
-import org.apache.commons.codec.binary.Base64;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Jwt Utility.
@@ -76,10 +70,5 @@ public class JwtUtils {
             return false;
         }
         return true;
-    }
-
-    public static String base64UrlDecode(String input) {
-        byte[] bytes = Base64.decodeBase64(input);
-        return new String(bytes);
     }
 }

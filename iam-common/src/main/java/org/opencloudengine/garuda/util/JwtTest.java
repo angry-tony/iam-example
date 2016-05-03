@@ -1,16 +1,12 @@
 package org.opencloudengine.garuda.util;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
+import net.minidev.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by uengine on 2015. 5. 22..
@@ -52,7 +48,54 @@ public class JwtTest {
 //        System.out.println(sessionToken);
 
         String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxMjQ3ODYsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjhjNTYzODViLTEwM2ItNDkyMS04ODA3LWYwYTgwZDFmZDI5ZiIsInR5cGUiOiJ1c2VyIiwib2F1dGhVc2VySWQiOiIxNTQzYzVhYzJjNTA0OWIxODA1ODY2MmRhMjM2ZjAxMSIsImNsaWVudElkIjoiOTdlZDhmMzBkYTAxNDgwMGI5MmEyNGQ4YmVkNmQ1YTUifSwiaXNzIjoib2NlLmlhbSIsImNsYWltIjp7ImFhYSI6ImJiYiJ9LCJpYXQiOjE0NjIxMjExODZ9.J8Edpn5fTtgx9-6cLXGiYV0NnRuPO2rbv28xkR55sl4";
+        String sharedSecret = "fcf5afd7-be51-4dfc-949f-d4ab768b985d";
+
         JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(jwt);
         System.out.println(jwtClaimsSet);
+
+
+        //만료시간 체크 없이 시그네이쳐 밸리데이션
+        boolean validateToken = validateToken(jwt, sharedSecret);
+
+
+        //Jwt 토큰에 포함된 만료시간과 함께 시그네이쳐 밸리데이션
+        boolean validateToken1 = validateToken(jwt, sharedSecret, null);
+
+
+        //임의의 만료시간과 함께 시그네이쳐 밸리데이션
+        Date expireTime = new Date();
+        boolean validateToken2 = validateToken(jwt, sharedSecret, expireTime);
+    }
+
+    public static boolean validateToken(String jwtToken, String sharedSecret) throws Exception {
+        JWSVerifier verifier = new MACVerifier(sharedSecret);
+        JWSObject jwsObject = JWSObject.parse(jwtToken);
+
+        if (!jwsObject.verify(verifier)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean validateToken(String jwtToken, String sharedSecret, Date expirationTime) throws Exception {
+        JWSVerifier verifier = new MACVerifier(sharedSecret);
+        JWSObject jwsObject = JWSObject.parse(jwtToken);
+
+        if (!jwsObject.verify(verifier)) {
+            return false;
+        }
+
+        JSONObject jsonPayload = jwsObject.getPayload().toJSONObject();
+        JWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(jsonPayload);
+
+        if (expirationTime == null) {
+            expirationTime = jwtClaimsSet.getExpirationTime();
+        }
+
+        int compareTo = new Date().compareTo(expirationTime);
+        if (compareTo > 0) {
+            return false;
+        }
+        return true;
     }
 }
