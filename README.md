@@ -2,6 +2,8 @@
 
 ## Installation
 
+[Install](document/install.md)
+
 ## Tutorial
 
 OCE IAM 의 Oauth Endpoint 는 다음으로 구성되어 있습니다.
