@@ -6,3 +6,6 @@
 
 [Jwt guide](document/jwt-guide.md)
 
+[CouchDB Schema And View](document/couchdb-schema.md)
+
+[Rest Api](document/api.md)
