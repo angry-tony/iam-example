@@ -111,6 +111,47 @@ couch.db.autoview=true
  
 카우치 db에 별도의 인증을 설정하지 않았다면 username 과 password 는 공란입니다. 
 
+### Mail Configuration
+
+```
+##########################################
+## JavaMail Configuration
+###########################################
+
+mail.host=smtp.gmail.com
+mail.username=
+mail.password=
+mail.port=587
+mail.smtp.auth=true
+mail.smtp.starttls.enable=true
+mail.from.address=${mail.username}
+mail.from.name=uengine
+mail.html=false
+
+mail.contacts.address=sppark@uengine.org
+mail.redirect.address=http://localhost:8080
+```
+
+매니지먼트 사용자 가입 이메일, 패스워드 변경 이메일을 보낼 때 쓰이는 설정입니다.
+
+ - mail.host : 메일 서비스 호스트
+ 
+ - mail.username : 사용자 이름
+ 
+ - mail.password : 패스워드
+ 
+ - mail.port : 메일 서비스 포트
+ 
+ - mail.from.address : 발송하는 이메일에 표시될 From
+ 
+ - mail.from.name : 발송하는 이메일에 표시될 이름
+ 
+ - mail.contacts.address : 문의 메일을 받을 주소
+ 
+ - mail.redirect.address : 발송하는 이메일의 링크 주소
+  
+mail.redirect.address 는 IAM 이 설치된 서버의 도메인 주소 또는 아이피를 표기하도록 합니다.
+ 
 
 ### Build and Launch
 
@@ -132,6 +173,8 @@ $ sudo chmod +x /var/lib/tomcat7/webapps/ROOT.war
 
 $ sudo service tomcat7 start
 ```
+
+초기 로그인은 support@iam.co.kr  /   admin  입니다.
 
 
 
