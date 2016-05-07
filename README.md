@@ -2,7 +2,7 @@
 
 [Installation](document/install.md)
 
-[Tutorial](document/install.md)
+[Tutorial](document/tutorial.md)
 
 [Jwt guide](document/jwt-guide.md)
 
