@@ -71,9 +71,13 @@
                             <input type="hidden" id="_id" name="_id" value="${oauthUser._id}">
 
                             <br>
-                            <h4>Require fields </h4>
+                            <h4>Require fields (If there is no require field value, it will be stored as a field value in the
+                                database.) </h4>
+
                             <p>userName: string</p>
+
                             <p>userPassword: string</p>
+
                             <p>level: number 0 ~ 5 </p>
 
                             <div class="form-group">
@@ -161,32 +165,29 @@
             } catch (e) {
                 return false;
             }
-            if (!user['userName']) {
-                return false;
+            if (user['userName']) {
+                if (user['userName'] && typeof user['userName'] !== 'string') {
+                    return false;
+                }
+                if (user.userName.length < 1) {
+                    return false;
+                }
             }
-            if (typeof user['userName'] !== 'string') {
-                return false;
+            if (user['userPassword']) {
+                if (typeof user['userPassword'] !== 'string') {
+                    return false;
+                }
+                if (user.userPassword.length < 1) {
+                    return false;
+                }
             }
-            if (user.userName.length < 1) {
-                return false;
-            }
-            if (!user['userPassword']) {
-                return false;
-            }
-            if (typeof user['userPassword'] !== 'string') {
-                return false;
-            }
-            if (user.userPassword.length < 1) {
-                return false;
-            }
-            if (!user['level']) {
-                return false;
-            }
-            if (typeof user['level'] !== 'number') {
-                return false;
-            }
-            if (user.level > 5 || user.level < 0) {
-                return false;
+            if (user['level']) {
+                if (typeof user['level'] !== 'number') {
+                    return false;
+                }
+                if (user.level > 5 || user.level < 0) {
+                    return false;
+                }
             }
             return true;
         });

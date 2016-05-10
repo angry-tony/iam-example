@@ -120,6 +120,7 @@ public class OauthUserController {
             map.remove("_rev");
             map.remove("docType");
             map.remove("managementId");
+            map.remove("userPassword");
             map.remove("regDate");
             map.remove("updDate");
             mav.addObject("oauthUserJson", JsonUtils.marshal(map));
@@ -189,7 +190,6 @@ public class OauthUserController {
                 }
             }
             oauthUserService.updateById(updateUser);
-            //oauthUserService.updateById(_id, userName, userPassword, level);
 
             List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");

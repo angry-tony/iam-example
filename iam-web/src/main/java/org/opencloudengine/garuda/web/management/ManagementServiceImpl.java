@@ -76,6 +76,11 @@ public class ManagementServiceImpl implements ManagementService {
     }
 
     @Override
+    public Management updateById(Management management) {
+        return managementRepository.updateById(management);
+    }
+
+    @Override
     public Management updateById(String userId, String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime) {
         Management management = this.selectByUserIdAndId(userId, id);
         if (management == null) {

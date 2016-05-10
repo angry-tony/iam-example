@@ -8,6 +8,8 @@ import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.model.User;
+import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -120,6 +122,19 @@ public class ManagementRepositoryImpl implements ManagementRepository {
         Response update = serviceFactory.getDb().update(management);
         management.set_rev(update.getRev());
         return management;
+    }
+
+    @Override
+    public Management updateById(Management management) {
+        Management existManagement = this.selectById(management.get_id());
+
+        existManagement = (Management) JsonUtils.merge(existManagement, management);
+        long time = new Date().getTime();
+        existManagement.setUpdDate(time);
+
+        Response update = serviceFactory.getDb().update(existManagement);
+        existManagement.set_rev(update.getRev());
+        return existManagement;
     }
 
     @Override

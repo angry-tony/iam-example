@@ -15,6 +15,8 @@ public class Management extends CouchDAO {
     private Integer sessionTokenLifetime;
     private Integer scopeCheckLifetime;
     private String description;
+    private String useCustomTokenIssuance;
+    private String customTokenIssuance;
     private Long regDate;
     private Long updDate;
 
@@ -86,6 +88,22 @@ public class Management extends CouchDAO {
         this.description = description;
     }
 
+    public String getUseCustomTokenIssuance() {
+        return useCustomTokenIssuance;
+    }
+
+    public void setUseCustomTokenIssuance(String useCustomTokenIssuance) {
+        this.useCustomTokenIssuance = useCustomTokenIssuance;
+    }
+
+    public String getCustomTokenIssuance() {
+        return customTokenIssuance;
+    }
+
+    public void setCustomTokenIssuance(String customTokenIssuance) {
+        this.customTokenIssuance = customTokenIssuance;
+    }
+
     public Long getRegDate() {
         return regDate;
     }
@@ -113,6 +131,8 @@ public class Management extends CouchDAO {
                 ", sessionTokenLifetime=" + sessionTokenLifetime +
                 ", scopeCheckLifetime=" + scopeCheckLifetime +
                 ", description='" + description + '\'' +
+                ", useCustomTokenIssuance='" + useCustomTokenIssuance + '\'' +
+                ", customTokenIssuance='" + customTokenIssuance + '\'' +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';

@@ -39,7 +39,12 @@ public class CouchFlexibleDAO extends HashMap<String, Object> implements Seriali
     public Long asLong(Object key) {
         if (this.containsKey(key)) {
             try {
-                return (Long) this.get(key);
+                Object o = this.get(key);
+                if(o.getClass().equals(Double.class)){
+                    return ((Double) o).longValue();
+                }else{
+                    return (Long) this.get(key);
+                }
             } catch (Exception ex) {
                 return null;
             }
@@ -63,7 +68,12 @@ public class CouchFlexibleDAO extends HashMap<String, Object> implements Seriali
     public Integer asInteger(Object key) {
         if (this.containsKey(key)) {
             try {
-                return (Integer) this.get(key);
+                Object o = this.get(key);
+                if(o.getClass().equals(Double.class)){
+                    return ((Double) o).intValue();
+                }else{
+                    return (Integer) this.get(key);
+                }
             } catch (Exception ex) {
                 return null;
             }

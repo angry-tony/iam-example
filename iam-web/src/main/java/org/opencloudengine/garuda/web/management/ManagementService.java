@@ -21,5 +21,7 @@ public interface ManagementService {
 
     void deleteById(String id);
 
+    Management updateById(Management management);
+
     Management updateById(String userId, String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 }

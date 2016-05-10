@@ -8,9 +8,11 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementRepository;
+import org.opencloudengine.garuda.web.security.AESPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +26,14 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
     @Autowired
     CouchServiceFactory serviceFactory;
 
+    @Autowired
+    AESPasswordEncoder passwordEncoder;
+
+
     @Override
     public OauthUser insert(OauthUser oauthUser) {
+        oauthUser.setUserPassword(passwordEncoder.encode(oauthUser.getUserPassword()));
+
         long time = new Date().getTime();
         oauthUser.setDocType(NAMESPACE);
         oauthUser.setRegDate(time);
@@ -42,9 +50,11 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectById");
             Key.ComplexKey complex = new Key().complex(id);
-            return builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+            OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+            value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+            return value;
         } catch (Exception ex) {
             return null;
         }
@@ -61,7 +71,9 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                     build().getResponse().getRows();
 
             for (ViewResponse.Row<Key.ComplexKey, OauthUser> row : rows) {
-                list.add(row.getValue());
+                OauthUser value = row.getValue();
+                value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+                list.add(value);
             }
             return list;
         } catch (Exception ex) {
@@ -74,9 +86,11 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdAndUserName");
             Key.ComplexKey complex = new Key().complex(managementId).add(userName);
-            return builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+            OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+            value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+            return value;
         } catch (Exception ex) {
             return null;
         }
@@ -85,11 +99,14 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
     @Override
     public OauthUser selectByManagementIdAndCredential(String managementId, String userName, String userPassword) {
         try {
+            userPassword = passwordEncoder.encode(userPassword);
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdAndCredential");
             Key.ComplexKey complex = new Key().complex(managementId).add(userName).add(userPassword);
-            return builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+            OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+            value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+            return value;
         } catch (Exception ex) {
             return null;
         }
@@ -100,9 +117,11 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdAndId");
             Key.ComplexKey complex = new Key().complex(managementId).add(id);
-            return builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+            OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+            value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+            return value;
         } catch (Exception ex) {
             return null;
         }
@@ -110,6 +129,10 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
 
     @Override
     public OauthUser updateById(OauthUser oauthUser) {
+//        if (!StringUtils.isEmpty(oauthUser.getUserPassword())) {
+//            oauthUser.setUserPassword(passwordEncoder.encode(oauthUser.getUserPassword()));
+//        }
+
         OauthUser existUser = this.selectById(oauthUser.get_id());
 
         //변경될 수 없는 값들을 보호한다.
@@ -119,12 +142,20 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
         oauthUser.setManagementId(existUser.getManagementId());
         oauthUser.setRegDate(existUser.getRegDate());
 
+        //existUser 에서 지정된 메소드 이외의 값을 제거한다.
+        existUser = JsonUtils.merge(new OauthUser(), existUser);
+
+        //existUser 와 업데이트객체를 머지한다.
+        existUser.putAll(oauthUser);
+
         long time = new Date().getTime();
         existUser.setUpdDate(time);
+        existUser.setUserPassword(passwordEncoder.encode(existUser.getUserPassword()));
 
-        Response update = serviceFactory.getDb().update(oauthUser);
-        oauthUser.set_rev(update.getRev());
-        return oauthUser;
+        Response update = serviceFactory.getDb().update(existUser);
+        existUser.set_rev(update.getRev());
+
+        return existUser;
     }
 
     @Override

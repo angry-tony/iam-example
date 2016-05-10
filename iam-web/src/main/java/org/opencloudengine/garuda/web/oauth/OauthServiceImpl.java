@@ -54,6 +54,9 @@ public class OauthServiceImpl implements OauthService {
     @Autowired
     private OauthGrantService oauthGrantService;
 
+    @Autowired
+    private CustomService customService;
+
     @Override
     public AuthorizeResponse validateAuthorize(HttpServletRequest request) {
 
@@ -357,6 +360,23 @@ public class OauthServiceImpl implements OauthService {
                     } else {
                         params.put("token_type", "Bearer");
                         params.put("expires_in", authorizeResponse.getOauthClient().getAccessTokenLifetime());
+                    }
+
+                    Management management = authorizeResponse.getManagement();
+                    OauthClient oauthClient = authorizeResponse.getOauthClient();
+                    OauthUser oauthUser = authorizeResponse.getOauthUser();
+                    String scope = authorizeResponse.getScope();
+
+                    //커스텀 토큰 스크립트를 수행한다.
+                    if (management.getUseCustomTokenIssuance().equals("Y")) {
+                        boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scope,
+                                authorizeResponse.getTokenType(), authorizeResponse.getClaim(), "user");
+                        if (!value) {
+                            params.put("error", OauthConstant.ACCESS_DENIED);
+                            params.put("error_description", "Access denied by custom token issuance rule");
+                            params.put("state", authorizeResponse.getState());
+                            break;
+                        }
                     }
 
                     oauthTokenService.insertToken(accessToken);

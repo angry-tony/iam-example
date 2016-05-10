@@ -72,6 +72,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.mozilla</groupId>
+            <artifactId>rhino</artifactId>
+            <version>1.7R3</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.opencloudengine.garuda</groupId>
             <artifactId>iam-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>

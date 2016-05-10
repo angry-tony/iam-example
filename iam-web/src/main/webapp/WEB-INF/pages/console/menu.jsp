@@ -19,4 +19,7 @@
     <li class="list-group-item" name="list-menu-scope">
         <a href="/console/scope/list"><i class="fa fa-cubes"></i> Scopes </a>
     </li>
+    <li class="list-group-item" name="list-menu-custom-token">
+        <a href="/console/custom/token/edit"><i class="fa fa-cubes"></i> Custom token issuance </a>
+    </li>
 </ul>

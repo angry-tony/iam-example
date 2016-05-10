@@ -19,5 +19,7 @@ public interface ManagementRepository {
 
     Management updateById(String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
 
+    Management updateById(Management management);
+
     void deleteById(String id);
 }
