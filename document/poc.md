@@ -42,11 +42,29 @@ Tomcat 8.0 / Jre 1.8.0 / Heap Memory 2G
 
 ### 3. US to Sydney
 
-![](images/test-sydney.png)
+![](images/test-us.png)
 
  - 시료 정보
 
 1. Bluemix
+
+2. Cloudant
+
+3. EC2 t2.micro 1 cpu / 1GB
+
+4. Apache Benchmark tool
+
+ - IAM 서버 설치 정보
+ 
+Tomcat 8.0 / Jre 1.8.0 / Heap Memory 2G
+
+### 4. Us to Us and Sydney Database
+
+![](images/test_us_us.png)
+
+ - 시료 정보
+
+1. EC2 t2.micro 1 cpu / 1GB
 
 2. Cloudant
 
@@ -110,7 +128,16 @@ Tomcat 8.0 / Jre 1.8.0 / Heap Memory 2G
 | 100    | 5        | 500         | 32.807           | 100             | 65.615                   |
 
 
-### TC-2 토큰 밸리데이트
+4. US 캘리포니아(요청지) - US 캘리포니아(IAM 서버) - 시드니(블루믹스 DB)
+
+| 쓰레드 | 반복호출 | 총 리퀘스트 | 총 응답 시간 (s) | 응답 성공률 (%) | 리퀘스트당 소요시간 (ms) |
+|--------|----------|-------------|------------------|-----------------|--------------------------|
+| 1      | 5        | 5           | 27.116           | 100             | 5423.207                 |
+| 10     | 5        | 50          | 29.238           | 100             | 584.752                  |
+| 50     | 5        | 250         | 41.736           | 100             | 166.943                  |
+| 100    | 5        | 500         | 58.971           | 100             | 117.942                  |
+
+### TC-2 토큰 밸리데이트 (데이터베이스 조회 없음)
 
 1. Local 환경
 
@@ -142,6 +169,14 @@ Tomcat 8.0 / Jre 1.8.0 / Heap Memory 2G
 | 100    | 5        | 500         | 2.405            | 100             | 4.809                    |
 
 
+4. US 캘리포니아(요청지) - US 캘리포니아(IAM 서버) - 시드니(블루믹스 DB)
+
+| 쓰레드 | 반복호출 | 총 리퀘스트 | 총 응답 시간 (s) | 응답 성공률 (%) | 리퀘스트당 소요시간 (ms) |
+|--------|----------|-------------|------------------|-----------------|--------------------------|
+| 1      | 5        | 5           | 0.033            | 100             | 6.544                    |
+| 10     | 5        | 50          | 0.055            | 100             | 1.107                    |
+| 50     | 5        | 250         | 0.216            | 100             | 0.865                    |
+| 100    | 5        | 500         | 0.344            | 100             | 0.688                    |
 
 ## 테스트 결과 (상세)
 
@@ -1160,6 +1195,345 @@ Percentage of the requests served within a certain time (ms)
   98%    520
   99%    529
  100%    567 (longest request)
+```
+
+
+### 4. US to Us and Sydney Database Test
+
+#### TC-1
+
+1. 쓰레드 1 * 반복 회수 5 = 요청수 5
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/access_token
+Document Length:        723 bytes
+
+Concurrency Level:      1
+Time taken for tests:   27.116 seconds
+Complete requests:      5
+Failed requests:        0
+Total transferred:      6460 bytes
+Total body sent:        1995
+HTML transferred:       3615 bytes
+Requests per second:    0.18 [#/sec] (mean)
+Time per request:       5423.207 [ms] (mean)
+Time per request:       5423.207 [ms] (mean, across all concurrent requests)
+Transfer rate:          0.23 [Kbytes/sec] received
+                        0.07 kb/s sent
+                        0.30 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:  5334 5423 167.7   5360    5722
+Waiting:     5334 5423 167.7   5360    5722
+Total:       5334 5423 167.7   5360    5722
+
+Percentage of the requests served within a certain time (ms)
+  50%   5356
+  66%   5365
+  75%   5365
+  80%   5722
+  90%   5722
+  95%   5722
+  98%   5722
+  99%   5722
+ 100%   5722 (longest request)
+```
+
+2. 쓰레드 10 * 반복 회수 5 = 요청수 50
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/access_token
+Document Length:        723 bytes
+
+Concurrency Level:      10
+Time taken for tests:   29.238 seconds
+Complete requests:      50
+Failed requests:        0
+Total transferred:      64600 bytes
+Total body sent:        19950
+HTML transferred:       36150 bytes
+Requests per second:    1.71 [#/sec] (mean)
+Time per request:       5847.524 [ms] (mean)
+Time per request:       584.752 [ms] (mean, across all concurrent requests)
+Transfer rate:          2.16 [Kbytes/sec] received
+                        0.67 kb/s sent
+                        2.82 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:  5378 5721 253.5   5716    6180
+Waiting:     5378 5721 253.5   5716    6180
+Total:       5378 5721 253.5   5716    6180
+
+Percentage of the requests served within a certain time (ms)
+  50%   5716
+  66%   5805
+  75%   5817
+  80%   5933
+  90%   6158
+  95%   6173
+  98%   6180
+  99%   6180
+ 100%   6180 (longest request)
+```
+
+3. 쓰레드 50 * 반복 회수 5 = 요청수 250
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/access_token
+Document Length:        723 bytes
+
+Concurrency Level:      50
+Time taken for tests:   41.736 seconds
+Complete requests:      250
+Failed requests:        0
+Total transferred:      323000 bytes
+Total body sent:        99750
+HTML transferred:       180750 bytes
+Requests per second:    5.99 [#/sec] (mean)
+Time per request:       8347.164 [ms] (mean)
+Time per request:       166.943 [ms] (mean, across all concurrent requests)
+Transfer rate:          7.56 [Kbytes/sec] received
+                        2.33 kb/s sent
+                        9.89 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       1
+Processing:  6650 8125 493.4   8259    8884
+Waiting:     6650 8125 493.2   8259    8883
+Total:       6651 8126 493.5   8259    8884
+
+Percentage of the requests served within a certain time (ms)
+  50%   8259
+  66%   8345
+  75%   8386
+  80%   8439
+  90%   8832
+  95%   8838
+  98%   8845
+  99%   8845
+ 100%   8884 (longest request)
+```
+
+4. 쓰레드 100 * 반복 회수 5 = 요청수 500
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/access_token
+Document Length:        723 bytes
+
+Concurrency Level:      100
+Time taken for tests:   58.971 seconds
+Complete requests:      500
+Failed requests:        0
+Total transferred:      646000 bytes
+Total body sent:        199500
+HTML transferred:       361500 bytes
+Requests per second:    8.48 [#/sec] (mean)
+Time per request:       11794.158 [ms] (mean)
+Time per request:       117.942 [ms] (mean, across all concurrent requests)
+Transfer rate:          10.70 [Kbytes/sec] received
+                        3.30 kb/s sent
+                        14.00 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   1.4      0       4
+Processing:  9789 11564 544.4  11681   12436
+Waiting:     9789 11564 544.3  11679   12435
+Total:       9789 11565 544.9  11681   12439
+
+Percentage of the requests served within a certain time (ms)
+  50%  11681
+  66%  11894
+  75%  11914
+  80%  12044
+  90%  12157
+  95%  12298
+  98%  12338
+  99%  12341
+ 100%  12439 (longest request)
+```
+
+#### TC-2
+
+1. 쓰레드 1 * 반복 회수 5 = 요청수 5
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/token_info?access_token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjI5MzcwMjksImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJ1c2VySWQiOiI0MDJlMTJmY2MwZWY0YmFkYWNiNjAzYjllZjZkYmRlMCIsImNsaWVudEtleSI6IjU0YTcwODQwLTQ1NTktNDgwYi05MDc4LTgxOWJmMjMyYjQxOSIsInVzZXJOYW1lIjoidXNlcjEiLCJtYW5hZ2VtZW50SWQiOiJlYWU4N2VkNWU1ODA0ZmZlYjA1NTBhNjFkNzg2Mjk4MCIsInJlZnJlc2hUb2tlbiI6IjFjOWViYTYwLWQ1YTAtNGE1OS1iMDI2LWY2YzNhODY1Y2Q2NyIsInR5cGUiOiJ1c2VyIiwiY2xpZW50SWQiOiJhNGE1NzkzNTdjZWY0NjE3OGU1YzY2ZDFkN2U2ZDdiNCJ9LCJpc3MiOiJvY2UuaWFtIiwiY2xhaW0iOnsidGVuYW50IjoiYTEsYjEifSwiaWF0IjoxNDYyOTMzNDI5fQ.JC7aCzS-TLVeGVerhBDKboPzd-0eYy4kUOOgGiV1GOM
+Document Length:        541 bytes
+
+Concurrency Level:      1
+Time taken for tests:   0.033 seconds
+Complete requests:      5
+Failed requests:        0
+Total transferred:      5550 bytes
+HTML transferred:       2705 bytes
+Requests per second:    152.81 [#/sec] (mean)
+Time per request:       6.544 [ms] (mean)
+Time per request:       6.544 [ms] (mean, across all concurrent requests)
+Transfer rate:          165.64 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:     2    6  10.8      2      26
+Waiting:        1    6  10.7      2      26
+Total:          2    7  10.8      2      26
+
+Percentage of the requests served within a certain time (ms)
+  50%      2
+  66%      2
+  75%      2
+  80%     26
+  90%     26
+  95%     26
+  98%     26
+  99%     26
+ 100%     26 (longest request)
+```
+
+2. 쓰레드 10 * 반복 회수 5 = 요청수 50
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/token_info?access_token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjI5MzcwMjksImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJ1c2VySWQiOiI0MDJlMTJmY2MwZWY0YmFkYWNiNjAzYjllZjZkYmRlMCIsImNsaWVudEtleSI6IjU0YTcwODQwLTQ1NTktNDgwYi05MDc4LTgxOWJmMjMyYjQxOSIsInVzZXJOYW1lIjoidXNlcjEiLCJtYW5hZ2VtZW50SWQiOiJlYWU4N2VkNWU1ODA0ZmZlYjA1NTBhNjFkNzg2Mjk4MCIsInJlZnJlc2hUb2tlbiI6IjFjOWViYTYwLWQ1YTAtNGE1OS1iMDI2LWY2YzNhODY1Y2Q2NyIsInR5cGUiOiJ1c2VyIiwiY2xpZW50SWQiOiJhNGE1NzkzNTdjZWY0NjE3OGU1YzY2ZDFkN2U2ZDdiNCJ9LCJpc3MiOiJvY2UuaWFtIiwiY2xhaW0iOnsidGVuYW50IjoiYTEsYjEifSwiaWF0IjoxNDYyOTMzNDI5fQ.JC7aCzS-TLVeGVerhBDKboPzd-0eYy4kUOOgGiV1GOM
+Document Length:        541 bytes
+
+Concurrency Level:      10
+Time taken for tests:   0.055 seconds
+Complete requests:      50
+Failed requests:        0
+Total transferred:      55500 bytes
+HTML transferred:       27050 bytes
+Requests per second:    903.60 [#/sec] (mean)
+Time per request:       11.067 [ms] (mean)
+Time per request:       1.107 [ms] (mean, across all concurrent requests)
+Transfer rate:          979.49 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:     2   10   6.8      8      39
+Waiting:        2   10   6.8      8      39
+Total:          2   11   6.8      8      39
+
+Percentage of the requests served within a certain time (ms)
+  50%      8
+  66%     13
+  75%     13
+  80%     16
+  90%     20
+  95%     21
+  98%     39
+  99%     39
+ 100%     39 (longest request)
+```
+
+3. 쓰레드 50 * 반복 회수 5 = 요청수 250
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/token_info?access_token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjI5MzcwMjksImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJ1c2VySWQiOiI0MDJlMTJmY2MwZWY0YmFkYWNiNjAzYjllZjZkYmRlMCIsImNsaWVudEtleSI6IjU0YTcwODQwLTQ1NTktNDgwYi05MDc4LTgxOWJmMjMyYjQxOSIsInVzZXJOYW1lIjoidXNlcjEiLCJtYW5hZ2VtZW50SWQiOiJlYWU4N2VkNWU1ODA0ZmZlYjA1NTBhNjFkNzg2Mjk4MCIsInJlZnJlc2hUb2tlbiI6IjFjOWViYTYwLWQ1YTAtNGE1OS1iMDI2LWY2YzNhODY1Y2Q2NyIsInR5cGUiOiJ1c2VyIiwiY2xpZW50SWQiOiJhNGE1NzkzNTdjZWY0NjE3OGU1YzY2ZDFkN2U2ZDdiNCJ9LCJpc3MiOiJvY2UuaWFtIiwiY2xhaW0iOnsidGVuYW50IjoiYTEsYjEifSwiaWF0IjoxNDYyOTMzNDI5fQ.JC7aCzS-TLVeGVerhBDKboPzd-0eYy4kUOOgGiV1GOM
+Document Length:        541 bytes
+
+Concurrency Level:      50
+Time taken for tests:   0.216 seconds
+Complete requests:      250
+Failed requests:        0
+Total transferred:      277500 bytes
+HTML transferred:       135250 bytes
+Requests per second:    1156.19 [#/sec] (mean)
+Time per request:       43.246 [ms] (mean)
+Time per request:       0.865 [ms] (mean, across all concurrent requests)
+Transfer rate:          1253.29 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   1.3      0       3
+Processing:     3   39  14.2     34      92
+Waiting:        0   37  15.6     33      92
+Total:          4   40  14.3     34      92
+
+Percentage of the requests served within a certain time (ms)
+  50%     34
+  66%     39
+  75%     47
+  80%     52
+  90%     62
+  95%     73
+  98%     76
+  99%     84
+ 100%     92 (longest request)
+```
+
+4. 쓰레드 100 * 반복 회수 5 = 요청수 500
+
+```
+Server Software:        Apache-Coyote/1.1
+Server Hostname:        localhost
+Server Port:            8080
+
+Document Path:          /oauth/token_info?access_token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjI5MzcwMjksImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJ1c2VySWQiOiI0MDJlMTJmY2MwZWY0YmFkYWNiNjAzYjllZjZkYmRlMCIsImNsaWVudEtleSI6IjU0YTcwODQwLTQ1NTktNDgwYi05MDc4LTgxOWJmMjMyYjQxOSIsInVzZXJOYW1lIjoidXNlcjEiLCJtYW5hZ2VtZW50SWQiOiJlYWU4N2VkNWU1ODA0ZmZlYjA1NTBhNjFkNzg2Mjk4MCIsInJlZnJlc2hUb2tlbiI6IjFjOWViYTYwLWQ1YTAtNGE1OS1iMDI2LWY2YzNhODY1Y2Q2NyIsInR5cGUiOiJ1c2VyIiwiY2xpZW50SWQiOiJhNGE1NzkzNTdjZWY0NjE3OGU1YzY2ZDFkN2U2ZDdiNCJ9LCJpc3MiOiJvY2UuaWFtIiwiY2xhaW0iOnsidGVuYW50IjoiYTEsYjEifSwiaWF0IjoxNDYyOTMzNDI5fQ.JC7aCzS-TLVeGVerhBDKboPzd-0eYy4kUOOgGiV1GOM
+Document Length:        541 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.344 seconds
+Complete requests:      500
+Failed requests:        0
+Total transferred:      555000 bytes
+HTML transferred:       270500 bytes
+Requests per second:    1453.93 [#/sec] (mean)
+Time per request:       68.779 [ms] (mean)
+Time per request:       0.688 [ms] (mean, across all concurrent requests)
+Transfer rate:          1576.04 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.4      0       1
+Processing:     5   61  21.3     60     142
+Waiting:        5   60  20.4     59     142
+Total:          6   62  21.1     60     142
+
+Percentage of the requests served within a certain time (ms)
+  50%     60
+  66%     66
+  75%     71
+  80%     74
+  90%     88
+  95%     99
+  98%    119
+  99%    125
+ 100%    142 (longest request)
 ```
 
 
