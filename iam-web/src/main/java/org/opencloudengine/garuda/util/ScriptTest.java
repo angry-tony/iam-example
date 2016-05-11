@@ -1,25 +1,13 @@
 package org.opencloudengine.garuda.util;
 
-import org.apache.commons.lang.ClassUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.util.EntityUtils;
 import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 import org.mozilla.javascript.tools.shell.Main;
-import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import sun.org.mozilla.javascript.internal.ContextFactory;
-import sun.org.mozilla.javascript.internal.Function;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +45,6 @@ public class ScriptTest {
             cx.evaluateString(global, engineJs, "script", 1, null);
             org.mozilla.javascript.Function run = (org.mozilla.javascript.Function) global.get("run", global);
             Object result = run.call(cx, global, global, new Object[]{});
-
             //Object result = cx.evaluateString(global, engineJs, "<cmd>", 1, null);
             //System.out.println(cx.toString(result));
             Map map = (Map) Context.jsToJava(result, Map.class);

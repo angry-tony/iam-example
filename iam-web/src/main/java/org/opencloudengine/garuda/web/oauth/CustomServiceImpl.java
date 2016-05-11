@@ -1,39 +1,25 @@
 package org.opencloudengine.garuda.web.oauth;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
 import org.apache.velocity.app.VelocityEngine;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 import org.mozilla.javascript.tools.shell.Main;
-import org.opencloudengine.garuda.common.exception.ServiceException;
-import org.opencloudengine.garuda.util.HttpUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.ResourceUtils;
 import org.opencloudengine.garuda.util.StringUtils;
-import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
-import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
-import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
 import org.opencloudengine.garuda.web.management.Management;
-import org.opencloudengine.garuda.web.management.ManagementService;
-import org.slf4j.helpers.MessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
-import sun.org.mozilla.javascript.internal.NativeArray;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.*;
 
 @Service

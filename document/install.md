@@ -68,6 +68,8 @@ Jan 31 23:50:51 u1 couchdb[3106]: [info] [<0.33.0>] Apache CouchDB has started o
 ### Install Maven and Tomcat
 
 ```
+$ sudo apt-get install openjdk-7-jdk
+
 $ sudo apt-get install maven
 
 $ sudo apt-get install tomcat7
