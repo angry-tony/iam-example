@@ -11,3 +11,5 @@
 [Rest Api](document/api.md)
 
 [POC](document/poc.md)
+
+[강의자료](document/iam.pptx)
