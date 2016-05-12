@@ -29,6 +29,8 @@ public class ManagementRepositoryImpl implements ManagementRepository {
         management.setDocType(NAMESPACE);
         management.setRegDate(time);
         management.setUpdDate(time);
+        management.setUseCustomTokenIssuance("N");
+        management.setCustomTokenIssuance("");
 
         Response response = serviceFactory.getDb().save(management);
         management.set_id(response.getId());
