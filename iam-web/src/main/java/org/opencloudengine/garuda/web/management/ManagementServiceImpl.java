@@ -24,9 +24,10 @@ public class ManagementServiceImpl implements ManagementService {
     @Autowired
     ConfigurationHelper configurationHelper;
 
+
     @Override
-    public List<Management> selectByUserId(String userId) {
-        return managementRepository.selectByUserId(userId);
+    public List<Management> selectAllByUserId(String userId) {
+        return managementRepository.selectAllByUserId(userId);
     }
 
     @Override
@@ -88,5 +89,25 @@ public class ManagementServiceImpl implements ManagementService {
         }
 
         return managementRepository.updateById(id, managementName, description, sessionTokenLifetime, scopeCheckLifetime);
+    }
+
+    @Override
+    public List<Management> selectByUserId(String userId, int limit, Long skip) {
+        return managementRepository.selectByUserId(userId, limit, skip);
+    }
+
+    @Override
+    public List<Management> selectByUserIdLikeManagementName(String userId, String managementName, int limit, Long skip) {
+        return managementRepository.selectByUserIdLikeManagementName(userId, managementName, limit, skip);
+    }
+
+    @Override
+    public Long countAllByUserId(String userId) {
+        return managementRepository.countAllByUserId(userId);
+    }
+
+    @Override
+    public Long countAllByUserIdLikeManagementName(String userId, String managementName) {
+        return managementRepository.countAllByUserIdLikeManagementName(userId, managementName);
     }
 }

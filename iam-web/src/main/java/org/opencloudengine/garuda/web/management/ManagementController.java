@@ -1,5 +1,6 @@
 package org.opencloudengine.garuda.web.management;
 
+import net.minidev.json.JSONObject;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.common.rest.Response;
 import org.opencloudengine.garuda.common.security.SessionUtils;
@@ -34,14 +35,38 @@ public class ManagementController {
     @Autowired
     private ManagementService managementService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String  load() {
+        return "/management/list";
+    }
+
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView list(HttpSession session) {
-        ModelAndView mav = new ModelAndView("/management/list");
+    public @ResponseBody String list(@RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                                     @RequestParam(value = "skip", required = false, defaultValue = "0") int skip,
+                                     @RequestParam(value = "managementName", required = false, defaultValue = "") String managementName) {
 
-        List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
-        mav.addObject("managements", managements);
-        return mav;
+        Long count;
+        List<Management> managements;
+        String id = SessionUtils.getId();
+
+        if(managementName.length() > 0) {
+            count = managementService.countAllByUserIdLikeManagementName(id, managementName);
+            managements = managementService.selectByUserIdLikeManagementName(id, managementName, limit, new Long(skip));
+
+        } else {
+            count = managementService.countAllByUserId(id);
+            managements = managementService.selectByUserId(id, limit, new Long(skip));
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("recordsTotal", limit);
+        jsonObject.put("recordsFiltered", count);
+        jsonObject.put("displayStart", skip);
+        jsonObject.put("data", managements);
+
+        return jsonObject.toString();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -63,7 +88,7 @@ public class ManagementController {
             managementService.createManagement(SessionUtils.getId(), managementName, description, sessionTokenLifetime, scopeCheckLifetime);
             ModelAndView mav = new ModelAndView("/management/list");
 
-            List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
+            List<Management> managements = managementService.selectAllByUserId(SessionUtils.getId());
             mav.addObject("managements", managements);
             return mav;
         } catch (Exception ex) {
@@ -124,7 +149,7 @@ public class ManagementController {
             if (management != null) {
                 managementService.deleteById(_id);
                 ModelAndView mav = new ModelAndView("/management/list");
-                List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
+                List<Management> managements = managementService.selectAllByUserId(SessionUtils.getId());
                 mav.addObject("managements", managements);
                 return mav;
             } else {
@@ -148,7 +173,7 @@ public class ManagementController {
             managementService.updateById(SessionUtils.getId(), _id, managementName, description, sessionTokenLifetime, scopeCheckLifetime);
 
             ModelAndView mav = new ModelAndView("/management/list");
-            List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
+            List<Management> managements = managementService.selectAllByUserId(SessionUtils.getId());
             mav.addObject("managements", managements);
             return mav;
         } catch (Exception ex) {

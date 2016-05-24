@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ManagementRepository {
+    List<Management> selectAllByUserId(String userId);
 
     Management insert(Management management);
 
@@ -22,4 +23,14 @@ public interface ManagementRepository {
     Management updateById(Management management);
 
     void deleteById(String id);
+
+
+    List<Management> selectByUserId(String userId, int limit, Long skip);
+
+    List<Management> selectByUserIdLikeManagementName(String userId, String managementName, int limit, Long skip);
+
+
+    Long countAllByUserId(String userId);
+
+    Long countAllByUserIdLikeManagementName(String userId, String managementName);
 }

@@ -4,16 +4,15 @@ import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
-import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
-import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public class ManagementRepositoryImpl implements ManagementRepository {
@@ -22,6 +21,28 @@ public class ManagementRepositoryImpl implements ManagementRepository {
 
     @Autowired
     CouchServiceFactory serviceFactory;
+
+    @Override
+    public List<Management> selectAllByUserId(String userId) {
+        List<Management> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByUserId");
+            Key.ComplexKey complex = new Key().complex(userId);
+
+            List<ViewResponse.Row<Key.ComplexKey, Management>> rows = builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, Management> row : rows) {
+                Management value = row.getValue();
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
     @Override
     public Management insert(Management management) {
@@ -143,5 +164,90 @@ public class ManagementRepositoryImpl implements ManagementRepository {
     public void deleteById(String id) {
         Management management = this.selectById(id);
         serviceFactory.getDb().remove(management);
+    }
+
+    @Override
+    public List<Management> selectByUserId(String userId, int limit, Long skip) {
+        List<Management> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByUserId");
+            Key.ComplexKey complex = new Key().complex(userId);
+
+            List<ViewResponse.Row<Key.ComplexKey, Management>> rows = builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    keys(complex).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, Management> row : rows) {
+                Management value = row.getValue();
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Management> selectByUserIdLikeManagementName(String userId, String managementName, int limit, Long skip) {
+        List<Management> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByUserIdLikeManagementName");
+            Key.ComplexKey startKey = new Key().complex(managementName).add(userId);
+            Key.ComplexKey endKey = new Key().complex(managementName + "Z").add(userId);
+
+            List<ViewResponse.Row<Key.ComplexKey, Management>> rows = builder.newRequest(Key.Type.COMPLEX, Management.class).
+                    startKey(startKey).endKey(endKey).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, Management> row : rows) {
+                Management value = row.getValue();
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public Long countAllByUserId(String userId) {
+        Long count = null;
+        Key.ComplexKey complex;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countAllByUserId");
+            complex = new Key().complex(userId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    keys(complex).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
+    @Override
+    public Long countAllByUserIdLikeManagementName(String userId, String managementName) {
+        Long count = null;
+        Key.ComplexKey startKey;
+        Key.ComplexKey endKey;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countAllByUserIdLikeManagementName");
+            startKey = new Key().complex(managementName).add(userId);
+            endKey = new Key().complex(managementName + "Z").add(userId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    startKey(startKey).endKey(endKey).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
     }
 }

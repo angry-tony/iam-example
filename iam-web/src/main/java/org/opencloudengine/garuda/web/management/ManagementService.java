@@ -1,13 +1,10 @@
 package org.opencloudengine.garuda.web.management;
 
-import org.opencloudengine.garuda.model.User;
-
 import java.util.List;
-import java.util.Map;
 
 public interface ManagementService {
 
-    List<Management> selectByUserId(String userId);
+    List<Management> selectAllByUserId(String userId);
 
     Management selectById(String id);
 
@@ -24,4 +21,14 @@ public interface ManagementService {
     Management updateById(Management management);
 
     Management updateById(String userId, String id, String managementName, String description, Integer sessionTokenLifetime, Integer scopeCheckLifetime);
+
+
+    List<Management> selectByUserId(String userId, int limit, Long skip);
+
+    List<Management> selectByUserIdLikeManagementName(String userId, String managementName, int limit, Long skip);
+
+
+    Long countAllByUserId(String userId);
+
+    Long countAllByUserIdLikeManagementName(String userId, String managementName);
 }
