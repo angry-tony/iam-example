@@ -80,12 +80,25 @@
                             </c:choose>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">Active Client </label>
+
+                                <input type="hidden" name="useCustomTokenIssuance"
+                                       value="${management.useCustomTokenIssuance}">
+
+                                <label class="col-md-2 control-label">Use Case </label>
 
                                 <div class="col-md-6">
-                                    <label class="checkbox"><input type="checkbox" name="useCustomTokenIssuance"
-                                                                   value="Y"
-                                                                   <c:if test="${management.useCustomTokenIssuance == 'Y'}">checked</c:if>>active</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="code">Authorization Code</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="implicit">Implicit Grant</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="password">Resource Owner Password Credentials</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="credentials">Client Credentials Grant</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="refreshToken">Refresh Token</label>
+                                    <label class="checkbox"><input name="useCustomToken" type="checkbox"
+                                                                   value="validateToken">Validate Token</label>
                                 </div>
                             </div>
 
@@ -228,8 +241,36 @@
 <script type="text/javascript">
 
     $(function () {
-        //var editor = ace.edit("customTokenIssuance");
-        //var CodeMirror = window.CodeMirror;
+
+        var useCustomTokenIssuance = $("[name=useCustomTokenIssuance]").val();
+        var split = useCustomTokenIssuance.split(",");
+        for (var i = 0; i < split.length; i++) {
+            $("[name=useCustomToken]").each(function () {
+                if (split[i] === $(this).val()) {
+                    $(this).prop("checked", true);
+                }
+            })
+        }
+
+        var postForm = $('#CustomTokenIssuanceForm');
+        postForm.validate({
+            rules: {
+
+            },
+            submitHandler: function (form, event) {
+                var useCustomTokenIssuance = [];
+                $("[name=useCustomToken]").each(function () {
+                    if($(this).prop("checked")){
+                        useCustomTokenIssuance.push($(this).val());
+                    }
+                });
+                var join = useCustomTokenIssuance.join();
+                $("[name=useCustomTokenIssuance]").val(join);
+                form.submit();
+            }
+        });
+
+
         var editor = new CodeMirror.fromTextArea(document.getElementById("customTokenIssuance"), {
             mode: "javascript",
             styleActiveLine: true,

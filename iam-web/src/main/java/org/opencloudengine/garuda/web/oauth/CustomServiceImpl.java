@@ -37,6 +37,30 @@ public class CustomServiceImpl implements CustomService {
     @Autowired
     private OauthClientService oauthClientService;
 
+    public final static String CODE = "code";
+    public final static String IMPLICIT = "implicit";
+    public final static String PASSWORD = "password";
+    public final static String CREDENTIALS = "credentials";
+    public final static String REFRESH_TOKEN = "refreshToken";
+    public final static String VALIDATE_TOKEN = "validateToken";
+
+    @Override
+    public List<String> getUseCaseList(Management management) {
+        String useCase = management.getUseCustomTokenIssuance();
+        if(StringUtils.isEmpty(useCase)){
+            return new ArrayList<>();
+        }else{
+            String[] split = useCase.split(",");
+            return Arrays.asList(split);
+        }
+    }
+
+    @Override
+    public boolean inCase(Management management, String useCase) {
+        List<String> useCaseList = this.getUseCaseList(management);
+        return useCaseList.contains(useCase);
+    }
+
     @Override
     public boolean processTokenScript(Management management, OauthClient oauthClient, OauthUser oauthUser, String scope, String tokenType, String claimJson, String type) {
         Map map = this.runTokenScript(management, oauthClient, oauthUser, scope, tokenType, claimJson, type);

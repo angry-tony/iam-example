@@ -368,7 +368,7 @@ public class OauthServiceImpl implements OauthService {
                     String scope = authorizeResponse.getScope();
 
                     //커스텀 토큰 스크립트를 수행한다.
-                    if (management.getUseCustomTokenIssuance().equals("Y")) {
+                    if(customService.inCase(management, CustomServiceImpl.IMPLICIT)){
                         boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scope,
                                 authorizeResponse.getTokenType(), authorizeResponse.getClaim(), "user");
                         if (!value) {

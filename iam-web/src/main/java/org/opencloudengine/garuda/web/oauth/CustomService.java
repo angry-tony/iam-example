@@ -4,6 +4,7 @@ import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.management.Management;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,4 +17,8 @@ public interface CustomService {
 
     Map processTokenTest(Management management, String userId, String clientId, String scopes,
                          String tokenType, String claimJson, String script);
+
+    List<String> getUseCaseList(Management management);
+
+    boolean inCase(Management management, String useCase);
 }

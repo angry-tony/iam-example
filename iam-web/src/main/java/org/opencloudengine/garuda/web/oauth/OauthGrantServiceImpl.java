@@ -74,7 +74,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 this.processRedirect(accessTokenResponse);
                 return;
             }
-
+            Management management = managementService.selectById(accessToken.getManagementId());
             OauthClient oauthClient = oauthClientService.selectById(accessToken.getClientId());
             OauthUser oauthUser = oauthUserService.selectById(accessToken.getOauthUserId());
 
@@ -93,6 +93,18 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 map.put("expires_in", diff);
             }
 
+            //커스텀 토큰 스크립트를 수행한다.
+            if (customService.inCase(management, CustomServiceImpl.VALIDATE_TOKEN)) {
+                boolean value = customService.processTokenScript(management, oauthClient, oauthUser, accessToken.getScopes(),
+                        "Bearer", null, accessToken.getType());
+                if (!value) {
+                    accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
+                    accessTokenResponse.setError_description("Access denied by custom token issuance rule");
+                    this.processRedirect(accessTokenResponse);
+                    return;
+                }
+            }
+
             map.put("client", oauthClient.getClientKey());
             if (oauthUser != null) {
                 map.put("username", oauthUser.getUserName());
@@ -105,7 +117,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
             String marshal = JsonUtils.marshal(map);
             String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-            System.out.println(prettyPrint);
+
 
             HttpServletResponse response = accessTokenResponse.getResponse();
             response.setStatus(200);
@@ -156,9 +168,30 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             Map<String, Object> claims = jwtClaimsSet.getClaims();
             map.putAll(claims);
 
+            //커스텀 토큰 스크립트를 수행한다.
+            Map context = (Map) claims.get("context");
+            String managementId = (String) context.get("managementId");
+            String clientKey = (String) context.get("clientKey");
+            String userId = context.containsKey("userId") ? (String) context.get("userId") : null;
+            String scopes = (String) context.get("scopes");
+            String type = (String) context.get("type");
+            String claim = JsonUtils.marshal((Map) claims.get("claim"));
+            Management management = managementService.selectById(managementId);
+            if (customService.inCase(management, CustomServiceImpl.VALIDATE_TOKEN)) {
+                OauthClient oauthClient = oauthClientService.selectByClientKey(clientKey);
+                OauthUser oauthUser = userId != null ? oauthUserService.selectById(userId) : null;
+                boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scopes,
+                        "JWT", claim, type);
+                if (!value) {
+                    accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
+                    accessTokenResponse.setError_description("Access denied by custom token issuance rule");
+                    this.processRedirect(accessTokenResponse);
+                    return;
+                }
+            }
+
             String marshal = JsonUtils.marshal(map);
             String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-            System.out.println(prettyPrint);
 
             HttpServletResponse response = accessTokenResponse.getResponse();
             response.setStatus(200);
@@ -244,7 +277,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //커스텀 토큰 스크립트를 수행한다.
-        if (management.getUseCustomTokenIssuance().equals("Y")) {
+        if (customService.inCase(management, CustomServiceImpl.REFRESH_TOKEN)) {
             boolean value = customService.processTokenScript(management, oauthClient, accessTokenResponse.getOauthUser(), accessTokenResponse.getScope(),
                     accessTokenResponse.getTokenType(), accessTokenResponse.getClaim(), "user");
             if (!value) {
@@ -348,7 +381,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setScope(oauthCode.getScopes());
 
         //커스텀 토큰 스크립트를 수행한다.
-        if (management.getUseCustomTokenIssuance().equals("Y")) {
+        if (customService.inCase(management, CustomServiceImpl.CODE)) {
             boolean value = customService.processTokenScript(management, oauthClient, oauthUser, accessTokenResponse.getScope(),
                     accessTokenResponse.getTokenType(), accessTokenResponse.getClaim(), "user");
             if (!value) {
@@ -435,7 +468,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthUser(oauthUser);
 
         //커스텀 토큰 스크립트를 수행한다.
-        if (management.getUseCustomTokenIssuance().equals("Y")) {
+        if (customService.inCase(management, CustomServiceImpl.PASSWORD)) {
             boolean value = customService.processTokenScript(management, oauthClient, oauthUser, accessTokenResponse.getScope(),
                     accessTokenResponse.getTokenType(), accessTokenResponse.getClaim(), "user");
             if (!value) {
@@ -445,7 +478,6 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 return;
             }
         }
-
 
         //어세스 토큰을 만들고 저장한다.
         this.insertAccessToken(accessTokenResponse, "user");
@@ -513,7 +545,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setOauthScopes(requestScopes);
 
         //커스텀 토큰 스크립트를 수행한다.
-        if (management.getUseCustomTokenIssuance().equals("Y")) {
+        if (customService.inCase(management, CustomServiceImpl.CREDENTIALS)) {
             boolean value = customService.processTokenScript(management, oauthClient, null, accessTokenResponse.getScope(),
                     accessTokenResponse.getTokenType(), accessTokenResponse.getClaim(), "user");
             if (!value) {
@@ -523,7 +555,6 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 return;
             }
         }
-
 
         //어세스 토큰을 만들고 저장한다.
         this.insertAccessToken(accessTokenResponse, "client");

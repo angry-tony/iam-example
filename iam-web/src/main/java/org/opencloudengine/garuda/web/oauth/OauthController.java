@@ -47,7 +47,6 @@ public class OauthController {
             map.put("state", authorizeResponse.getState());
             String marshal = JsonUtils.marshal(map);
             String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-            System.out.println(prettyPrint);
             response.getWriter().write(prettyPrint);
 
             oauthService.responseAuthorize(authorizeResponse);
