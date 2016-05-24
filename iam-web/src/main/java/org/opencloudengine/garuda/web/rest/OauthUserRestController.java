@@ -37,7 +37,7 @@ public class OauthUserRestController {
         }
 
         try {
-            List<OauthUser> users = oauthUserService.selectByManagementId(management.get_id());
+            List<OauthUser> users = oauthUserService.selectAllByManagementId(management.get_id());
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

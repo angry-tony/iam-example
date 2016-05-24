@@ -40,7 +40,7 @@ public class OauthScopeRestController {
         }
 
         try {
-            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
+            List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
             if (oauthScopes.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

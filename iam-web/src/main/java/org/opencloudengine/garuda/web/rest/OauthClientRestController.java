@@ -40,7 +40,7 @@ public class OauthClientRestController {
         }
 
         try {
-            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
+            List<OauthClient> oauthClients = oauthClientService.selectAllByManagementId(management.get_id());
             if (oauthClients.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -52,7 +52,6 @@ public class OauthClientRestController {
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<OauthClient> getClient(HttpServletRequest request, @PathVariable("_id") String _id) {
-
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
