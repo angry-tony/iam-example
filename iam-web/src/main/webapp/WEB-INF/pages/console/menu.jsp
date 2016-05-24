@@ -11,13 +11,13 @@
         <a href="/console/overview"><i class="fa fa-bar-chart-o"></i> Overview </a>
     </li>
     <li class="list-group-item" name="list-menu-user">
-        <a href="/console/user/list"><i class="fa fa-group"></i> Users </a>
+        <a href="/console/user"><i class="fa fa-group"></i> Users </a>
     </li>
     <li class="list-group-item" name="list-menu-client">
-        <a href="/console/client/list"><i class="fa fa-group"></i> Clients </a>
+        <a href="/console/client"><i class="fa fa-group"></i> Clients </a>
     </li>
     <li class="list-group-item" name="list-menu-scope">
-        <a href="/console/scope/list"><i class="fa fa-cubes"></i> Scopes </a>
+        <a href="/console/scope"><i class="fa fa-cubes"></i> Scopes </a>
     </li>
     <li class="list-group-item" name="list-menu-custom-token">
         <a href="/console/custom/token/edit"><i class="fa fa-cubes"></i> Custom token issuance </a>

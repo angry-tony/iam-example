@@ -27,6 +27,63 @@
     <!-- CSS Page Style -->
     <link rel="stylesheet" href="/resources/assets/css/pages/page_faq1.css">
     <link rel="stylesheet" href="/resources/assets/css/pages/page_search_inner.css">
+
+    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function search(table, searchValue) {
+            if(event.keyCode == 13) {
+                reload(table, searchValue);
+            }
+        };
+
+        function reload(table, searchValue) {
+            // limit and skip setting
+            var tableAPI = table.api();
+            var limit = tableAPI.settings()[0]._iDisplayLength
+            var skip = tableAPI.settings()[0]._iDisplayStart;
+
+            tableAPI.ajax.url('/management/list?limit=' + limit + '&skip=' + skip + '&userName=' + searchValue);
+            tableAPI.ajax.reload();
+        };
+
+        $(document).ready(function() {
+            var table = $('#managements').DataTable({
+                serverSide: true,
+                searching: false,
+                ajax: {
+                    url: '/management/list',
+                    dataSrc: function(managements) {
+                        // change init page setting (_iDisplayStart )
+                        table.settings()[0]._iDisplayStart = managements.displayStart;
+
+                        // make id edit href
+                        for(var i = 0; i < managements.data.length; i++) {
+                            managements.data[i].managementName = '<a href=/management/session?_id=' + managements.data[i]._id + '>' + managements.data[i].managementName + '</a>';
+                            managements.data[i]._id = '<a href=/management/edit?_id=' + managements.data[i]._id + '>Edit</a>';
+                        }
+                        return managements.data;
+                    }
+                },
+                columns: [
+                    { data: 'managementName' },
+                    { data: 'description' },
+                    { data: '_id' }
+                ]
+            });
+
+            // page event
+            $('#managements').on('page.dt', function() {
+                reload($('#managements').dataTable(), $('#customSearch').val().trim());
+
+                // page length event
+            }).on('length.dt', function() {
+                reload($('#managements').dataTable(), $('#customSearch').val().trim());
+
+            });
+        });
+    </script>
 </head>
 
 
@@ -58,7 +115,8 @@
 
                 <div class="margin-bottom-10">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
+                        <div style="float: right"> Search : <input type="text" id="customSearch" onKeyDown="javascript: search($('#managements').dataTable(), this.value)" /> </div>
+                        <table id="managements" class="display table table-bordered table-striped">
                             <thead>
                             <tr>
                                 <th>Management Group Name</th>
@@ -66,22 +124,7 @@
                                 <th></th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <c:forEach items="${managements}" var="management" varStatus="status">
-                                <tr>
-                                    <td name="groupName">
-                                        <a href="/management/session?_id=${management._id}">${management.managementName}</a>
-                                    </td>
-                                    <td>
-                                            ${management.description}
-                                    </td>
-                                    <td>
-                                        <a href="/management/edit?_id=${management._id}">Edit</a>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>

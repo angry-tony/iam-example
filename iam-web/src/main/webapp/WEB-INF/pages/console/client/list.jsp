@@ -20,6 +20,63 @@
     <!-- CSS Page Style -->
     <link rel="stylesheet" href="/resources/assets/css/pages/profile.css">
 
+    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+        function search(table, searchValue) {
+            if(event.keyCode == 13) {
+                reload(table, searchValue);
+            }
+        };
+
+        function reload(table, searchValue) {
+            // limit and skip setting
+            var tableAPI = table.api();
+            var limit = tableAPI.settings()[0]._iDisplayLength
+            var skip = tableAPI.settings()[0]._iDisplayStart;
+
+            tableAPI.ajax.url('/console/client/list?limit=' + limit + '&skip=' + skip + '&userName=' + searchValue);
+            tableAPI.ajax.reload();
+        };
+
+        $(document).ready(function() {
+            var table = $('#clients').DataTable({
+                serverSide: true,
+                searching: false,
+                ajax: {
+                    url: '/console/client/list',
+                    dataSrc: function(oauthClients) {
+                        // change init page setting (_iDisplayStart )
+                        table.settings()[0]._iDisplayStart = oauthClients.displayStart;
+
+                        // make id edit href
+                        for(var i = 0; i < oauthClients.data.length; i++) {
+                            oauthClients.data[i]._id = '<a href=/console/client/edit?_id=' + oauthClients.data[i]._id + '>Edit</a>';
+                        }
+                        return oauthClients.data;
+                    }
+                },
+                columns: [
+                    { data: 'name' },
+                    { data: 'description' },
+                    { data: 'clientType' },
+                    { data: '_id' }
+                ]
+            });
+
+            // page event
+            $('#clients').on('page.dt', function() {
+                reload($('#clients').dataTable(), $('#customSearch').val().trim());
+
+                // page length event
+            }).on('length.dt', function() {
+                reload($('#clients').dataTable(), $('#customSearch').val().trim());
+
+            });
+        });
+    </script>
+
 </head>
 
 
@@ -63,34 +120,17 @@
 
                         <div class="margin-bottom-10">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <div style="float: right"> Search : <input type="text" id="customSearch" onKeyDown="javascript: search($('#clients').dataTable(), this.value)" /> </div>
+                                <table id="clients" class="display table table-bordered table-striped">
                                     <thead>
                                     <tr>
                                         <th>Client Name</th>
-                                        <th>Description</th>
+                                        <th>Descriptions</th>
                                         <th>Type</th>
                                         <th></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <c:forEach items="${oauthClients}" var="oauthClient" varStatus="status">
-                                        <tr>
-                                            <td>
-                                                    ${oauthClient.name}
-                                            </td>
-                                            <td>
-                                                    ${oauthClient.description}
-                                            </td>
-                                            <td>
-                                                    ${oauthClient.clientType}
-                                            </td>
-                                            <td>
-                                                <a href="/console/client/edit?_id=${oauthClient._id}">Edit</a>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>

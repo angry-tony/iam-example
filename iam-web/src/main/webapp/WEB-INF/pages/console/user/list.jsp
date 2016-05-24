@@ -17,9 +17,64 @@
     <!-- Meta -->
     <%@include file="../../template/header_js.jsp" %>
 
+    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
+    <link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+
     <!-- CSS Page Style -->
     <link rel="stylesheet" href="/resources/assets/css/pages/profile.css">
 
+    <script type="text/javascript">
+        function search(table, searchValue) {
+            if(event.keyCode == 13) {
+                reload(table, searchValue);
+            }
+        };
+
+        function reload(table, searchValue) {
+            // limit and skip setting
+            var tableAPI = table.api();
+            var limit = tableAPI.settings()[0]._iDisplayLength
+            var skip = tableAPI.settings()[0]._iDisplayStart;
+
+            tableAPI.ajax.url('/console/user/list?limit=' + limit + '&skip=' + skip + '&userName=' + searchValue);
+            tableAPI.ajax.reload();
+        };
+
+        $(document).ready(function() {
+            var table = $('#users').DataTable({
+                serverSide: true,
+                searching: false,
+                ajax: {
+                    url: '/console/user/list',
+                    dataSrc: function(oauthUsers) {
+                        // change init page setting (_iDisplayStart )
+                        table.settings()[0]._iDisplayStart = oauthUsers.displayStart;
+
+                        // make id edit href
+                        for(var i = 0; i < oauthUsers.data.length; i++) {
+                            oauthUsers.data[i]._id = '<a href=/console/user/edit?_id=' + oauthUsers.data[i]._id + '>Edit</a>';
+                        }
+                        return oauthUsers.data;
+                    }
+                },
+                columns: [
+                    { data: 'userName' },
+                    { data: 'level' },
+                    { data: '_id' }
+                ]
+            });
+
+            // page event
+            $('#users').on('page.dt', function() {
+                reload($('#users').dataTable(), $('#customSearch').val().trim());
+
+            // page length event
+            }).on('length.dt', function() {
+                reload($('#users').dataTable(), $('#customSearch').val().trim());
+
+            });
+        });
+    </script>
 </head>
 
 
@@ -63,30 +118,16 @@
 
                         <div class="margin-bottom-10">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <div style="float: right"> Search : <input type="text" id="customSearch" onKeyDown="javascript: search($('#users').dataTable(), this.value)" /> </div>
+                                <table id="users" class="display table table-bordered table-striped">
                                     <thead>
-                                    <tr>
-                                        <th>User Name</th>
-                                        <th>Level</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${oauthUsers}" var="oauthUser" varStatus="status">
                                         <tr>
-                                            <td>
-                                                    ${oauthUser.userName}
-                                            </td>
-                                            <td>
-                                                    ${oauthUser.level}
-                                            </td>
-                                            <td>
-                                                <a href="/console/user/edit?_id=${oauthUser._id}">Edit</a>
-                                            </td>
+                                            <th>User Name</th>
+                                            <th>Level</th>
+                                            <th></th>
                                         </tr>
-                                    </c:forEach>
-
-                                    </tbody>
+                                    </thead>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>

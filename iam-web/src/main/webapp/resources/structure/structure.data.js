@@ -122,7 +122,7 @@ structure.data = {
          */
         {
             title: 'Management',
-            href: '/management/list'
+            href: '/management'
         },
         /*
         /*
