@@ -1,18 +1,17 @@
 package org.opencloudengine.garuda.web.console.oauthclient;
 
+import net.minidev.json.JSONObject;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -36,30 +35,53 @@ public class OauthClientController {
     @Autowired
     private OauthScopeService oauthScopeService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String  load() {
+        return "/console/client/list";
+    }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView list(HttpSession session) {
+    public @ResponseBody String list(HttpSession session,
+                                     @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                                     @RequestParam(value = "skip", required = false, defaultValue = "0") int skip,
+                                     @RequestParam(value = "clientName", required = false, defaultValue = "") String clientName) {
+
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
-        ModelAndView mav = new ModelAndView("/console/client/list");
+        Long count;
+        List<OauthClient> oauthClients;
 
-        mav.addObject("management", management);
-        mav.addObject("oauthClients", oauthClients);
-        return mav;
+        if(clientName.length() > 0) {
+            count = oauthClientService.countAllByManagementIdLikeClientName(management.get_id(), clientName);
+            oauthClients = oauthClientService.selectByManagementLikeClientName(management.get_id(), clientName, limit, new Long(skip));
+
+        } else {
+            count = oauthClientService.countAllByManagementId(management.get_id());
+            oauthClients = oauthClientService.selectByManagementId(management.get_id(), limit, new Long(skip));
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("recordsTotal", limit);
+        jsonObject.put("recordsFiltered", count);
+        jsonObject.put("displayStart", skip);
+        jsonObject.put("data", oauthClients);
+
+        return jsonObject.toString();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView newManagement(HttpSession session) {
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
+        List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
 
         ModelAndView mav = new ModelAndView("/console/client/new");
 
         mav.addObject("management", management);
         mav.addObject("oauthScopes", oauthScopes);
+
         return mav;
     }
 
@@ -84,7 +106,7 @@ public class OauthClientController {
 
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
+        List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
 
         try {
 
@@ -95,6 +117,7 @@ public class OauthClientController {
                 mav.addObject("management", management);
                 mav.addObject("oauthScopes", oauthScopes);
                 mav.addObject("duplicate", true);
+
                 return mav;
             }
 
@@ -104,10 +127,9 @@ public class OauthClientController {
                     refreshTokenLifetime, accessTokenLifetime, jwtTokenLifetime, scopes);
 
             //리스트 페이지 반환
-            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
-            mav.addObject("oauthClients", oauthClients);
+
             return mav;
 
         } catch (Exception ex) {
@@ -115,6 +137,7 @@ public class OauthClientController {
             mav.addObject("management", management);
             mav.addObject("oauthScopes", oauthScopes);
             mav.addObject("failed", true);
+
             return mav;
         }
     }
@@ -125,7 +148,7 @@ public class OauthClientController {
                              @RequestParam(defaultValue = "") String _id) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
+        List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
 
         //클라이언트 검색
         OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
@@ -142,7 +165,9 @@ public class OauthClientController {
             mav.addObject("oauthClient", oauthClient);
             mav.addObject("oauthScopes", oauthScopes);
             mav.addObject("clientScopes", clientScopes);
+
             return mav;
+
         } catch (Exception ex) {
             throw new ServiceException("Invalid oauth client id");
         }
@@ -164,10 +189,9 @@ public class OauthClientController {
 
             oauthClientService.deleteById(_id);
 
-            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
-            mav.addObject("oauthClients", oauthClients);
+
             return mav;
 
         } catch (Exception ex) {
@@ -187,7 +211,6 @@ public class OauthClientController {
                                @RequestParam(defaultValue = "") String authorizedGrantTypes,
                                @RequestParam(defaultValue = "") String webServerRedirectUri,
                                @RequestParam(defaultValue = "") String refreshTokenValidity,
-                               @RequestParam(defaultValue = "") String additionalInformation,
                                @RequestParam(defaultValue = "") Integer codeLifetime,
                                @RequestParam(defaultValue = "") Integer refreshTokenLifetime,
                                @RequestParam(defaultValue = "") Integer accessTokenLifetime,
@@ -196,7 +219,7 @@ public class OauthClientController {
     ) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
+        List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
 
         //클라이언트 검색
         OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
@@ -217,6 +240,7 @@ public class OauthClientController {
                     mav.addObject("oauthClient", oauthClient);
                     mav.addObject("clientScopes", clientScopes);
                     mav.addObject("duplicate", true);
+
                     return mav;
                 }
             }
@@ -225,11 +249,11 @@ public class OauthClientController {
                     webServerRedirectUri, refreshTokenValidity, codeLifetime,
                     refreshTokenLifetime, accessTokenLifetime, jwtTokenLifetime, scopes);
 
-            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/client/list");
             mav.addObject("management", management);
-            mav.addObject("oauthClients", oauthClients);
+
             return mav;
+
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/client/edit");
             mav.addObject("management", management);
@@ -237,6 +261,7 @@ public class OauthClientController {
             mav.addObject("oauthScopes", oauthScopes);
             mav.addObject("clientScopes", clientScopes);
             mav.addObject("failed", true);
+
             return mav;
         }
     }

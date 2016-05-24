@@ -45,8 +45,28 @@ public class OauthUserServiceImpl implements OauthUserService {
     }
 
     @Override
-    public List<OauthUser> selectByManagementId(String managementId) {
-        return oauthUserRepository.selectByManagementId(managementId);
+    public List<OauthUser> selectAllByManagementId(String managementId) {
+        return oauthUserRepository.selectAllByManagementId(managementId);
+    }
+
+    @Override
+    public List<OauthUser> selectByManagementId(String managementId, int limit, Long skip) {
+        return oauthUserRepository.selectByManagementId(managementId, limit, skip);
+    }
+
+    @Override
+    public List<OauthUser> selectByManagementLikeUserName(String managementId, String userName, int limit, Long skip) {
+        return oauthUserRepository.selectByManagementLikeUserName(managementId, userName, limit, skip);
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        return oauthUserRepository.countAllByManagementId(managementId);
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeUserName(String managementId, String userName) {
+        return oauthUserRepository.countAllByManagementIdLikeUserName(managementId, userName);
     }
 
     @Override

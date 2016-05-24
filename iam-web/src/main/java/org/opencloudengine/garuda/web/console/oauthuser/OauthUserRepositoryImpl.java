@@ -4,19 +4,15 @@ import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.util.StringUtils;
-import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
-import org.opencloudengine.garuda.web.management.Management;
-import org.opencloudengine.garuda.web.management.ManagementRepository;
 import org.opencloudengine.garuda.web.security.AESPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public class OauthUserRepositoryImpl implements OauthUserRepository {
@@ -42,6 +38,7 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
         Response response = serviceFactory.getDb().save(oauthUser);
         oauthUser.set_id(response.getId());
         oauthUser.set_rev(response.getRev());
+
         return oauthUser;
     }
 
@@ -55,13 +52,14 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                     build().getResponse().getRows().get(0).getValue();
             value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
             return value;
+
         } catch (Exception ex) {
             return null;
         }
     }
 
     @Override
-    public List<OauthUser> selectByManagementId(String managementId) {
+    public List<OauthUser> selectAllByManagementId(String managementId) {
         List<OauthUser> list = new ArrayList<>();
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
@@ -76,9 +74,96 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                 list.add(value);
             }
             return list;
+
         } catch (Exception ex) {
             return list;
         }
+    }
+
+    @Override
+    public List<OauthUser> selectByManagementId(String managementId, int limit, Long skip) {
+        List<OauthUser> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
+            Key.ComplexKey complex = new Key().complex(managementId);
+            List<ViewResponse.Row<Key.ComplexKey, OauthUser>> rows = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+                    keys(complex).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthUser> row : rows) {
+                OauthUser value = row.getValue();
+                value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public List<OauthUser> selectByManagementLikeUserName(String managementId, String userName, int limit, Long skip) {
+        List<OauthUser> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdLikeUserName");
+            Key.ComplexKey startKey = new Key().complex(userName).add(managementId);
+            Key.ComplexKey endKey = new Key().complex(userName + "Z").add(managementId);
+
+            List<ViewResponse.Row<Key.ComplexKey, OauthUser>> rows = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+                    startKey(startKey).endKey(endKey).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthUser> row : rows) {
+                OauthUser value = row.getValue();
+                value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        Long count = null;
+        Key.ComplexKey complex;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementId");
+            complex = new Key().complex(managementId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    keys(complex).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeUserName(String managementId, String userName) {
+        Long count = null;
+        Key.ComplexKey startKey;
+        Key.ComplexKey endKey;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementIdLikeUserName");
+            startKey = new Key().complex(userName).add(managementId);
+            endKey = new Key().complex(userName + "Z").add(managementId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    startKey(startKey).endKey(endKey).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
     }
 
     @Override
@@ -91,6 +176,7 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                     build().getResponse().getRows().get(0).getValue();
             value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
             return value;
+
         } catch (Exception ex) {
             return null;
         }
@@ -107,6 +193,7 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                     build().getResponse().getRows().get(0).getValue();
             value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
             return value;
+
         } catch (Exception ex) {
             return null;
         }
@@ -122,6 +209,7 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
                     build().getResponse().getRows().get(0).getValue();
             value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
             return value;
+
         } catch (Exception ex) {
             return null;
         }

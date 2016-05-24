@@ -2,21 +2,20 @@ package org.opencloudengine.garuda.web.console.oauthscope;
 
 import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
-import com.cloudant.client.api.views.UnpaginatedRequestBuilder;
 import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.opencloudengine.garuda.common.exception.ServiceException;
-import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class OauthScopeRepositoryImpl implements OauthScopeRepository {
@@ -54,6 +53,107 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
         }
     }
 
+    @Override
+    public List<OauthScope> selectAllByManagementId(String managementId) {
+        List<OauthScope> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
+            Key.ComplexKey complex = new Key().complex(managementId);
+            List<ViewResponse.Row<Key.ComplexKey, OauthScope>> rows = builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
+                    keys(complex).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthScope> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public List<OauthScope> selectByManagementId(String managementId, int limit, Long skip) {
+        List<OauthScope> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
+            Key.ComplexKey complex = new Key().complex(managementId);
+            List<ViewResponse.Row<Key.ComplexKey, OauthScope>> rows = builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
+                    keys(complex).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthScope> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public List<OauthScope> selectByManagementLikeScopeName(String managementId, String userName, int limit, Long skip) {
+        List<OauthScope> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdLikeScopeName");
+            Key.ComplexKey startKey = new Key().complex(userName).add(managementId);
+            Key.ComplexKey endKey = new Key().complex(userName + "Z").add(managementId);
+
+            List<ViewResponse.Row<Key.ComplexKey, OauthScope>> rows = builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
+                    startKey(startKey).endKey(endKey).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthScope> row : rows) {
+                OauthScope value = row.getValue();
+                list.add(value);
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        Long count = null;
+        Key.ComplexKey complex;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementId");
+            complex = new Key().complex(managementId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    keys(complex).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeScopeName(String managementId, String userName) {
+        Long count = null;
+        Key.ComplexKey startKey;
+        Key.ComplexKey endKey;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementIdLikeScopeName");
+            startKey = new Key().complex(userName).add(managementId);
+            endKey = new Key().complex(userName + "Z").add(managementId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    startKey(startKey).endKey(endKey).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
     private List<OauthScope> selectById(List<String> idList) {
         List<OauthScope> list = new ArrayList<>();
         try {
@@ -75,25 +175,7 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
                 list.add(row.getValue());
             }
             return list;
-        } catch (Exception ex) {
-            return list;
-        }
-    }
 
-    @Override
-    public List<OauthScope> selectByManagementId(String managementId) {
-        List<OauthScope> list = new ArrayList<>();
-        try {
-            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
-            Key.ComplexKey complex = new Key().complex(managementId);
-            List<ViewResponse.Row<Key.ComplexKey, OauthScope>> rows = builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
-                    keys(complex).
-                    build().getResponse().getRows();
-
-            for (ViewResponse.Row<Key.ComplexKey, OauthScope> row : rows) {
-                list.add(row.getValue());
-            }
-            return list;
         } catch (Exception ex) {
             return list;
         }
@@ -107,6 +189,7 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
             return builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+
         } catch (Exception ex) {
             return null;
         }
@@ -120,6 +203,7 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
             return builder.newRequest(Key.Type.COMPLEX, OauthScope.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
+
         } catch (Exception ex) {
             return null;
         }
@@ -128,7 +212,6 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
     @Override
     public OauthScope updateById(OauthScope oauthScope) {
         OauthScope existScope = this.selectById(oauthScope.get_id());
-        existScope = (OauthScope) JsonUtils.merge(existScope, oauthScope);
         long time = new Date().getTime();
         existScope.setUpdDate(time);
 

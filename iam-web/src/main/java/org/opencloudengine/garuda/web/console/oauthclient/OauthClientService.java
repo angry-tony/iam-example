@@ -6,7 +6,18 @@ public interface OauthClientService {
 
     OauthClient selectById(String id);
 
-    List<OauthClient> selectByManagementId(String managementId);
+
+    List<OauthClient> selectAllByManagementId(String managementId);
+
+    List<OauthClient> selectByManagementId(String managementId, int limit, Long skip);
+
+    List<OauthClient> selectByManagementLikeClientName(String managementId, String clientName, int limit, Long skip);
+
+
+    Long countAllByManagementId(String managementId);
+
+    Long countAllByManagementIdLikeClientName(String managementId, String clientName);
+
 
     OauthClient selectByManagementIdAndName(String managementId, String name);
 

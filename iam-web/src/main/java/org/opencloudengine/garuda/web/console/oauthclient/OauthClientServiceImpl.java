@@ -35,8 +35,28 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    public List<OauthClient> selectByManagementId(String managementId) {
-        return oauthClientRepository.selectByManagementId(managementId);
+    public List<OauthClient> selectAllByManagementId(String managementId) {
+        return oauthClientRepository.selectAllByManagementId(managementId);
+    }
+
+    @Override
+    public List<OauthClient> selectByManagementId(String managementId, int limit, Long skip) {
+        return oauthClientRepository.selectByManagementId(managementId, limit, skip);
+    }
+
+    @Override
+    public List<OauthClient> selectByManagementLikeClientName(String managementId, String clientName, int limit, Long skip) {
+        return oauthClientRepository.selectByManagementLikeClientName(managementId, clientName, limit, skip);
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        return oauthClientRepository.countAllByManagementId(managementId);
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeClientName(String managementId, String clientName) {
+        return oauthClientRepository.countAllByManagementIdLikeClientName(managementId, clientName);
     }
 
     @Override

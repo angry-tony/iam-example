@@ -1,6 +1,7 @@
 package org.opencloudengine.garuda.web.console.oauthscope;
 
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,7 +13,17 @@ public interface OauthScopeRepository {
 
     OauthScope selectById(String id);
 
-    List<OauthScope> selectByManagementId(String managementId);
+    List<OauthScope> selectAllByManagementId(String managementId);
+
+    List<OauthScope> selectByManagementId(String managementId, int limit, Long skip);
+
+    List<OauthScope> selectByManagementLikeScopeName(String managementId, String scopeName, int limit, Long skip);
+
+
+    Long countAllByManagementId(String managementId);
+
+    Long countAllByManagementIdLikeScopeName(String managementId, String scopeName);
+
 
     OauthScope selectByManagementIdAndName(String managementId, String name);
 

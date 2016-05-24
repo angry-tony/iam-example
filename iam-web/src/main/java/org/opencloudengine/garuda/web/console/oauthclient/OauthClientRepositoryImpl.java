@@ -4,15 +4,14 @@ import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.web.management.Management;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public class OauthClientRepositoryImpl implements OauthClientRepository {
@@ -49,7 +48,7 @@ public class OauthClientRepositoryImpl implements OauthClientRepository {
     }
 
     @Override
-    public List<OauthClient> selectByManagementId(String managementId) {
+    public List<OauthClient> selectAllByManagementId(String managementId) {
         List<OauthClient> list = new ArrayList<>();
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
@@ -65,6 +64,89 @@ public class OauthClientRepositoryImpl implements OauthClientRepository {
         } catch (Exception ex) {
             return list;
         }
+    }
+
+    @Override
+    public List<OauthClient> selectByManagementId(String managementId, int limit, Long skip) {
+        List<OauthClient> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementId");
+            Key.ComplexKey complex = new Key().complex(managementId);
+            List<ViewResponse.Row<Key.ComplexKey, OauthClient>> rows = builder.newRequest(Key.Type.COMPLEX, OauthClient.class).
+                    keys(complex).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthClient> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public List<OauthClient> selectByManagementLikeClientName(String managementId, String clientName, int limit, Long skip) {
+        List<OauthClient> list = new ArrayList<>();
+        Key.ComplexKey startKey;
+        Key.ComplexKey endKey;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByManagementIdLikeClientName");
+            startKey = new Key().complex(clientName).add(managementId);
+            endKey = new Key().complex(clientName + "Z").add(managementId);
+            List<ViewResponse.Row<Key.ComplexKey, OauthClient>> rows = builder.newRequest(Key.Type.COMPLEX, OauthClient.class).
+                    startKey(startKey).endKey(endKey).limit(limit).skip(skip).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthClient> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        Long count = null;
+        Key.ComplexKey complex;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementId");
+            complex = new Key().complex(managementId);
+
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    keys(complex).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeClientName(String managementId, String clientName) {
+        Long count = null;
+        Key.ComplexKey startKey;
+        Key.ComplexKey endKey;
+
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "countByManagementIdLikeClientName");
+            startKey = new Key().complex(clientName).add(managementId);
+            endKey = new Key().complex(clientName + "Z").add(managementId);
+            count = builder.newRequest(Key.Type.COMPLEX, Long.class).
+                    startKey(startKey).endKey(endKey).reduce(true).
+                    build().getResponse().getRows().get(0).getValue();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return count;
     }
 
     @Override

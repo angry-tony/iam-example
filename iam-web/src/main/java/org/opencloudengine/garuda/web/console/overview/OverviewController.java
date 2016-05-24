@@ -41,7 +41,7 @@ public class OverviewController {
             Management management = (Management) session.getAttribute("management");
             if(management == null){
                 ModelAndView mav = new ModelAndView("/management/list");
-                List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
+                List<Management> managements = managementService.selectAllByUserId(SessionUtils.getId());
                 mav.addObject("managements", managements);
                 return mav;
             }

@@ -2,6 +2,7 @@ package org.opencloudengine.garuda.web.console.oauthscope;
 
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientScopes;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,28 @@ public class OauthScopeServiceImpl implements OauthScopeService {
     }
 
     @Override
-    public List<OauthScope> selectByManagementId(String managementId) {
-        return oauthScopeRepository.selectByManagementId(managementId);
+    public List<OauthScope> selectAllByManagementId(String managementId) {
+        return oauthScopeRepository.selectAllByManagementId(managementId);
+    }
+
+    @Override
+    public List<OauthScope> selectByManagementId(String managementId, int limit, Long skip) {
+        return oauthScopeRepository.selectByManagementId(managementId, limit, skip);
+    }
+
+    @Override
+    public List<OauthScope> selectByManagementLikeScopeName(String managementId, String userName, int limit, Long skip) {
+        return oauthScopeRepository.selectByManagementLikeScopeName(managementId, userName, limit, skip);
+    }
+
+    @Override
+    public Long countAllByManagementId(String managementId) {
+        return oauthScopeRepository.countAllByManagementId(managementId);
+    }
+
+    @Override
+    public Long countAllByManagementIdLikeScopeName(String managementId, String userName) {
+        return oauthScopeRepository.countAllByManagementIdLikeScopeName(managementId, userName);
     }
 
     @Override

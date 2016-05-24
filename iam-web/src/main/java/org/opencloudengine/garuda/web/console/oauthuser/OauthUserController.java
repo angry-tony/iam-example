@@ -1,23 +1,22 @@
 package org.opencloudengine.garuda.web.console.oauthuser;
 
+import net.minidev.json.JSONObject;
 import org.opencloudengine.garuda.common.exception.ServiceException;
-import org.opencloudengine.garuda.common.security.SessionUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.management.Management;
-import org.opencloudengine.garuda.web.management.ManagementService;
 import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,17 +35,42 @@ public class OauthUserController {
     private OauthUserService oauthUserService;
 
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String  load() {
+        return "/console/user/list";
+    }
+
+    // limit default value is javascript datatables _iDisplayLength
+    // plz check user/list.jsp
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView list(HttpSession session) {
+    public @ResponseBody String list(HttpSession session,
+                                              @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                                              @RequestParam(value = "skip", required = false, defaultValue = "0") int skip,
+                                              @RequestParam(value = "userName", required = false, defaultValue = "") String userName) {
+
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
-        ModelAndView mav = new ModelAndView("/console/user/list");
+        Long count;
+        List<OauthUser> oauthUsers;
 
-        mav.addObject("management", management);
-        mav.addObject("oauthUsers", oauthUsers);
-        return mav;
+        if(userName.length() > 0) {
+            count = oauthUserService.countAllByManagementIdLikeUserName(management.get_id(), userName);
+            oauthUsers = oauthUserService.selectByManagementLikeUserName(management.get_id(), userName, limit, new Long(skip));
+
+        } else {
+            count = oauthUserService.countAllByManagementId(management.get_id());
+            oauthUsers = oauthUserService.selectByManagementId(management.get_id(), limit, new Long(skip));
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("recordsTotal", limit);
+        jsonObject.put("recordsFiltered", count);
+        jsonObject.put("displayStart", skip);
+        jsonObject.put("data", oauthUsers);
+
+        return jsonObject.toString();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -55,16 +79,16 @@ public class OauthUserController {
         Management management = (Management) session.getAttribute("management");
 
         ModelAndView mav = new ModelAndView("/console/user/new");
-
         mav.addObject("management", management);
+
         return mav;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView create(HttpSession session,
-                               @RequestParam(defaultValue = "") String body
-    ) throws IOException {
+                               @RequestParam(defaultValue = "") String body) throws IOException {
+
         Management management = (Management) session.getAttribute("management");
 
         try {
@@ -77,23 +101,22 @@ public class OauthUserController {
             if (existUser != null) {
                 ModelAndView mav = new ModelAndView("/console/user/new");
                 mav.addObject("duplicate", true);
+
                 return mav;
             }
 
             //유저 생성
             oauthUserService.createUser(management.get_id(), oauthUser);
-
-            //리스트 페이지 반환
-            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
+            // 유저 페이지 반환
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
-            mav.addObject("oauthUsers", oauthUsers);
             return mav;
 
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/user/new");
             mav.addObject("management", management);
             mav.addObject("failed", true);
+
             return mav;
         }
     }
@@ -146,10 +169,8 @@ public class OauthUserController {
 
             oauthUserService.deleteById(_id);
 
-            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
-            mav.addObject("oauthUsers", oauthUsers);
             return mav;
 
         } catch (Exception ex) {
@@ -186,20 +207,21 @@ public class OauthUserController {
                     mav.addObject("management", management);
                     mav.addObject("oauthUser", oauthUser);
                     mav.addObject("duplicate", true);
+
                     return mav;
                 }
             }
             oauthUserService.updateById(updateUser);
 
-            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/user/list");
             mav.addObject("management", management);
-            mav.addObject("oauthUsers", oauthUsers);
             return mav;
+
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/user/edit");
             mav.addObject("management", management);
             mav.addObject("failed", true);
+
             return mav;
         }
     }

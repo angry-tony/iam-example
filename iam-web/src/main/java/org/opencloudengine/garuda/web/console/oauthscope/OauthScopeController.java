@@ -1,18 +1,14 @@
 package org.opencloudengine.garuda.web.console.oauthscope;
 
+import net.minidev.json.JSONObject;
 import org.opencloudengine.garuda.common.exception.ServiceException;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -33,18 +29,42 @@ public class OauthScopeController {
     @Autowired
     private OauthScopeService oauthScopeService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public String  load() {
+        return "/console/scope/list";
+    }
 
+    // limit default value is javascript datatables _iDisplayLength
+    // plz check user/list.jsp
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public ModelAndView list(HttpSession session) {
+    public @ResponseBody String list(HttpSession session,
+                       @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                       @RequestParam(value = "skip", required = false, defaultValue = "0") int skip,
+                       @RequestParam(value = "scopeName", required = false, defaultValue = "") String scopeName) {
+
         Management management = (Management) session.getAttribute("management");
 
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
-        ModelAndView mav = new ModelAndView("/console/scope/list");
+        Long count;
+        List<OauthScope> oauthScopes;
 
-        mav.addObject("management", management);
-        mav.addObject("oauthScopes", oauthScopes);
-        return mav;
+        if(scopeName.length() > 0) {
+            count = oauthScopeService.countAllByManagementIdLikeScopeName(management.get_id(), scopeName);
+            oauthScopes = oauthScopeService.selectByManagementLikeScopeName(management.get_id(), scopeName, limit, new Long(skip));
+
+        } else {
+            count = oauthScopeService.countAllByManagementId(management.get_id());
+            oauthScopes = oauthScopeService.selectByManagementId(management.get_id(), limit, new Long(skip));
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("recordsTotal", limit);
+        jsonObject.put("recordsFiltered", count);
+        jsonObject.put("displayStart", skip);
+        jsonObject.put("data", oauthScopes);
+
+        return jsonObject.toString();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -53,8 +73,8 @@ public class OauthScopeController {
         Management management = (Management) session.getAttribute("management");
 
         ModelAndView mav = new ModelAndView("/console/scope/new");
-
         mav.addObject("management", management);
+
         return mav;
     }
 
@@ -72,6 +92,7 @@ public class OauthScopeController {
             if (existScope != null) {
                 ModelAndView mav = new ModelAndView("/console/scope/new");
                 mav.addObject("duplicate", true);
+
                 return mav;
             }
 
@@ -79,16 +100,14 @@ public class OauthScopeController {
             oauthScopeService.createScope(management.get_id(), name, description);
 
             //리스트 페이지 반환
-            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
-            mav.addObject("management", management);
-            mav.addObject("oauthScopes", oauthScopes);
             return mav;
 
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/scope/new");
             mav.addObject("management", management);
             mav.addObject("failed", true);
+
             return mav;
         }
     }
@@ -109,7 +128,9 @@ public class OauthScopeController {
             ModelAndView mav = new ModelAndView("/console/scope/edit");
             mav.addObject("management", management);
             mav.addObject("oauthScope", oauthScope);
+
             return mav;
+
         } catch (Exception ex) {
             throw new ServiceException("Invalid oauth scope id");
         }
@@ -131,10 +152,9 @@ public class OauthScopeController {
 
             oauthScopeService.deleteById(_id);
 
-            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
             mav.addObject("management", management);
-            mav.addObject("oauthScopes", oauthScopes);
+
             return mav;
 
         } catch (Exception ex) {
@@ -147,8 +167,7 @@ public class OauthScopeController {
     public ModelAndView update(HttpSession session,
                                @RequestParam(defaultValue = "") String _id,
                                @RequestParam(defaultValue = "") String name,
-                               @RequestParam(defaultValue = "") String description,
-                               @RequestParam(defaultValue = "") String additionalInformation) throws IOException {
+                               @RequestParam(defaultValue = "") String description) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
 
@@ -167,21 +186,23 @@ public class OauthScopeController {
                     mav.addObject("management", management);
                     mav.addObject("oauthScope", oauthScope);
                     mav.addObject("duplicate", true);
+
                     return mav;
                 }
             }
 
             oauthScopeService.updateById(_id, name, description);
 
-            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
             ModelAndView mav = new ModelAndView("/console/scope/list");
             mav.addObject("management", management);
-            mav.addObject("oauthScopes", oauthScopes);
+
             return mav;
+
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/scope/edit");
             mav.addObject("management", management);
             mav.addObject("failed", true);
+
             return mav;
         }
     }

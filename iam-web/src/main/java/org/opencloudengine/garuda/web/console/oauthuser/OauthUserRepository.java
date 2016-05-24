@@ -1,7 +1,5 @@
 package org.opencloudengine.garuda.web.console.oauthuser;
 
-import org.opencloudengine.garuda.web.management.Management;
-
 import java.util.List;
 
 public interface OauthUserRepository {
@@ -11,7 +9,15 @@ public interface OauthUserRepository {
 
     OauthUser selectById(String id);
 
-    List<OauthUser> selectByManagementId(String managementId);
+    List<OauthUser> selectAllByManagementId(String managementId);
+
+    List<OauthUser> selectByManagementId(String managementId, int limit, Long skip);
+
+    List<OauthUser> selectByManagementLikeUserName(String managementId, String userName, int limit, Long skip);
+
+    Long countAllByManagementId(String managementId);
+
+    Long countAllByManagementIdLikeUserName(String managementId, String userName);
 
     OauthUser selectByManagementIdAndUserName(String managementId, String userName);
 

@@ -56,25 +56,27 @@ public class CustomController {
     @RequestMapping(value = "/token/edit", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView edit(HttpSession session) throws IOException {
-
         Management management = (Management) session.getAttribute("management");
         try {
             if (management == null) {
                 ModelAndView mav = new ModelAndView("/management/list");
-                List<Management> managements = managementService.selectByUserId(SessionUtils.getId());
+                List<Management> managements = managementService.selectAllByUserId(SessionUtils.getId());
                 mav.addObject("managements", managements);
+
                 return mav;
             }
-            List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
-            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
-            List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
+            List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
+            List<OauthClient> oauthClients = oauthClientService.selectAllByManagementId(management.get_id());
+            List<OauthUser> oauthUsers = oauthUserService.selectAllByManagementId(management.get_id());
 
             ModelAndView mav = new ModelAndView("/console/custom/token/edit");
             mav.addObject("management", management);
             mav.addObject("oauthScopes", oauthScopes);
             mav.addObject("oauthClients", oauthClients);
             mav.addObject("oauthUsers", oauthUsers);
+
             return mav;
+
         } catch (Exception ex) {
             throw new ServiceException("Invalid Server Error");
         }
@@ -87,9 +89,9 @@ public class CustomController {
                                @RequestParam(defaultValue = "") String customTokenIssuance) throws IOException {
 
         Management management = (Management) session.getAttribute("management");
-        List<OauthScope> oauthScopes = oauthScopeService.selectByManagementId(management.get_id());
-        List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id());
-        List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id());
+        List<OauthScope> oauthScopes = oauthScopeService.selectAllByManagementId(management.get_id());
+        List<OauthClient> oauthClients = oauthClientService.selectAllByManagementId(management.get_id());
+        List<OauthUser> oauthUsers = oauthUserService.selectAllByManagementId(management.get_id());
 
         try {
             management.setUseCustomTokenIssuance(useCustomTokenIssuance);
@@ -102,7 +104,9 @@ public class CustomController {
             mav.addObject("oauthScopes", oauthScopes);
             mav.addObject("oauthClients", oauthClients);
             mav.addObject("oauthUsers", oauthUsers);
+
             return mav;
+
         } catch (Exception ex) {
             ModelAndView mav = new ModelAndView("/console/custom/token/edit");
             mav.addObject("management", management);
@@ -110,6 +114,7 @@ public class CustomController {
             mav.addObject("oauthClients", oauthClients);
             mav.addObject("oauthUsers", oauthUsers);
             mav.addObject("failed", true);
+
             return mav;
         }
     }
@@ -137,7 +142,10 @@ public class CustomController {
         } catch (Exception ex) {
             response.setSuccess(false);
             response.getError().setMessage(ex.getMessage());
-            if (ex.getCause() != null) response.getError().setCause(ex.getCause().getMessage());
+
+            if (ex.getCause() != null) {
+                response.getError().setCause(ex.getCause().getMessage());
+            }
             response.getError().setException(ExceptionUtils.getFullStackTrace(ex));
         }
         return response;
