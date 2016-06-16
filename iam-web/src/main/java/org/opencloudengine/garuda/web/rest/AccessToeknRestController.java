@@ -57,6 +57,25 @@ public class AccessToeknRestController {
         }
     }
 
+    @RequestMapping(value = "/token/{token}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<OauthAccessToken> getTokenByToken(HttpServletRequest request, @PathVariable("token") String token) {
+
+        Management management = restAuthService.managementParser(request);
+        if (management == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            OauthAccessToken accessToken = oauthTokenService.selectTokenByToken(token);
+            if (accessToken == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(accessToken, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @RequestMapping(value = "/token", method = RequestMethod.POST)
     public ResponseEntity<Void> createToken(HttpServletRequest request, @RequestBody OauthAccessToken oauthAccessToken, UriComponentsBuilder ucBuilder) {
         Management management = restAuthService.managementParser(request);

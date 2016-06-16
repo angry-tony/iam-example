@@ -918,6 +918,52 @@
         ]
       }
     },
+    "/token/{token}": {
+      "get": {
+        "summary": "Get Access Token",
+        "description": "get access token",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "description": "token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Access Token"
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        },
+        "security": [
+          {
+            "management_key": []
+          },
+          {
+            "management_secret": []
+          }
+        ]
+      }
+    },
     "/token/{_id}": {
       "get": {
         "summary": "Get Access Token",

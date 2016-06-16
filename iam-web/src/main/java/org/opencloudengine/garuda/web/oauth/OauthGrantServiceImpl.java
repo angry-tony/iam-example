@@ -106,8 +106,10 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             }
 
             map.put("client", oauthClient.getClientKey());
+            map.put("clientId" , oauthClient.get_id());
             if (oauthUser != null) {
                 map.put("username", oauthUser.getUserName());
+                map.put("userId", oauthUser.get_id());
             }
             if (!StringUtils.isEmpty(accessToken.getRefreshToken())) {
                 map.put("refreshToken", accessToken.getRefreshToken());
