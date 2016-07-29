@@ -106,7 +106,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             }
 
             map.put("client", oauthClient.getClientKey());
-            map.put("clientId" , oauthClient.get_id());
+            map.put("clientId", oauthClient.get_id());
             if (oauthUser != null) {
                 map.put("username", oauthUser.getUserName());
                 map.put("userId", oauthUser.get_id());
@@ -230,7 +230,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setManagement(management);
 
         //클라이언트가 리프레쉬 토큰을 허용하는지 알아본다.
-        if (!oauthClient.getRefreshTokenValidity().equals("Y")) {
+        if (!"Y".equals(oauthClient.getRefreshTokenValidity())) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type refresh_token");
             this.processRedirect(accessTokenResponse);
@@ -622,7 +622,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //클라이언트 액티브를 체크한다.
-        if (!oauthClient.getActiveClient().equals("Y")) {
+        if (!"Y".equals(oauthClient.getActiveClient())) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
             this.processRedirect(accessTokenResponse);
@@ -676,7 +676,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setToken(UUID.randomUUID().toString());
         accessToken.setManagementId(management.get_id());
         accessToken.setClientId(oauthClient.get_id());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+        if ("Y".equals(oauthClient.getRefreshTokenValidity())) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
         }
 
@@ -687,7 +687,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessTokenResponse.setTokenType("Bearer");
         accessTokenResponse.setAccessToken(accessToken.getToken());
         accessTokenResponse.setExpiresIn(oauthClient.getAccessTokenLifetime());
-        if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+        if ("Y".equals(oauthClient.getRefreshTokenValidity())) {
             accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
         }
 
@@ -868,7 +868,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //클라이언트 액티브를 체크한다.
-        if (!oauthClient.getActiveClient().equals("Y")) {
+        if (!"Y".equals(oauthClient.getActiveClient())) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
             this.processRedirect(accessTokenResponse);
@@ -920,7 +920,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         accessToken.setManagementId(accessTokenResponse.getManagement().get_id());
         accessToken.setClientId(accessTokenResponse.getOauthClient().get_id());
 
-        if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+        if ("Y".equals(accessTokenResponse.getOauthClient().getRefreshTokenValidity())) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
         }
 
@@ -939,7 +939,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             //리스폰스에 리턴값을 세팅한다.
             accessTokenResponse.setTokenType("JWT");
             accessTokenResponse.setAccessToken(accessToken.getToken());
-            if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+            if ("Y".equals(accessTokenResponse.getOauthClient().getRefreshTokenValidity())) {
                 accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
             }
             accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getJwtTokenLifetime());
@@ -947,7 +947,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             //리스폰스에 리턴값을 세팅한다.
             accessTokenResponse.setTokenType("Bearer");
             accessTokenResponse.setAccessToken(accessToken.getToken());
-            if (accessTokenResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+            if ("Y".equals(accessTokenResponse.getOauthClient().getRefreshTokenValidity())) {
                 accessTokenResponse.setRefreshToken(accessToken.getRefreshToken());
             }
             accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getAccessTokenLifetime());

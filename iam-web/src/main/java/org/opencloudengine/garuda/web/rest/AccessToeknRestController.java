@@ -90,7 +90,7 @@ public class AccessToeknRestController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
-            if (oauthClient.getRefreshTokenValidity().equals("Y")) {
+            if ("Y".equals(oauthClient.getRefreshTokenValidity())) {
                 oauthAccessToken.setRefreshToken(UUID.randomUUID().toString());
             }
             oauthAccessToken.setManagementId(management.get_id());

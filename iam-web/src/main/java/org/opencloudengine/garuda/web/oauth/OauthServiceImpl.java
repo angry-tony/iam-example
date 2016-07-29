@@ -345,7 +345,7 @@ public class OauthServiceImpl implements OauthService {
                     accessToken.setManagementId(authorizeResponse.getManagement().get_id());
                     accessToken.setClientId(authorizeResponse.getOauthClient().get_id());
 
-                    if (authorizeResponse.getOauthClient().getRefreshTokenValidity().equals("Y")) {
+                    if ("Y".equals(authorizeResponse.getOauthClient().getRefreshTokenValidity())) {
                         accessToken.setRefreshToken(UUID.randomUUID().toString());
                     }
 
@@ -368,7 +368,7 @@ public class OauthServiceImpl implements OauthService {
                     String scope = authorizeResponse.getScope();
 
                     //커스텀 토큰 스크립트를 수행한다.
-                    if(customService.inCase(management, CustomServiceImpl.IMPLICIT)){
+                    if (customService.inCase(management, CustomServiceImpl.IMPLICIT)) {
                         boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scope,
                                 authorizeResponse.getTokenType(), authorizeResponse.getClaim(), "user");
                         if (!value) {
