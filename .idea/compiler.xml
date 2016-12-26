@@ -43,11 +43,19 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
       </profile>
+      <profile default="false" name="Annotation profile for iam-java-client" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="iam-java-client" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="cloudent-extention" target="1.7" />
       <module name="couchdb4j" target="1.7" />
       <module name="iam-common" target="1.7" />
+      <module name="iam-java-client" target="1.7" />
       <module name="iam-web" target="1.7" />
       <module name="oce-jwt" target="1.5" />
       <module name="oceIAM" target="1.5" />
