@@ -21,7 +21,6 @@ import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.DateUtils;
 import org.opencloudengine.garuda.util.EscapeUtils;
 import org.opencloudengine.garuda.util.ExceptionUtils;
-import org.opencloudengine.garuda.util.NetworkUtils;
 import org.opencloudengine.garuda.web.configuration.DefaultController;
 import org.opencloudengine.garuda.web.security.AESPasswordEncoder;
 import org.opencloudengine.garuda.web.system.UserService;
@@ -107,11 +106,11 @@ public class RegisteController extends DefaultController {
         }
 
         //신규 계정일 경우 유저를 만들고 이메일 전송 후 화면 이동시킨다.
-        String ipAddr = NetworkUtils.getIpAddr(request);
+        //String ipAddr = NetworkUtils.getIpAddr(request);
         User user = new User();
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(unescapedPassword));
-        user.setCountry(NetworkUtils.getCountryCode(ipAddr));
+        //user.setCountry(NetworkUtils.getCountryCode(ipAddr));
 
         userService.createUser(user);
         registeService.sendRegisteMail(email);
