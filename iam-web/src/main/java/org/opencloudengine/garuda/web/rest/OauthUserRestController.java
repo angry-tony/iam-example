@@ -66,6 +66,25 @@ public class OauthUserRestController {
         }
     }
 
+    @RequestMapping(value = "/username/{name}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<OauthUser> getUserByName(HttpServletRequest request, @PathVariable("name") String name) {
+
+        Management management = restAuthService.managementParser(request);
+        if (management == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            OauthUser oauthUser = oauthUserService.selectByManagementIdAndUserName(management.get_id(), name);
+            if (oauthUser == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(oauthUser, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     public ResponseEntity<Void> createUser(HttpServletRequest request, @RequestBody OauthUser oauthUser, UriComponentsBuilder ucBuilder) {
         Management management = restAuthService.managementParser(request);

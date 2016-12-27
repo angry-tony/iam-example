@@ -239,6 +239,29 @@ public class IamClient {
         return objectMapper.convertValue(unmarshal, OauthUser.class);
     }
 
+    public OauthUser getUserByName(String userName) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/username/" + userName;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth user");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthUser.class);
+    }
+
     public OauthUser updateUser(OauthUser oauthUser) throws Exception {
         Map<String, Object> map = JsonUtils.convertClassToMap(oauthUser);
         Map<String, Object> params = new HashMap<>();
