@@ -36,5 +36,8 @@ public class AccessTokenExample {
 
         Map map = iamClient.accessToken(passwordCredentials);
         System.out.println(JsonUtils.marshal(map));
+
+        Map tokenInfo = iamClient.tokenInfo(map.get("access_token").toString());
+        System.out.println(JsonUtils.marshal(tokenInfo));
     }
 }

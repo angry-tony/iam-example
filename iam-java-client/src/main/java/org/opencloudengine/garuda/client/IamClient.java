@@ -138,6 +138,27 @@ public class IamClient {
         return unmarshal;
     }
 
+    public Map tokenInfo(String token) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("access_token", token);
+
+        String queryString = HttpUtils.createGETQueryString(params);
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createOauthBaseUrl() + "/token_info" + queryString;
+
+        Map<String, String> headers = new HashMap();
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        unmarshal.put("status", response.getStatusLine().getStatusCode());
+        return unmarshal;
+    }
+
     public OauthUser createUser(OauthUser oauthUser) throws Exception {
         Map<String, Object> map = JsonUtils.convertClassToMap(oauthUser);
         Map<String, Object> params = new HashMap<>();
