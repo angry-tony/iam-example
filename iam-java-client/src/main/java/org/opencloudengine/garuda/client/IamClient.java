@@ -1,19 +1,21 @@
 package org.opencloudengine.garuda.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.opencloudengine.garuda.client.model.OauthClient;
+import org.opencloudengine.garuda.client.model.OauthScope;
+import org.opencloudengine.garuda.client.model.OauthUser;
 import org.opencloudengine.garuda.util.HttpUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by uengine on 2016. 9. 8..
@@ -136,6 +138,475 @@ public class IamClient {
         return unmarshal;
     }
 
+    public OauthUser createUser(OauthUser oauthUser) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthUser);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/user";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("POST", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            throw new Exception("Failed to create oauth user");
+        }
+        Header[] locations = response.getHeaders("Location");
+        Header location = locations[0];
+        String userId = location.getValue().substring(location.getValue().lastIndexOf("/") + 1);
+
+        return getUser(userId);
+    }
+
+    public List<OauthUser> getAllUser() throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/user";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get all oauth user");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        List<Map> list = JsonUtils.unmarshalToList(responseText);
+        List<OauthUser> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Map map : list) {
+            result.add(objectMapper.convertValue(map, OauthUser.class));
+        }
+        return result;
+    }
+
+    public OauthUser getUser(String userId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/user/" + userId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth user");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthUser.class);
+    }
+
+    public OauthUser updateUser(OauthUser oauthUser) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthUser);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        String userId = oauthUser.get_id();
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/user/" + userId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("PUT", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            throw new Exception("Failed to update oauth user");
+        }
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthUser.class);
+    }
+
+    public void deleteUser(String userId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/user/" + userId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("DELETE", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 204) {
+            throw new Exception("Failed to delete oauth user");
+        }
+    }
+
+    public OauthClient createClient(OauthClient oauthClient) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthClient);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("POST", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            throw new Exception("Failed to create oauth client");
+        }
+        Header[] locations = response.getHeaders("Location");
+        Header location = locations[0];
+        String clientId = location.getValue().substring(location.getValue().lastIndexOf("/") + 1);
+
+        return getClient(clientId);
+    }
+
+    public List<OauthClient> getAllClient() throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get all oauth client");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        List<Map> list = JsonUtils.unmarshalToList(responseText);
+        List<OauthClient> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Map map : list) {
+            result.add(objectMapper.convertValue(map, OauthClient.class));
+        }
+        return result;
+    }
+
+    public OauthClient getClient(String clientId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth client");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthClient.class);
+    }
+
+    public OauthClient updateClient(OauthClient oauthClient) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthClient);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        String clientId = oauthClient.get_id();
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("PUT", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            throw new Exception("Failed to update oauth client");
+        }
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthClient.class);
+    }
+
+    public void deleteClient(String clientId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("DELETE", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 204) {
+            throw new Exception("Failed to delete oauth client");
+        }
+    }
+
+    public void createClientScope(String clientId, String scopeId) throws Exception {
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("POST", url, "", headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            throw new Exception("Failed to create oauth client scope");
+        }
+    }
+
+    public List<OauthScope> getAllClientScope(String clientId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId + "/scope";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get all oauth client scope");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        List<Map> list = JsonUtils.unmarshalToList(responseText);
+        List<OauthScope> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Map map : list) {
+            result.add(objectMapper.convertValue(map, OauthScope.class));
+        }
+        return result;
+    }
+
+    public OauthScope getClientScope(String clientId, String scopeId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth client scope");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthScope.class);
+    }
+
+    public void deleteClientScope(String clientId, String scopeId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/client/" + clientId + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("DELETE", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 204) {
+            throw new Exception("Failed to delete oauth client scope");
+        }
+    }
+
+    public OauthScope createScope(OauthScope oauthScope) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthScope);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/scope";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("POST", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            throw new Exception("Failed to create oauth scope");
+        }
+        Header[] locations = response.getHeaders("Location");
+        Header location = locations[0];
+        String scopeId = location.getValue().substring(location.getValue().lastIndexOf("/") + 1);
+
+        return getScope(scopeId);
+    }
+
+    public List<OauthScope> getAllScope() throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/scope";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get all oauth scope");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        List<Map> list = JsonUtils.unmarshalToList(responseText);
+        List<OauthScope> result = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (Map map : list) {
+            result.add(objectMapper.convertValue(map, OauthScope.class));
+        }
+        return result;
+    }
+
+    public OauthScope getScope(String scopeId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth scope");
+        }
+
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthScope.class);
+    }
+
+    public OauthScope updateScope(OauthScope oauthScope) throws Exception {
+        Map<String, Object> map = JsonUtils.convertClassToMap(oauthScope);
+        Map<String, Object> params = new HashMap<>();
+        for (String key : map.keySet()) {
+            if (map.get(key) != null) {
+                params.put(key, map.get(key));
+            }
+        }
+
+        String scopeId = oauthScope.get_id();
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("PUT", url, JsonUtils.marshal(params), headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 200) {
+            throw new Exception("Failed to update oauth scope");
+        }
+        HttpEntity entity = response.getEntity();
+        String responseText = EntityUtils.toString(entity);
+
+        Map unmarshal = JsonUtils.unmarshal(responseText);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.convertValue(unmarshal, OauthScope.class);
+    }
+
+    public void deleteScope(String scopeId) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/scope/" + scopeId;
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("DELETE", url, null, headers);
+        if (response.getStatusLine().getStatusCode() != 204) {
+            throw new Exception("Failed to delete oauth scope");
+        }
+    }
 
 
     private String createOauthBaseUrl() {

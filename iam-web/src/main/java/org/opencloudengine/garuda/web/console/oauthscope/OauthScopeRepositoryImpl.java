@@ -287,6 +287,9 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
     public OauthScope selectClientScopesByScopeId(String clientId, String scopeId) {
 
         OauthClientScopes oauthClientScopes = this.selectClientScopesByClientIdAndScopeId(clientId, scopeId);
+        if(oauthClientScopes == null){
+            return null;
+        }
         return this.selectById(oauthClientScopes.getScopeId());
     }
 
