@@ -131,6 +131,28 @@ public class AccessToeknRestController {
         }
     }
 
+    @RequestMapping(value = "/token/{token}", method = RequestMethod.DELETE)
+    public ResponseEntity<OauthAccessToken> deleteTokenByToken(HttpServletRequest request, @PathVariable("token") String token) {
+
+        Management management = restAuthService.managementParser(request);
+        if (management == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            OauthAccessToken currentToken = oauthTokenService.selectTokenByToken(token);
+
+            if (currentToken == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            oauthTokenService.deleteTokenById(currentToken.get_id());
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @RequestMapping(value = "/token/{_id}", method = RequestMethod.DELETE)
     public ResponseEntity<OauthAccessToken> deleteToken(HttpServletRequest request, @PathVariable("_id") String _id) {
 

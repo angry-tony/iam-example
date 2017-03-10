@@ -96,22 +96,6 @@
 lang = (lang.length > 0) ? lang : config['default.locale'];</script>
 <script type="text/javascript" src="/resources/js/bundle.js"></script>
 
-<!-- session -->
-<%
-//    User user = (User) session.getAttribute("user");
-//    String ipAddress = NetworkUtils.getIpAddr(request);
-//
-//    //해당 세션의 첫 접속인경우, ISOCode 와 언어가 일치하지 않을 경우 맞는언어페이지로 리다이렉트.
-//    if (session.getAttribute("ISOCode") == null) {
-//        String ISOCode = NetworkUtils.getCountryCode(ipAddress);
-//        session.setAttribute("ISOCode", ISOCode);
-//        String localeByIpaddr = NetworkUtils.getLocaleFromISOCode(ISOCode);
-//        Locale locale = LocaleContextHolder.getLocale();
-//        if (!localeByIpaddr.equals(locale.toString()))
-//            response.sendRedirect("/index?lang=" + localeByIpaddr);
-//    }
-
-%>
 <script type="text/javascript">
     function isEmpty(str) {
         if (typeof str == 'string' && str.length > 0)return false;
