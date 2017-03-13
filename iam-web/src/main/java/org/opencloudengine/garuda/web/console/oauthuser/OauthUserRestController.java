@@ -1,9 +1,11 @@
-package org.opencloudengine.garuda.web.rest;
+package org.opencloudengine.garuda.web.console.oauthuser;
 
-
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
+import net.minidev.json.JSONObject;
+import org.opencloudengine.garuda.common.exception.ServiceException;
+import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.management.Management;
+import org.opencloudengine.garuda.web.rest.RestAuthService;
+import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -11,14 +13,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Controller
 @RequestMapping("/rest/v1")
 public class OauthUserRestController {
+
     @Autowired
     @Qualifier("config")
     private Properties config;
@@ -45,6 +55,61 @@ public class OauthUserRestController {
         } catch (Exception ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @RequestMapping(value = "/user/pagination", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<OauthUser>> pagination(HttpServletRequest request,
+                                                      @RequestParam(defaultValue = "0") int offset,
+                                                      @RequestParam(defaultValue = "100") int limit) {
+
+        Management management = restAuthService.managementParser(request);
+        if (management == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        //총합
+        Long max = oauthUserService.countAllByManagementId(management.get_id());
+
+        //컨디션 합
+        Long total = max;
+
+        //컨디션 결과
+        List<OauthUser> oauthUsers = oauthUserService.selectByManagementId(management.get_id(), limit, new Long(offset));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-uengine-pagination-maxnbrecords", max + "");
+        headers.add("x-uengine-pagination-currentoffset", offset + "");
+        headers.add("x-uengine-pagination-totalnbrecords", total + "");
+
+        return new ResponseEntity<>(oauthUsers, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/user/search/{searchKey}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<OauthUser>> search(HttpServletRequest request,
+                                                      @PathVariable("searchKey") String searchKey,
+                                                      @RequestParam(defaultValue = "0") int offset,
+                                                      @RequestParam(defaultValue = "100") int limit) {
+
+        Management management = restAuthService.managementParser(request);
+        if (management == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        //총합
+        Long max = oauthUserService.countAllByManagementId(management.get_id());
+
+        //컨디션 합
+        Long total = oauthUserService.countAllByManagementIdLikeUserName(management.get_id(), searchKey);
+
+        //컨디션 결과
+        List<OauthUser> oauthUsers = oauthUserService.selectByManagementLikeUserName(management.get_id(), searchKey, limit, new Long(offset));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-uengine-pagination-maxnbrecords", max + "");
+        headers.add("x-uengine-pagination-currentoffset", offset + "");
+        headers.add("x-uengine-pagination-totalnbrecords", total + "");
+
+        return new ResponseEntity<>(oauthUsers, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/user/{_id}", method = RequestMethod.GET, produces = "application/json")
@@ -91,9 +156,7 @@ public class OauthUserRestController {
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
         try {
-
             OauthUser existUser = oauthUserService.selectByManagementIdAndUserName(management.get_id(), oauthUser.getUserName());
             if (existUser != null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);

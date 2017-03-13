@@ -25,10 +25,4 @@ public interface ManagementService {
 
     List<Management> selectByUserId(String userId, int limit, Long skip);
 
-    List<Management> selectByUserIdLikeManagementName(String userId, String managementName, int limit, Long skip);
-
-
-    Long countAllByUserId(String userId);
-
-    Long countAllByUserIdLikeManagementName(String userId, String managementName);
 }

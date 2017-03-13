@@ -1,142 +1,140 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" trimDirectiveWhitespaces="true" %>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="uengine" uri="http://www.uengine.io/tags" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <!DOCTYPE html>
 <!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
 <!--[if !IE]><!-->
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org"
       lang="en">
 <!--<![endif]-->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>OCE IAM | HOME</title>
+    <title>uEngine Billing | HOME</title>
 
     <%@include file="../template/header_js.jsp" %>
-
-    <link rel="stylesheet" href="/resources/assets/plugins/sky-forms-pro/skyforms/css/sky-forms.css">
-    <link rel="stylesheet" href="/resources/assets/plugins/sky-forms-pro/skyforms/custom/custom-sky-forms.css">
-    <!--[if lt IE 9]>
-    <link rel="stylesheet" href="/resources/assets/plugins/sky-forms-pro/skyforms/css/sky-forms-ie8.css"><![endif]-->
-
-    <!-- CSS Page Style -->
-    <link rel="stylesheet" href="/resources/assets/css/pages/page_faq1.css">
-    <link rel="stylesheet" href="/resources/assets/css/pages/page_search_inner.css">
-
-    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
-    <link href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-
-    <script type="text/javascript">
-        function search(table, searchValue) {
-            if(event.keyCode == 13) {
-                reload(table, searchValue);
-            }
-        };
-
-        function reload(table, searchValue) {
-            // limit and skip setting
-            var tableAPI = table.api();
-            var limit = tableAPI.settings()[0]._iDisplayLength
-            var skip = tableAPI.settings()[0]._iDisplayStart;
-
-            tableAPI.ajax.url('/management/list?limit=' + limit + '&skip=' + skip + '&userName=' + searchValue);
-            tableAPI.ajax.reload();
-        };
-
-        $(document).ready(function() {
-            var table = $('#managements').DataTable({
-                serverSide: true,
-                searching: false,
-                ajax: {
-                    url: '/management/list',
-                    dataSrc: function(managements) {
-                        // change init page setting (_iDisplayStart )
-                        table.settings()[0]._iDisplayStart = managements.displayStart;
-
-                        // make id edit href
-                        for(var i = 0; i < managements.data.length; i++) {
-                            managements.data[i].managementName = '<a href=/management/session?_id=' + managements.data[i]._id + '>' + managements.data[i].managementName + '</a>';
-                            managements.data[i]._id = '<a href=/management/edit?_id=' + managements.data[i]._id + '>Edit</a>';
-                        }
-                        return managements.data;
-                    }
-                },
-                columns: [
-                    { data: 'managementName' },
-                    { data: 'description' },
-                    { data: '_id' }
-                ]
-            });
-
-            // page event
-            $('#managements').on('page.dt', function() {
-                reload($('#managements').dataTable(), $('#customSearch').val().trim());
-
-                // page length event
-            }).on('length.dt', function() {
-                reload($('#managements').dataTable(), $('#customSearch').val().trim());
-
-            });
-        });
-    </script>
 </head>
 
+<body>
+<div id="wrapper">
+    <%@include file="../template/nav.jsp" %>
+    <script type="text/javascript">
+        $('[name=list-menu-management]').find('ul').eq(0).addClass('in');
+        $('[name=list-menu-management-list]').addClass('active');
+    </script>
 
-<div class="wrapper">
-    <%@include file="../template/header.jsp" %>
+    <div id="page-wrapper" class="gray-bg dashbard-1">
 
-    <!--=== Breadcrumbs ===-->
-    <div class="breadcrumbs">
-        <div class="container">
-            <h1 class="pull-left">Management Group</h1>
-            <ul class="pull-right breadcrumb">
-                <li><a href="index.html">HOME</a></li>
-                <li class="active">Management Group</li>
-            </ul>
-        </div>
-    </div>
-    <!--/breadcrumbs-->
+        <%@include file="../template/header.jsp" %>
 
-    <!--=== Content Part ===-->
-
-    <!-- Begin Table Search v1 -->
-    <div class="container content profile">
         <div class="row">
-            <div class="col-md-12">
-                <a class="btn-u btn-u-primary" href="/management/new">Create Management</a>
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Management Groups</h5>
 
-                <br>
-                <br>
+                        <div class="ibox-tools">
+                            <a href="/management/new" type="button" class="btn btn-primary btn-sm">New +</a>
+                        </div>
 
-                <div class="margin-bottom-10">
-                    <div class="table-responsive">
-                        <div style="float: right"> Search : <input type="text" id="customSearch" onKeyDown="javascript: search($('#managements').dataTable(), this.value)" /> </div>
-                        <table id="managements" class="display table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th>Management Group Name</th>
-                                <th>Description</th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                    </div>
+                    <div class="ibox-content">
+
+                        <div class="table-responsive">
+                            <table id="management-table" class="table table-striped table-bordered table-hover">
+
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <%@include file="../template/footer.jsp" %>
+
     </div>
-
-    <!--=== End Content Part ===-->
-
-    <%@include file="../template/footer.jsp" %>
 </div>
-<!--/wrapper-->
 <%@include file="../template/footer_js.jsp" %>
 
+
+<script>
+    $(document).ready(function () {
+        var fill = function (invoices) {
+            var dt = new uengineDT($('#management-table'),
+                {
+                    order: [[0, "desc"]],
+                    select: {
+                        style: 'single'
+                    },
+                    columns: [
+                        {
+                            data: 'label',
+                            title: 'NAME',
+                            defaultContent: '',
+                            event: {
+                                click: function (key, value, rowValue, rowIdx, td) {
+                                    iam.setDefaultManagement(
+                                        rowValue['_id'],
+                                        rowValue['managementKey'],
+                                        rowValue['managementSecret']
+                                    );
+                                    window.location.href = '/management/profile';
+                                }
+                            }
+                        },
+                        {
+                            data: 'description',
+                            title: 'DESCRIPTION',
+                            defaultContent: ''
+                        },
+                        {
+                            data: 'managementKey',
+                            title: 'KEY',
+                            defaultContent: ''
+                        }
+                    ],
+                    pageLength: 10,
+                    info: true,
+                    responsive: true,
+                    dom: '<"html5buttons"B>lTfgitp',
+                    buttons: [
+                        {extend: 'copy'},
+                        {extend: 'csv'},
+                        {extend: 'excel', title: 'ExampleFile'},
+                        {extend: 'pdf', title: 'ExampleFile'},
+
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).addClass('white-bg');
+                                $(win.document.body).css('font-size', '10px');
+
+                                $(win.document.body).find('table')
+                                    .addClass('compact')
+                                    .css('font-size', 'inherit');
+                            }
+                        }
+                    ]
+                });
+            dt.renderGrid(invoices);
+        };
+        iam.getManagements()
+            .done(function (managements) {
+                if (managements && managements.length) {
+                    $.each(managements, function (index, management) {
+                        management['label'] = '<a href="Javascript:void(0);">' + management['managementName'] + '</a>';
+                    });
+                    fill(managements);
+                }
+            })
+            .fail(function (response) {
+                toastr.error("Failed to get Management groups : " + response.responseText);
+            });
+    });
+</script>
+</body>
 </html>

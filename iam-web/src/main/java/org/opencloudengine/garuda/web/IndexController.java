@@ -1,17 +1,15 @@
 package org.opencloudengine.garuda.web;
 
-import org.opencloudengine.garuda.web.contactus.ContactUs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -62,20 +60,6 @@ public class IndexController {
         return new ModelAndView("index");
     }
 
-
-    @RequestMapping(value = "contact", method = RequestMethod.GET)
-    public ModelAndView contact(HttpSession session) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth instanceof AnonymousAuthenticationToken)) {
-            ModelAndView index = new ModelAndView("/my/contact");
-            return index;
-        } else {
-            ModelAndView index = new ModelAndView("/contact");
-            index.addObject("contact", new ContactUs());
-            return index;
-        }
-    }
-
     @RequestMapping(value = "redirect", method = RequestMethod.GET)
     public ModelAndView redirect(@RequestParam String url) {
         return new ModelAndView("redirect:" + url);
@@ -86,4 +70,93 @@ public class IndexController {
         return new ModelAndView(url);
     }
 
+
+    @RequestMapping(value = "management/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView managementList() {
+        ModelAndView mav = new ModelAndView("/management/list");
+        return mav;
+    }
+
+    @RequestMapping(value = "management/profile", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView managementProfile() {
+        ModelAndView view = new ModelAndView("/management/detail");
+        view.addObject("profile", true);
+        return view;
+    }
+
+    @RequestMapping(value = "management/new", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView newManagement() {
+        ModelAndView mav = new ModelAndView("/management/detail");
+        return mav;
+    }
+
+    @RequestMapping(value = "user/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView userList() {
+        ModelAndView mav = new ModelAndView("/user/list");
+        return mav;
+    }
+
+    @RequestMapping(value = "user/new", method = RequestMethod.GET)
+    public ModelAndView userNew(HttpSession session) {
+        ModelAndView view = new ModelAndView("/user/detail");
+        return view;
+    }
+
+    @RequestMapping(value = "user/{_id}/edit", method = RequestMethod.GET)
+    public ModelAndView userEdit(HttpSession session, @PathVariable("_id") String _id) {
+        ModelAndView view = new ModelAndView("/user/detail");
+        view.addObject("_id", _id);
+        return view;
+    }
+
+    @RequestMapping(value = "client/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView clientList() {
+        ModelAndView mav = new ModelAndView("/client/list");
+        return mav;
+    }
+
+    @RequestMapping(value = "client/new", method = RequestMethod.GET)
+    public ModelAndView clientNew(HttpSession session) {
+        ModelAndView view = new ModelAndView("/client/detail");
+        return view;
+    }
+
+    @RequestMapping(value = "client/{_id}/edit", method = RequestMethod.GET)
+    public ModelAndView clientEdit(HttpSession session, @PathVariable("_id") String _id) {
+        ModelAndView view = new ModelAndView("/client/detail");
+        view.addObject("_id", _id);
+        return view;
+    }
+
+    @RequestMapping(value = "scope/list", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView scopeList() {
+        ModelAndView mav = new ModelAndView("/scope/list");
+        return mav;
+    }
+
+    @RequestMapping(value = "scope/new", method = RequestMethod.GET)
+    public ModelAndView scopeNew(HttpSession session) {
+        ModelAndView view = new ModelAndView("/scope/detail");
+        return view;
+    }
+
+    @RequestMapping(value = "scope/{_id}/edit", method = RequestMethod.GET)
+    public ModelAndView scopeEdit(HttpSession session, @PathVariable("_id") String _id) {
+        ModelAndView view = new ModelAndView("/scope/detail");
+        view.addObject("_id", _id);
+        return view;
+    }
+
+    @RequestMapping(value = "management/custom", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView managementCustom() {
+        ModelAndView mav = new ModelAndView("/management/custom");
+        return mav;
+    }
 }

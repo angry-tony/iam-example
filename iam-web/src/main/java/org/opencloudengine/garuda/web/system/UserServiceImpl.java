@@ -16,10 +16,20 @@
  */
 package org.opencloudengine.garuda.web.system;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.mail.MailService;
 import org.opencloudengine.garuda.model.User;
+import org.opencloudengine.garuda.util.JwtUtils;
 import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthSessionToken;
+import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
+import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.registe.Registe;
 import org.opencloudengine.garuda.web.registe.RegisteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author Seungpil PARK
@@ -140,4 +148,76 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public String generateSessionToken(String username, String password) {
+
+        try {
+            //발급 시간
+            Date issueTime = new Date();
+
+            //만료시간
+            Date expirationTime = new Date(new Date().getTime() +
+                    Integer.parseInt(configurationHelper.get("security.web.session.timeout")) * 1000);
+
+            //발급자
+            String issuer = configurationHelper.get("security.jwt.issuer");
+
+            //시그네이쳐 설정
+            String sharedSecret = configurationHelper.get("security.jwt.secret");
+            JWSSigner signer = new MACSigner(sharedSecret);
+
+            //콘텍스트 설정
+            Map context = new HashMap();
+            context.put("username", username);
+            context.put("password", password);
+
+            JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
+            JWTClaimsSet claimsSet = builder
+                    .issuer(issuer)
+                    .issueTime(issueTime)
+                    .expirationTime(expirationTime)
+                    .claim("context", context).build();
+
+            SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+
+            signedJWT.sign(signer);
+
+            String sessionToken = signedJWT.serialize();
+
+            return sessionToken;
+        } catch (Exception ex) {
+            throw new ServiceException("Failed to generate session token", ex);
+        }
+    }
+
+    @Override
+    public User validateSessionToken(String sessionToken) {
+
+        try {
+            JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(sessionToken);
+
+            String sharedSecret = configurationHelper.get("security.jwt.secret");
+            Map context = (Map) jwtClaimsSet.getClaim("context");
+            String username = (String) context.get("username");
+            String password = (String) context.get("password");
+
+            //만료시간
+            Date issueTime = jwtClaimsSet.getIssueTime();
+            Date expirationTime = new Date(issueTime.getTime() + Integer.parseInt(configurationHelper.get("security.web.session.timeout")) * 1000);
+
+            boolean validated = JwtUtils.validateToken(sessionToken, sharedSecret, expirationTime);
+            if (validated) {
+                User user = this.selectByUserEmail(username);
+                if (user != null && password.equals(user.getPassword())) {
+                    return user;
+                } else {
+                    throw new ServiceException("Failed to validate session token");
+                }
+            } else {
+                throw new ServiceException("Failed to validate session token");
+            }
+        } catch (Exception ex) {
+            throw new ServiceException("Failed to validate session token", ex);
+        }
+    }
 }

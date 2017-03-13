@@ -1,10 +1,12 @@
 package org.opencloudengine.garuda.web.rest;
 
+import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
+import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,26 @@ public class RestAuthServiceImpl implements RestAuthService {
 
     @Autowired
     private OauthClientService oauthClientService;
+
+    @Autowired
+    private UserService userService;
+
+    @Override
+    public User userParser(HttpServletRequest request) {
+        Map<String, String> headers = this.getHeaders(request);
+
+        String sessionToken = headers.get("authorization");
+
+        if (!StringUtils.isEmpty(sessionToken)) {
+            try {
+                return userService.validateSessionToken(sessionToken);
+            } catch (Exception ex) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 
     @Override
     public Management managementParser(HttpServletRequest request) {

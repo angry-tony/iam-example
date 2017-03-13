@@ -2,66 +2,77 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<!-- ajax 호출 UI 블락커 && 커스터마이징 -->
-<script type="text/javascript" src="/resources/plugins/blockUI/blockUI.js"></script>
-<script type="text/javascript" src="/resources/js/blockUIcustom.js"></script>
+<!-- Mainly scripts -->
+<script src="/resources/js/bootstrap.min.js"></script>
+<script src="/resources/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="/resources/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="/resources/js/plugins/dataTables/datatables.min.js"></script>
+<script src="/resources/js/plugins/dataTables/dataTables.select.min.js"></script>
+<script src="/resources/js/uengine-datatables.js"></script>
+
+<!-- Chosen -->
+<script src="/resources/js/plugins/chosen/chosen.jquery.js"></script>
+
+<!-- Flot -->
+<script src="/resources/js/plugins/flot/jquery.flot.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.spline.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.resize.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.pie.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.symbol.js"></script>
+<script src="/resources/js/plugins/flot/jquery.flot.time.js"></script>
 
 
-<!-- 메뉴 스트럭쳐 && html 콘텐츠 로딩 && 언어 -->
-<script type="text/javascript" src="/resources/structure/structure.data.js"></script>
-<script type="text/javascript" src="/resources/structure/structure.js"></script>
-<script type="text/javascript" src="/resources/js/language.js"></script>
+<!-- Peity -->
+<script src="/resources/js/plugins/peity/jquery.peity.min.js"></script>
+<script src="/resources/js/demo/peity-demo.js"></script>
 
-<!-- 배경 백그라운드 이미지 교체 -->
-<script type="text/javascript">
-    $('.parallax-counter-v4').css('background' , 'url(/resources/assets/img/bg/19.jpg) 50% 0 fixed');
-</script>
+<!-- Custom and plugin javascript -->
+<script src="/resources/js/inspinia.js"></script>
+<script src="/resources/js/plugins/pace/pace.min.js"></script>
 
-<!-- Jquery Validator -->
-<script type="text/javascript" src="/resources/plugins/validator/jquery.validate.js"></script>
-<script type="text/javascript" src="/resources/plugins/validator/additional-methods.js"></script>
+<!-- jQuery UI -->
+<script src="/resources/js/plugins/jquery-ui/jquery-ui.min.js"></script>
 
-<!-- JS Implementing Plugins -->
-<script type="text/javascript" src="/resources/assets/plugins/back-to-top.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/smoothScroll.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/cube-portfolio/cubeportfolio/js/jquery.cubeportfolio.min.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/parallax-slider/js/modernizr.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/parallax-slider/js/jquery.cslider.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/owl-carousel/owl-carousel/owl.carousel.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/sky-forms-pro/skyforms/js/jquery-ui.min.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/sky-forms-pro/skyforms/js/jquery.validate.min.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/sky-forms-pro/skyforms/js/jquery.maskedinput.min.js"></script>
-<script type="text/javascript" src="/resources/assets/plugins/scrollbar/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<!-- GITTER -->
+<script src="/resources/js/plugins/gritter/jquery.gritter.min.js"></script>
 
-<!-- JS Customization -->
-<script type="text/javascript" src="/resources/assets/js/custom.js"></script>
+<!-- Sparkline -->
+<script src="/resources/js/plugins/sparkline/jquery.sparkline.min.js"></script>
 
-<!-- JS Page Level -->
-<script type="text/javascript" src="/resources/assets/js/app.js"></script>
-<script type="text/javascript" src="/resources/assets/js/plugins/owl-carousel.js"></script>
-<script type="text/javascript" src="/resources/assets/js/plugins/parallax-slider.js"></script>
-<script type="text/javascript" src="/resources/js/cube.js"></script>
-<script type="text/javascript" src="/resources/structure/table.js"></script>
-<script type="text/javascript" src="/resources/assets/js/forms/reg.js"></script>
-<script type="text/javascript" src="/resources/assets/js/forms/checkout.js"></script>
-<script type="text/javascript" src="/resources/assets/js/plugins/datepicker.js"></script>
-<script type="text/javascript">
-    jQuery(document).ready(function() {
-        App.init();
-        OwlCarousel.initOwlCarousel();
-        ParallaxSlider.initParallaxSlider();
+<!-- Sparkline demo data  -->
+<script src="/resources/js/demo/sparkline-demo.js"></script>
+
+<!-- ChartJS-->
+<script src="/resources/js/plugins/chartJs/Chart.min.js"></script>
+
+<!-- Toastr -->
+<script src="/resources/js/plugins/toastr/toastr.min.js"></script>
+
+<!-- iCheck -->
+<script src="/resources/js/plugins/iCheck/icheck.min.js"></script>
+
+<!-- Print -->
+<script src="/resources/js/plugins/print/print.js"></script>
+
+<!-- SUMMERNOTE -->
+<script src="/resources/js/plugins/summernote/summernote.min.js"></script>
+
+<!-- Data picker -->
+<script src="/resources/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+<!--Validate-->
+<script type="text/javascript" src="/resources/js/plugins/validate/jquery.validate.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+//        $('.i-checks').iCheck({
+//            checkboxClass: 'icheckbox_square-green',
+//            radioClass: 'iradio_square-green'
+//        });
+//
+//        $('.chosen-select').chosen({width: "100%"});
+//
+//        $('.summernote').summernote();
     });
 </script>
-
-
-<!--[if lt IE 9]>
-<script src="/resources/assets/plugins/respond.js"></script>
-<script src="/resources/assets/plugins/html5shiv.js"></script>
-<script src="/resources/assets/plugins/placeholder-IE-fixes.js"></script>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<script src="/resources/assets/plugins/sky-forms-pro/skyforms/js/sky-forms-ie8.js"></script>
-<![endif]-->
-
-<!--[if lt IE 10]>
-<script src="/resources/assets/plugins/sky-forms-pro/skyforms/js/jquery.placeholder.min.js"></script>
-<![endif]-->

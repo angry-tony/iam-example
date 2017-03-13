@@ -80,5 +80,9 @@ public interface UserService {
 
     boolean reqPasswdExist(String user_id, String token);
 
+    String generateSessionToken(String username, String password);
+
+    User validateSessionToken(String token);
+
 
 }
