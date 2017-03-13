@@ -151,8 +151,9 @@ IAM.prototype = {
             dataType: 'json',
             data: data,
             resolve: function (response, status, xhr) {
-                var total = parseInt(xhr.getResponseHeader('x-killbill-pagination-totalnbrecords'));
-                var filtered = parseInt(xhr.getResponseHeader('x-killbill-pagination-maxnbrecords'));
+                var total = parseInt(xhr.getResponseHeader('x-uengine-pagination-totalnbrecords'));
+                var filtered = parseInt(xhr.getResponseHeader('x-uengine-pagination-maxnbrecords'));
+                console.log(total,filtered);
                 return {
                     data: response,
                     total: total,
@@ -216,8 +217,8 @@ IAM.prototype = {
             dataType: 'json',
             data: data,
             resolve: function (response, status, xhr) {
-                var total = parseInt(xhr.getResponseHeader('x-killbill-pagination-totalnbrecords'));
-                var filtered = parseInt(xhr.getResponseHeader('x-killbill-pagination-maxnbrecords'));
+                var total = parseInt(xhr.getResponseHeader('x-uengine-pagination-totalnbrecords'));
+                var filtered = parseInt(xhr.getResponseHeader('x-uengine-pagination-maxnbrecords'));
                 return {
                     data: response,
                     total: total,
@@ -325,8 +326,8 @@ IAM.prototype = {
             dataType: 'json',
             data: data,
             resolve: function (response, status, xhr) {
-                var total = parseInt(xhr.getResponseHeader('x-killbill-pagination-totalnbrecords'));
-                var filtered = parseInt(xhr.getResponseHeader('x-killbill-pagination-maxnbrecords'));
+                var total = parseInt(xhr.getResponseHeader('x-uengine-pagination-totalnbrecords'));
+                var filtered = parseInt(xhr.getResponseHeader('x-uengine-pagination-maxnbrecords'));
                 return {
                     data: response,
                     total: total,

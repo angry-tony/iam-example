@@ -315,7 +315,7 @@
 
                 form.find('[name=delete]').show()
                     .click(function () {
-                        iam.deleteManagement(oauthClient['_id'])
+                        iam.deleteClient(oauthClient['_id'])
                             .done(function () {
                                 window.location.href = '/client/list';
                             })

@@ -212,6 +212,8 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
     @Override
     public OauthScope updateById(OauthScope oauthScope) {
         OauthScope existScope = this.selectById(oauthScope.get_id());
+
+        existScope = (OauthScope) JsonUtils.merge(existScope, oauthScope);
         long time = new Date().getTime();
         existScope.setUpdDate(time);
 
