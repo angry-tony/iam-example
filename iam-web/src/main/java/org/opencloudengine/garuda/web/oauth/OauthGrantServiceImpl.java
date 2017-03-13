@@ -290,6 +290,20 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             }
         }
 
+
+        //토큰 요청이 JWT 이고, 요청에서 claim 이 넘어오지 않았다면, claim 을 덮어쓴다.
+        if ("JWT".equals(accessTokenResponse.getTokenType()) && StringUtils.isEmpty(accessTokenResponse.getClaim())) {
+            String token = accessToken.getToken();
+            boolean matches = token.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}");
+            //JWT 토큰일경우
+            if (!matches) {
+                JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(token);
+                Map<String, Object> claims = jwtClaimsSet.getClaims();
+                String claim = JsonUtils.marshal((Map) claims.get("claim"));
+                accessTokenResponse.setClaim(claim);
+            }
+        }
+
         //어세스 토큰을 만들고 저장한다.
         AccessTokenResponse tokenResponse = this.insertAccessToken(accessTokenResponse, type);
 
@@ -929,7 +943,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             accessTokenResponse.setTokenType("Bearer");
         }
 
-        if (accessTokenResponse.getTokenType().equals("JWT")) {
+        if ("JWT".equals(accessTokenResponse.getTokenType())) {
             String jwtToken = oauthTokenService.generateJWTToken(accessTokenResponse.getOauthUser(),
                     accessTokenResponse.getOauthClient(),
                     accessToken, accessTokenResponse.getClaim(),
