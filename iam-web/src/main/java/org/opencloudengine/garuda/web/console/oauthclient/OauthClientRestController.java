@@ -50,7 +50,6 @@ public class OauthClientRestController {
             if (oauthClients.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            JsonUtils.marshal("sdfsdfsdf");
             return new ResponseEntity<>(oauthClients, HttpStatus.OK);
         } catch (Exception ex) {
             ExceptionUtils.httpExceptionResponse(ex, response);
@@ -197,7 +196,7 @@ public class OauthClientRestController {
     }
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthClient> deleteClient(HttpServletRequest request,HttpServletResponse response,
+    public ResponseEntity<OauthClient> deleteClient(HttpServletRequest request, HttpServletResponse response,
                                                     @PathVariable("_id") String _id) {
 
         try {
@@ -247,7 +246,7 @@ public class OauthClientRestController {
 
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<OauthScope> getClientScope(
-            HttpServletRequest request,HttpServletResponse response,
+            HttpServletRequest request, HttpServletResponse response,
             @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
 
         try {
