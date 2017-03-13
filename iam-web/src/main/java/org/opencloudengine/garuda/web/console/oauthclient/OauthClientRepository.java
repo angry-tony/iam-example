@@ -11,6 +11,8 @@ public interface OauthClientRepository {
 
     List<OauthClient> selectAllByManagementId(String managementId);
 
+    List<OauthClient> selectByAutoDeletionToken();
+
     List<OauthClient> selectByManagementId(String managementId, int limit, Long skip);
 
     List<OauthClient> selectByManagementLikeClientName(String managementId, String clientName, int limit, Long skip);

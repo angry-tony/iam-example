@@ -31,7 +31,7 @@
     </div>
 </div>
 
-<%@include file="../template/footer_js.jsp" %>
+<%@include file="../template/footer_js.jsp" %>applicationContext-engine.xml
 
 </body>
 

@@ -13,6 +13,12 @@
     },
     "selectTokenByManagementIdAndId": {
       "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){emit([doc.managementId,doc._id],doc); }}"
+    },
+    "selectJwtExpiredToken": {
+      "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){ if(doc.token && doc.token.length >= 30)emit([doc.clientId,doc.regDate],doc); }}"
+    },
+    "selectBearerExpiredToken": {
+      "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){ if(doc.token && doc.token.length < 30)emit([doc.clientId,doc.regDate],doc); }}"
     }
   }
 }

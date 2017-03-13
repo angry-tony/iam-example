@@ -3,26 +3,29 @@ package org.opencloudengine.garuda.web.oauth;
 import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.ViewRequestBuilder;
+import com.cloudant.client.api.views.ViewResponse;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.opencloudengine.garuda.backend.scheduler.jobs.StopJob;
 import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class OauthTokenRepositoryImpl implements OauthTokenRepository {
 
     private String CODE_NAMESPACE = "oauth_code";
     private String TOKEN_NAMESPACE = "oauth_access_token";
+
+    private Logger logger = LoggerFactory.getLogger(OauthTokenRepository.class);
 
     @Autowired
     CouchServiceFactory serviceFactory;
@@ -161,6 +164,41 @@ public class OauthTokenRepositoryImpl implements OauthTokenRepository {
         Response update = serviceFactory.getDb().update(existToken);
         existToken.set_rev(update.getRev());
         return existToken;
+    }
+
+    @Override
+    public void deleteExpiredToken(String clientId, Long expirationTime, String tokenType) {
+        List<Map> list = new ArrayList<>();
+        try {
+            String viewName = tokenType.equals("JWT") ? "selectJwtExpiredToken" : "selectBearerExpiredToken";
+
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, viewName);
+            Key.ComplexKey startKey = new Key().complex(clientId).add(0);
+            Key.ComplexKey endKey = new Key().complex(clientId).add(expirationTime);
+            List<ViewResponse.Row<Key.ComplexKey, Map>> rows = builder.newRequest(Key.Type.COMPLEX, Map.class).
+                    limit(100).skip(0).//descending(true).
+                    startKey(startKey).endKey(endKey).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, Map> row : rows) {
+                Map value = row.getValue();
+                Map toDelete = new HashMap();
+                toDelete.put("_id", value.get("_id"));
+                toDelete.put("_rev", value.get("_rev"));
+                toDelete.put("_deleted", true);
+                list.add(toDelete);
+            }
+
+
+            if (list.size() > 0) {
+                serviceFactory.getDb().bulk(list);
+            }
+
+            logger.info("{} tokens deleted, {}", list.size(), viewName);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

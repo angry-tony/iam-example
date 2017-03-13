@@ -184,7 +184,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">Refresh Token </label>
+                                <label class="col-md-2 control-label"> Auto deletion expired token </label>
 
                                 <div class="col-md-6">
                                     <label>
@@ -379,7 +379,16 @@
                 data['scopes'] = data['scopes'].join(',');
             }
 
-            console.log(data);
+            if(data['activeClient'] != 'Y'){
+                data['activeClient'] = 'N';
+            }
+            if(data['refreshTokenValidity'] != 'Y'){
+                data['refreshTokenValidity'] = 'N';
+            }
+            if(data['autoDeletionToken'] != 'Y'){
+                data['autoDeletionToken'] = 'N';
+            }
+
             blockStart('Please wait a moment...');
 
             if (oauthClient) {

@@ -67,6 +67,25 @@ public class OauthClientRepositoryImpl implements OauthClientRepository {
     }
 
     @Override
+    public List<OauthClient> selectByAutoDeletionToken() {
+        List<OauthClient> list = new ArrayList<>();
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByAutoDeletionToken");
+            Key.ComplexKey complex = new Key().complex("Y");
+            List<ViewResponse.Row<Key.ComplexKey, OauthClient>> rows = builder.newRequest(Key.Type.COMPLEX, OauthClient.class).
+                    keys(complex).
+                    build().getResponse().getRows();
+
+            for (ViewResponse.Row<Key.ComplexKey, OauthClient> row : rows) {
+                list.add(row.getValue());
+            }
+            return list;
+        } catch (Exception ex) {
+            return list;
+        }
+    }
+
+    @Override
     public List<OauthClient> selectByManagementId(String managementId, int limit, Long skip) {
         List<OauthClient> list = new ArrayList<>();
         try {

@@ -28,6 +28,8 @@ public interface OauthTokenRepository {
 
     OauthAccessToken updateTokenById(OauthAccessToken oauthAccessToken);
 
+    void deleteExpiredToken(String clientId, Long expirationTime, String tokenType);
+
     void deleteTokenById(String id);
 
 }

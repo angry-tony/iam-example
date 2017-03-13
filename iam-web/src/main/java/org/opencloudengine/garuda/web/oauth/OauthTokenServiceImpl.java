@@ -1,5 +1,8 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import com.cloudant.client.api.views.Key;
+import com.cloudant.client.api.views.ViewRequestBuilder;
+import com.cloudant.client.api.views.ViewResponse;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
