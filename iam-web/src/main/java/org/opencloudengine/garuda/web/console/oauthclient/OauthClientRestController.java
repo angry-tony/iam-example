@@ -1,6 +1,9 @@
 package org.opencloudengine.garuda.web.console.oauthclient;
 
 
+import org.apache.http.HttpResponse;
+import org.opencloudengine.garuda.util.ExceptionUtils;
+import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.management.Management;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,7 +39,7 @@ public class OauthClientRestController {
     private OauthScopeService oauthScopeService;
 
     @RequestMapping(value = "/client", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthClient>> listAllClients(HttpServletRequest request) {
+    public ResponseEntity<List<OauthClient>> listAllClients(HttpServletRequest request, HttpServletResponse response) {
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -46,92 +50,104 @@ public class OauthClientRestController {
             if (oauthClients.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
+            JsonUtils.marshal("sdfsdfsdf");
             return new ResponseEntity<>(oauthClients, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/pagination", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthClient>> pagination(HttpServletRequest request,
+    public ResponseEntity<List<OauthClient>> pagination(HttpServletRequest request, HttpServletResponse response,
                                                         @RequestParam(defaultValue = "0") int offset,
                                                         @RequestParam(defaultValue = "100") int limit) {
 
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            //총합
+            Long max = oauthClientService.countAllByManagementId(management.get_id());
+
+            //컨디션 합
+            Long total = max;
+
+            //컨디션 결과
+            List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id(), limit, new Long(offset));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("x-uengine-pagination-maxnbrecords", max + "");
+            headers.add("x-uengine-pagination-currentoffset", offset + "");
+            headers.add("x-uengine-pagination-totalnbrecords", total + "");
+
+            return new ResponseEntity<>(oauthClients, headers, HttpStatus.OK);
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
-        //총합
-        Long max = oauthClientService.countAllByManagementId(management.get_id());
-
-        //컨디션 합
-        Long total = max;
-
-        //컨디션 결과
-        List<OauthClient> oauthClients = oauthClientService.selectByManagementId(management.get_id(), limit, new Long(offset));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("x-uengine-pagination-maxnbrecords", max + "");
-        headers.add("x-uengine-pagination-currentoffset", offset + "");
-        headers.add("x-uengine-pagination-totalnbrecords", total + "");
-
-        return new ResponseEntity<>(oauthClients, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/client/search/{searchKey}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<OauthClient>> search(HttpServletRequest request,
+    public ResponseEntity<List<OauthClient>> search(HttpServletRequest request, HttpServletResponse response,
                                                     @PathVariable("searchKey") String searchKey,
                                                     @RequestParam(defaultValue = "0") int offset,
                                                     @RequestParam(defaultValue = "100") int limit) {
+        try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
 
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            //총합
+            Long max = oauthClientService.countAllByManagementId(management.get_id());
+
+            //컨디션 합
+            Long total = oauthClientService.countAllByManagementIdLikeClientName(management.get_id(), searchKey);
+
+            //컨디션 결과
+            List<OauthClient> oauthClients = oauthClientService.selectByManagementLikeClientName(management.get_id(), searchKey, limit, new Long(offset));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("x-uengine-pagination-maxnbrecords", max + "");
+            headers.add("x-uengine-pagination-currentoffset", offset + "");
+            headers.add("x-uengine-pagination-totalnbrecords", total + "");
+
+            return new ResponseEntity<>(oauthClients, headers, HttpStatus.OK);
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
-
-        //총합
-        Long max = oauthClientService.countAllByManagementId(management.get_id());
-
-        //컨디션 합
-        Long total = oauthClientService.countAllByManagementIdLikeClientName(management.get_id(), searchKey);
-
-        //컨디션 결과
-        List<OauthClient> oauthClients = oauthClientService.selectByManagementLikeClientName(management.get_id(), searchKey, limit, new Long(offset));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("x-uengine-pagination-maxnbrecords", max + "");
-        headers.add("x-uengine-pagination-currentoffset", offset + "");
-        headers.add("x-uengine-pagination-totalnbrecords", total + "");
-
-        return new ResponseEntity<>(oauthClients, headers, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<OauthClient> getClient(HttpServletRequest request, @PathVariable("_id") String _id) {
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
+    public ResponseEntity<OauthClient> getClient(HttpServletRequest request, HttpServletResponse response, @PathVariable("_id") String _id) {
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity<>(oauthClient, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client", method = RequestMethod.POST)
-    public ResponseEntity<Void> createClient(HttpServletRequest request, @RequestBody OauthClientWithScopes oauthClient, UriComponentsBuilder ucBuilder) {
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
+    public ResponseEntity<Void> createClient(HttpServletRequest request, HttpServletResponse response,
+                                             @RequestBody OauthClientWithScopes oauthClient,
+                                             UriComponentsBuilder ucBuilder) {
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient existClient = oauthClientService.selectByManagementIdAndName(management.get_id(), oauthClient.getName());
             if (existClient != null) {
                 return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -146,19 +162,20 @@ public class OauthClientRestController {
             headers.setLocation(ucBuilder.path("/rest/v1/client/{_id}").buildAndExpand(createdClient.get_id()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.PUT)
-    public ResponseEntity<OauthClient> updateClient(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthClientWithScopes oauthClient) {
-
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+    public ResponseEntity<OauthClient> updateClient(HttpServletRequest request, HttpServletResponse response,
+                                                    @PathVariable("_id") String _id, @RequestBody OauthClientWithScopes oauthClient) {
 
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient currentClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentClient == null) {
@@ -174,18 +191,20 @@ public class OauthClientRestController {
             currentClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
             return new ResponseEntity<>(currentClient, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthClient> deleteClient(HttpServletRequest request, @PathVariable("_id") String _id) {
+    public ResponseEntity<OauthClient> deleteClient(HttpServletRequest request,HttpServletResponse response,
+                                                    @PathVariable("_id") String _id) {
 
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient currentClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
 
             if (currentClient == null) {
@@ -195,18 +214,21 @@ public class OauthClientRestController {
             oauthClientService.deleteById(currentClient.get_id());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/{clientId}/scope", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<OauthScope>> listAllClientScopes(
-            HttpServletRequest request, @PathVariable("clientId") String clientId) {
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+            HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("clientId") String clientId) {
+
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -218,20 +240,21 @@ public class OauthClientRestController {
             }
             return new ResponseEntity<>(oauthScopes, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<OauthScope> getClientScope(
-            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
-
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+            HttpServletRequest request,HttpServletResponse response,
+            @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
 
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -243,20 +266,22 @@ public class OauthClientRestController {
             }
             return new ResponseEntity<>(oauthScope, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Void> createClientScope(
-            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId, UriComponentsBuilder ucBuilder) {
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+            HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId, UriComponentsBuilder ucBuilder) {
 
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -277,7 +302,8 @@ public class OauthClientRestController {
                     buildAndExpand(clientScopes.getClientId(), clientScopes.getScopeId()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
@@ -285,13 +311,14 @@ public class OauthClientRestController {
     @RequestMapping(value = "/client/{clientId}/scope/{scopeId}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<OauthScope> deleteClientScope(
-            HttpServletRequest request, @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
+            HttpServletRequest request, HttpServletResponse response,
+            @PathVariable("clientId") String clientId, @PathVariable("scopeId") String scopeId) {
 
-        Management management = restAuthService.managementParser(request);
-        if (management == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         try {
+            Management management = restAuthService.managementParser(request);
+            if (management == null) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             OauthClient oauthClient = oauthClientService.selectByManagementIdAndId(management.get_id(), clientId);
             if (oauthClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -307,7 +334,8 @@ public class OauthClientRestController {
 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 }

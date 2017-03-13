@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ManagementRestController {
     private CustomService customService;
 
     @RequestMapping(value = "/management", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Management>> getManagements(HttpServletRequest request) {
+    public ResponseEntity<List<Management>> getManagements(HttpServletRequest request, HttpServletResponse response) {
         try {
             User user = restAuthService.userParser(request);
             if (user == null) {
@@ -58,13 +59,14 @@ public class ManagementRestController {
 
             return new ResponseEntity<>(managements, HttpStatus.OK);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/management/{_id}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Management> getManagement(HttpServletRequest request, @PathVariable("_id") String _id) {
+    public ResponseEntity<Management> getManagement(HttpServletRequest request,HttpServletResponse response,
+                                                    @PathVariable("_id") String _id) {
 
         try {
             User user = restAuthService.userParser(request);
@@ -77,12 +79,14 @@ public class ManagementRestController {
             }
             return new ResponseEntity<>(management, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/management", method = RequestMethod.POST)
-    public ResponseEntity<Void> createManagement(HttpServletRequest request, @RequestBody Management management, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Void> createManagement(HttpServletRequest request,HttpServletResponse response,
+                                                 @RequestBody Management management, UriComponentsBuilder ucBuilder) {
 
         try {
             User user = restAuthService.userParser(request);
@@ -100,12 +104,14 @@ public class ManagementRestController {
             headers.setLocation(ucBuilder.path("/rest/v1/management/{_id}").buildAndExpand(created.get_id()).toUri());
             return new ResponseEntity<>(headers, HttpStatus.CREATED);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/management/{_id}", method = RequestMethod.PUT)
-    public ResponseEntity<Management> updateManagement(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody Management management) {
+    public ResponseEntity<Management> updateManagement(HttpServletRequest request,HttpServletResponse response,
+                                                       @PathVariable("_id") String _id, @RequestBody Management management) {
 
         try {
             User user = restAuthService.userParser(request);
@@ -124,12 +130,14 @@ public class ManagementRestController {
             currentManagement = managementService.selectByUserIdAndId(user.get_id(), _id);
             return new ResponseEntity<>(currentManagement, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/management/{_id}", method = RequestMethod.DELETE)
-    public ResponseEntity<OauthClient> deleteManagement(HttpServletRequest request, @PathVariable("_id") String _id) {
+    public ResponseEntity<OauthClient> deleteManagement(HttpServletRequest request,HttpServletResponse response,
+                                                        @PathVariable("_id") String _id) {
 
         try {
             User user = restAuthService.userParser(request);
@@ -145,12 +153,14 @@ public class ManagementRestController {
             managementService.deleteById(currentManagement.get_id());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 
     @RequestMapping(value = "/management/{_id}/test", method = RequestMethod.POST)
-    public ResponseEntity<Map> testScript(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody Map params) {
+    public ResponseEntity<Map> testScript(HttpServletRequest request,HttpServletResponse response,
+                                          @PathVariable("_id") String _id, @RequestBody Map params) {
         try {
             Management management = managementService.selectById(_id);
             if (management == null) {
@@ -168,7 +178,8 @@ public class ManagementRestController {
             return new ResponseEntity<>(map, HttpStatus.OK);
 
         } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 }

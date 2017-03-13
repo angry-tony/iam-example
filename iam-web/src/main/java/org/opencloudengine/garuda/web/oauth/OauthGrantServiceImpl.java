@@ -790,6 +790,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             }
         } catch (IOException ex) {
             //response 전달 과정 중 실패가 일어나더라도 프로세스에는 영향을 끼지지 않는다.
+            ExceptionUtils.httpExceptionResponse(ex, accessTokenResponse.getResponse());
         }
     }
 

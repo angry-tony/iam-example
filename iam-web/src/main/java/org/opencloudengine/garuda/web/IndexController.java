@@ -34,7 +34,7 @@ public class IndexController {
      *
      * @return Model And View
      */
-    @RequestMapping(value = "/rest/console", method = RequestMethod.GET)
+    @RequestMapping(value = "/api", method = RequestMethod.GET)
     public ModelAndView api(HttpSession session, final Locale locale) {
         session.setAttribute("lang", locale.toString());
 

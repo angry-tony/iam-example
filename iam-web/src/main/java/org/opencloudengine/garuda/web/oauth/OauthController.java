@@ -38,26 +38,30 @@ public class OauthController {
     @ResponseStatus(HttpStatus.OK)
     public ModelAndView authorize(HttpSession session, HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
-        AuthorizeResponse authorizeResponse = oauthService.validateAuthorize(request);
 
-        if (authorizeResponse.getError() != null) {
-            Map map = new HashMap();
-            map.put("error", authorizeResponse.getError());
-            map.put("error_description", authorizeResponse.getError_description());
-            map.put("state", authorizeResponse.getState());
-            String marshal = JsonUtils.marshal(map);
-            String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-            response.getWriter().write(prettyPrint);
+        try {
+            AuthorizeResponse authorizeResponse = oauthService.validateAuthorize(request);
+            if (authorizeResponse.getError() != null) {
+                Map map = new HashMap();
+                map.put("error", authorizeResponse.getError());
+                map.put("error_description", authorizeResponse.getError_description());
+                map.put("state", authorizeResponse.getState());
+                String marshal = JsonUtils.marshal(map);
+                String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+                response.getWriter().write(prettyPrint);
 
-            oauthService.responseAuthorize(authorizeResponse);
-
+                oauthService.responseAuthorize(authorizeResponse);
+                return null;
+            } else {
+                //인증 화면으로 넘어갈 것.
+                ModelAndView mav = new ModelAndView("/auth/oauth-login");
+                mav.addObject("authorizeResponse", authorizeResponse);
+                mav.addObject("jsonAuthorizeResponse", JsonUtils.marshal(authorizeResponse));
+                return mav;
+            }
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
             return null;
-        } else {
-            //인증 화면으로 넘어갈 것.
-            ModelAndView mav = new ModelAndView("/auth/oauth-login");
-            mav.addObject("authorizeResponse", authorizeResponse);
-            mav.addObject("jsonAuthorizeResponse", JsonUtils.marshal(authorizeResponse));
-            return mav;
         }
     }
 
@@ -171,13 +175,17 @@ public class OauthController {
     public void authorize_redirect(HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
 
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        Set<String> paramKeys = parameterMap.keySet();
-        Iterator<String> iterator = paramKeys.iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            String[] value = parameterMap.get(key);
-            System.out.println(key + " : " + value);
+        try {
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            Set<String> paramKeys = parameterMap.keySet();
+            Iterator<String> iterator = paramKeys.iterator();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                String[] value = parameterMap.get(key);
+                System.out.println(key + " : " + value);
+            }
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
         }
     }
 
@@ -194,22 +202,33 @@ public class OauthController {
                          @RequestParam(defaultValue = "") String tokenType,
                          @RequestParam(defaultValue = "") String claim
     ) throws IOException {
-
-        AuthorizeResponse authorizeResponse = oauthService.fetchAuthorize(managementKey, clientKey, userName, scopes, responseType, redirectUri, state, tokenType, claim);
-        oauthService.processAuthorize(authorizeResponse, response);
+        try {
+            AuthorizeResponse authorizeResponse = oauthService.fetchAuthorize(managementKey, clientKey, userName, scopes, responseType, redirectUri, state, tokenType, claim);
+            oauthService.processAuthorize(authorizeResponse, response);
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+        }
     }
 
     @RequestMapping(value = "/access_token", method = RequestMethod.POST, produces = "application/json")
     public void accessToken(HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
 
-        oauthService.processAccessToken(request, response);
+        try {
+            oauthService.processAccessToken(request, response);
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+        }
     }
 
     @RequestMapping(value = "/token_info", method = RequestMethod.GET, produces = "application/json")
     public void tokenInfo(HttpServletRequest request, HttpServletResponse response
     ) throws IOException {
 
-        oauthService.processTokenInfo(request, response);
+        try {
+            oauthService.processTokenInfo(request, response);
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+        }
     }
 }
