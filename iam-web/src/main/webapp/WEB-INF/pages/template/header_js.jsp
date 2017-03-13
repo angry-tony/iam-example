@@ -59,6 +59,9 @@
 <link href="/resources/css/style.css" rel="stylesheet">
 <link href="/resources/css/custom.css" rel="stylesheet">
 
+<!-- select2 -->
+<link href="/resources/js/plugins/select2/select2.css" rel="stylesheet">
+
 <link href="/resources/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
 
 <!-- Spring JS -->

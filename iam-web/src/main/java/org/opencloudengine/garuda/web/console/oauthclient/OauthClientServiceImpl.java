@@ -81,7 +81,7 @@ public class OauthClientServiceImpl implements OauthClientService {
 
     @Override
     public OauthClient updateById(String id, String name, String description, String clientTrust, String clientType, String activeClient,
-                                  String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity,
+                                  String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken,
                                   Integer codeLifetime, Integer refreshTokenLifetime,
                                   Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
         OauthClient oauthClient = new OauthClient();
@@ -96,6 +96,7 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setRefreshTokenValidity(refreshTokenValidity);
         oauthClient.setCodeLifetime(codeLifetime);
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
+        oauthClient.setAutoDeletionToken(autoDeletionToken);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);
         oauthClient.setJwtTokenLifetime(jwtTokenLifetime);
 
@@ -117,13 +118,8 @@ public class OauthClientServiceImpl implements OauthClientService {
     }
 
     @Override
-    public OauthClient updateById(OauthClient oauthClient) {
-        return oauthClientRepository.updateById(oauthClient);
-    }
-
-    @Override
     public OauthClient createClient(String managementId, String name, String description, String clientTrust, String clientType, String activeClient,
-                                    String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity,
+                                    String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken,
                                     Integer codeLifetime, Integer refreshTokenLifetime,
                                     Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
 
@@ -142,6 +138,7 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setAuthorizedGrantTypes(authorizedGrantTypes);
         oauthClient.setWebServerRedirectUri(webServerRedirectUri);
         oauthClient.setRefreshTokenValidity(refreshTokenValidity);
+        oauthClient.setAutoDeletionToken(autoDeletionToken);
         oauthClient.setCodeLifetime(codeLifetime);
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);

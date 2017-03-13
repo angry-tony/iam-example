@@ -64,6 +64,9 @@
 <!--Validate-->
 <script type="text/javascript" src="/resources/js/plugins/validate/jquery.validate.min.js"></script>
 
+<!-- select2 -->
+<script src="/resources/js/plugins/select2/select2.js"></script>
+
 <script>
     $(document).ready(function () {
 //        $('.i-checks').iCheck({

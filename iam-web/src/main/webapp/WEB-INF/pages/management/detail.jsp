@@ -43,6 +43,32 @@
                               id="managementForm" method="post">
                             <h4 name="title">Create New Management Group </h4>
 
+                            <div id="readonly-fields">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Management Key</label>
+
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="managementKey" readonly="true">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Management Secret</label>
+
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="managementSecret" readonly="true">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Management JwtSecret</label>
+
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" name="managementJwtSecret" readonly="true">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Name <span class="color-red">*</span></label>
 
@@ -105,6 +131,7 @@
         var isProfile = '${profile}';
         var form = $('#managementForm');
         if (isProfile == 'true') {
+            $('#readonly-fields').show();
             $('[name=title]').html('Edit Management Group');
             form.deserialize(currentManagement);
             form.find('[name=submit]').text('EDIT');
@@ -123,6 +150,7 @@
                         })
                 });
         }else{
+            $('#readonly-fields').hide();
             $('[name=title]').html('Create New Management Group');
         }
 

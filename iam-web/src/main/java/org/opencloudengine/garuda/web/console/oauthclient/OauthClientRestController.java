@@ -54,8 +54,8 @@ public class OauthClientRestController {
 
     @RequestMapping(value = "/client/pagination", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<OauthClient>> pagination(HttpServletRequest request,
-                                                      @RequestParam(defaultValue = "0") int offset,
-                                                      @RequestParam(defaultValue = "100") int limit) {
+                                                        @RequestParam(defaultValue = "0") int offset,
+                                                        @RequestParam(defaultValue = "100") int limit) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -80,9 +80,9 @@ public class OauthClientRestController {
 
     @RequestMapping(value = "/client/search/{searchKey}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<OauthClient>> search(HttpServletRequest request,
-                                                      @PathVariable("searchKey") String searchKey,
-                                                      @RequestParam(defaultValue = "0") int offset,
-                                                      @RequestParam(defaultValue = "100") int limit) {
+                                                    @PathVariable("searchKey") String searchKey,
+                                                    @RequestParam(defaultValue = "0") int offset,
+                                                    @RequestParam(defaultValue = "100") int limit) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -125,7 +125,7 @@ public class OauthClientRestController {
     }
 
     @RequestMapping(value = "/client", method = RequestMethod.POST)
-    public ResponseEntity<Void> createClient(HttpServletRequest request, @RequestBody OauthClient oauthClient, UriComponentsBuilder ucBuilder) {
+    public ResponseEntity<Void> createClient(HttpServletRequest request, @RequestBody OauthClientWithScopes oauthClient, UriComponentsBuilder ucBuilder) {
         Management management = restAuthService.managementParser(request);
         if (management == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -139,8 +139,8 @@ public class OauthClientRestController {
 
             OauthClient createdClient = oauthClientService.createClient(management.get_id(), oauthClient.getName(), oauthClient.getDescription(), oauthClient.getClientTrust()
                     , oauthClient.getClientType(), oauthClient.getActiveClient(), oauthClient.getAuthorizedGrantTypes(), oauthClient.getWebServerRedirectUri()
-                    , oauthClient.getRefreshTokenValidity(), oauthClient.getCodeLifetime(), oauthClient.getRefreshTokenLifetime()
-                    , oauthClient.getAccessTokenLifetime(), oauthClient.getJwtTokenLifetime(), null);
+                    , oauthClient.getRefreshTokenValidity(), oauthClient.getAutoDeletionToken(), oauthClient.getCodeLifetime(), oauthClient.getRefreshTokenLifetime()
+                    , oauthClient.getAccessTokenLifetime(), oauthClient.getJwtTokenLifetime(), oauthClient.getScopes());
 
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ucBuilder.path("/rest/v1/client/{_id}").buildAndExpand(createdClient.get_id()).toUri());
@@ -151,7 +151,7 @@ public class OauthClientRestController {
     }
 
     @RequestMapping(value = "/client/{_id}", method = RequestMethod.PUT)
-    public ResponseEntity<OauthClient> updateClient(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthClient oauthClient) {
+    public ResponseEntity<OauthClient> updateClient(HttpServletRequest request, @PathVariable("_id") String _id, @RequestBody OauthClientWithScopes oauthClient) {
 
         Management management = restAuthService.managementParser(request);
         if (management == null) {
@@ -164,8 +164,12 @@ public class OauthClientRestController {
             if (currentClient == null) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            oauthClient.set_id(currentClient.get_id());
-            oauthClientService.updateById(oauthClient);
+            oauthClientService.updateById(_id, oauthClient.getName(), oauthClient.getDescription(),
+                    oauthClient.getClientTrust(), oauthClient.getClientType(), oauthClient.getActiveClient(),
+                    oauthClient.getAuthorizedGrantTypes(), oauthClient.getWebServerRedirectUri(),
+                    oauthClient.getRefreshTokenValidity(), oauthClient.getAutoDeletionToken(),
+                    oauthClient.getCodeLifetime(), oauthClient.getRefreshTokenLifetime(),
+                    oauthClient.getAccessTokenLifetime(), oauthClient.getJwtTokenLifetime(), oauthClient.getScopes());
 
             currentClient = oauthClientService.selectByManagementIdAndId(management.get_id(), _id);
             return new ResponseEntity<>(currentClient, HttpStatus.OK);

@@ -130,14 +130,6 @@ IAM.prototype = {
         };
         return this.send(options);
     },
-    getAllUsers: function () {
-        var options = {
-            type: "GET",
-            url: '/rest/v1/user',
-            dataType: "json"
-        };
-        return this.send(options);
-    },
     getUser: function (id) {
         var options = {
             type: "GET",
@@ -200,6 +192,180 @@ IAM.prototype = {
         var options = {
             type: "DELETE",
             url: '/rest/v1/user/' + id
+        };
+        return this.send(options);
+    },
+    getClient: function (id) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + id,
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    getClientSearch: function (searchKey, offset, limit) {
+        var data = {
+            offset: offset ? offset : 0,
+            limit: limit ? limit : 100,
+            audit: 'NONE'
+        };
+        var url = searchKey ? '/rest/v1/client/search/' + searchKey : '/rest/v1/client/pagination';
+        var options = {
+            type: "GET",
+            url: url,
+            dataType: 'json',
+            data: data,
+            resolve: function (response, status, xhr) {
+                var total = parseInt(xhr.getResponseHeader('x-killbill-pagination-totalnbrecords'));
+                var filtered = parseInt(xhr.getResponseHeader('x-killbill-pagination-maxnbrecords'));
+                return {
+                    data: response,
+                    total: total,
+                    filtered: filtered,
+                    offset: data.offset,
+                    limit: data.limit
+                };
+            }
+        };
+        return this.send(options);
+    },
+    createClient: function (data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text',
+            resolve: function (response, status, xhr) {
+                var locationHeader = xhr.getResponseHeader('Location');
+                return locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+            }
+        };
+        return this.send(options);
+    },
+    updateClient: function (id, data) {
+        var options = {
+            type: "PUT",
+            url: '/rest/v1/client/' + id,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    deleteClient: function (id) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/client/' + id
+        };
+        return this.send(options);
+    },
+    getClientScopes: function (clientId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/scope',
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    getClientScope: function (clientId, scopeId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/scope/' + scopeId,
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    createClientScope: function (clientId, scopeId) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client/' + clientId + '/scope/' + scopeId,
+            contentType: "application/json",
+            dataType: 'text',
+            resolve: function (response, status, xhr) {
+                var locationHeader = xhr.getResponseHeader('Location');
+                return locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+            }
+        };
+        return this.send(options);
+    },
+    deleteClientScope: function (clientId, scopeId) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/client/' + clientId + '/scope/' + scopeId
+        };
+        return this.send(options);
+    },
+    getAllScope: function () {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/scope',
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    getScope: function (id) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/scope/' + id,
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    getScopeSearch: function (searchKey, offset, limit) {
+        var data = {
+            offset: offset ? offset : 0,
+            limit: limit ? limit : 100,
+            audit: 'NONE'
+        };
+        var url = searchKey ? '/rest/v1/scope/search/' + searchKey : '/rest/v1/scope/pagination';
+        var options = {
+            type: "GET",
+            url: url,
+            dataType: 'json',
+            data: data,
+            resolve: function (response, status, xhr) {
+                var total = parseInt(xhr.getResponseHeader('x-killbill-pagination-totalnbrecords'));
+                var filtered = parseInt(xhr.getResponseHeader('x-killbill-pagination-maxnbrecords'));
+                return {
+                    data: response,
+                    total: total,
+                    filtered: filtered,
+                    offset: data.offset,
+                    limit: data.limit
+                };
+            }
+        };
+        return this.send(options);
+    },
+    createScope: function (data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/scope',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text',
+            resolve: function (response, status, xhr) {
+                var locationHeader = xhr.getResponseHeader('Location');
+                return locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+            }
+        };
+        return this.send(options);
+    },
+    updateScope: function (id, data) {
+        var options = {
+            type: "PUT",
+            url: '/rest/v1/scope/' + id,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    deleteScope: function (id) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/scope/' + id
         };
         return this.send(options);
     },
