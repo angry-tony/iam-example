@@ -27,7 +27,7 @@
 
     <div class="error-desc">
         Sorry, but the page you are looking for has note been found. We apologize.<br/>
-        You can go back to main page: <br/><a href="/index" class="btn btn-primary m-t">Dashboard</a>
+        You can go back to main page: <br/><a href="${pageContext.request.contextPath}/index" class="btn btn-primary m-t">Dashboard</a>
     </div>
 </div>
 

@@ -38,7 +38,7 @@
                         <h5>Management Groups</h5>
 
                         <div class="ibox-tools">
-                            <a href="/management/new" type="button" class="btn btn-primary btn-sm">New +</a>
+                            <a href="${pageContext.request.contextPath}/management/new" type="button" class="btn btn-primary btn-sm">New +</a>
                         </div>
 
                     </div>
@@ -82,7 +82,7 @@
                                         rowValue['managementKey'],
                                         rowValue['managementSecret']
                                     );
-                                    window.location.href = '/management/profile';
+                                    window.location.href = contextPath + '/management/profile';
                                 }
                             }
                         },

@@ -1,14 +1,18 @@
 /**
  * Created by Seungpil Park on 2016. 9. 6..
  */
-var IAM = function (host, port) {
+var IAM = function (host, port, contextPath) {
     this.host = host;
     this.port = port;
     this.schema = 'http';
+    this.contextPath = contextPath;
     if (!host && !port) {
         this.baseUrl = '';
     } else {
         this.baseUrl = this.schema + '://' + this.host + ':' + this.port;
+    }
+    if (this.contextPath) {
+        this.baseUrl = this.baseUrl + this.contextPath;
     }
     this.user = undefined;
     this.management = undefined;
@@ -153,7 +157,7 @@ IAM.prototype = {
             resolve: function (response, status, xhr) {
                 var total = parseInt(xhr.getResponseHeader('x-uengine-pagination-totalnbrecords'));
                 var filtered = parseInt(xhr.getResponseHeader('x-uengine-pagination-maxnbrecords'));
-                console.log(total,filtered);
+                console.log(total, filtered);
                 return {
                     data: response,
                     total: total,

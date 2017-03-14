@@ -140,7 +140,7 @@
                 .click(function(){
                     iam.deleteManagement(currentManagement['_id'])
                         .done(function () {
-                            window.location.href = '/management/list';
+                            window.location.href = contextPath + '/management/list';
                         })
                         .fail(function () {
                             toastr.error('Failed to delete management group');
@@ -174,7 +174,7 @@
             } else {
                 iam.createManagement(data)
                     .done(function () {
-                        window.location.href = '/management/list';
+                        window.location.href = contextPath + '/management/list';
                     })
                     .fail(function () {
                         toastr.error('Failed to create management group');

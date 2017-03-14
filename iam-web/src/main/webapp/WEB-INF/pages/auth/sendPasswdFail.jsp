@@ -19,7 +19,7 @@
 
     <%@include file="../template/header_js.jsp" %>
 
-    <link rel="stylesheet" href="/resources/assets/css/pages/page_log_reg_v1.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/pages/page_log_reg_v1.css">
 </head>
 
 <!-- body classes:
@@ -35,7 +35,7 @@
         <div class="container">
             <h1 class="pull-left"><uengine:message code="menu.login"/></h1>
             <ul class="pull-right breadcrumb">
-                <li><a href="index.html"><uengine:message code="menu.home"/></a></li>
+                <li><a href="${pageContext.request.contextPath}/index"><uengine:message code="menu.home"/></a></li>
                 <li class="active"><uengine:message code="menu.login"/></li>
             </ul>
         </div>
@@ -47,7 +47,7 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
 
-                <form id="login_form" class="reg-page" action="/auth/sendPasswd" method="post" role="form">
+                <form id="login_form" class="reg-page" action="${pageContext.request.contextPath}/auth/sendPasswd" method="post" role="form">
                     <div class="reg-header">
                         <h2><uengine:message code="login.sendpasswd.fail"></uengine:message> </h2>
                         <p><uengine:message code="login.forget.desc"></uengine:message> </p>
@@ -66,7 +66,7 @@
                     <hr>
 
                     <h4><uengine:message code="login.forget.email1"></uengine:message> </h4>
-                    <p><uengine:message code="login.forget.email2"></uengine:message> <a class="color-green" href="/auth/forgetEmail"> <uengine:message code="login.forget.email3"></uengine:message> </a> <uengine:message code="login.forget.email4"></uengine:message> </p>
+                    <p><uengine:message code="login.forget.email2"></uengine:message> <a class="color-green" href="${pageContext.request.contextPath}/auth/forgetEmail"> <uengine:message code="login.forget.email3"></uengine:message> </a> <uengine:message code="login.forget.email4"></uengine:message> </p>
                 </form>
             </div>
         </div><!--/row-->

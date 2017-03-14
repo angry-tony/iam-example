@@ -95,7 +95,7 @@
                 .click(function () {
                     iam.deleteUser(oauthUser['_id'])
                         .done(function () {
-                            window.location.href = '/user/list';
+                            window.location.href = contextPath + '/user/list';
                         })
                         .fail(function () {
                             toastr.error('Failed to delete oauth user');
@@ -207,7 +207,7 @@
                 } else {
                     iam.createUser(JSON.parse(body))
                         .done(function () {
-                            window.location.href = '/user/list';
+                            window.location.href = contextPath + '/user/list';
                         })
                         .fail(function () {
                             toastr.error('Failed to create oauth user');

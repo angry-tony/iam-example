@@ -29,7 +29,7 @@
 
     </div>
     <h3>Account already exists.</h3>
-    <p>Already Signed Up? Click <a href="/auth/login">Sign In</a> to login your account.</p>
+    <p>Already Signed Up? Click <a href="${pageContext.request.contextPath}/auth/login">Sign In</a> to login your account.</p>
 
     <br>
     <p id="mailExist"></p>
@@ -50,7 +50,7 @@
   $(function () {
     $('#register_form').submit(function (e) {
       e.preventDefault();
-      location.href = '/auth/login';
+      location.href = contextPath + '/auth/login';
     });
     $('#mailExist').text('${responseEmail}' + ' is already subscribed.');
 

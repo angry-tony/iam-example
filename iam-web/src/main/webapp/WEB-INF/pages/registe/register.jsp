@@ -29,9 +29,9 @@
 
     </div>
     <h3>Register a new account</h3>
-    <p>Already Signed Up? Click <a href="/auth/login">Sign In</a> to login your account.</p>
+    <p>Already Signed Up? Click <a href="${pageContext.request.contextPath}/auth/login">Sign In</a> to login your account.</p>
 
-    <form action="/registe/request" method="post" id="register_form" class="m-t" role="form">
+    <form action="${pageContext.request.contextPath}/registe/request" method="post" id="register_form" class="m-t" role="form">
       <div class="form-group">
         <input type="text" name="userName" class="form-control" placeholder="Username" required="">
       </div>

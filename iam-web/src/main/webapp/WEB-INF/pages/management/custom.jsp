@@ -204,9 +204,9 @@
 </div>
 <%@include file="../template/footer_js.jsp" %>
 
-<link rel="stylesheet" href="/resources/js/plugins/codemirror/codemirror.css">
-<script type="text/javascript" src="/resources/js/plugins/codemirror/codemirror.js"></script>
-<script type="text/javascript" src="/resources/js/plugins/codemirror/javascript.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/js/plugins/codemirror/codemirror.css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/plugins/codemirror/codemirror.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/plugins/codemirror/javascript.js"></script>
 <script>
     $(document).ready(function () {
 

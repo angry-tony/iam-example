@@ -36,7 +36,7 @@
                         <h5>Oauth Scopes</h5>
 
                         <div class="ibox-tools">
-                            <a href="/client/new" type="button" class="btn btn-primary btn-sm">New +</a>
+                            <a href="${pageContext.request.contextPath}/client/new" type="button" class="btn btn-primary btn-sm">New +</a>
                         </div>
 
                     </div>
@@ -71,7 +71,7 @@
                     defaultContent: '',
                     event: {
                         click: function (key, value, rowValue, rowIdx, td) {
-                            window.location.href = '/scope/' + rowValue['_id'] + '/edit';
+                            window.location.href = contextPath + '/scope/' + rowValue['_id'] + '/edit';
                         }
                     }
                 },

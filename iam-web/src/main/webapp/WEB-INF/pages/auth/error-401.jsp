@@ -27,7 +27,7 @@
 
     <div class="error-desc">
         Sorry, you don't have permission about this page. We apologize.<br/>
-        You can go back to main page: <br/><a href="/index" class="btn btn-primary m-t">Dashboard</a>
+        You can go back to main page: <br/><a href="${pageContext.request.contextPath}/index" class="btn btn-primary m-t">Dashboard</a>
     </div>
 </div>
 

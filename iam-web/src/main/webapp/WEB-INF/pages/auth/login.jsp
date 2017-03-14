@@ -50,7 +50,8 @@
             <p class="text-muted text-center">
                 <small>Do not have an account?</small>
             </p>
-            <a class="btn btn-sm btn-white btn-block" href="/registe/register">Create an account</a>
+            <a class="btn btn-sm btn-white btn-block" href="${pageContext.request.contextPath}/registe/register">Create
+                an account</a>
         </form>
         <p class="m-t">
             <small>uEngine IAM app &copy; 2016</small>
@@ -69,12 +70,12 @@
             event.preventDefault();
             var data = $(this).serializeObject();
             iam.login(data)
-                    .done(function () {
-                        window.location.href = '/';
-                    })
-                    .fail(function () {
-                        window.location.href = '/auth/fail';
-                    })
+                .done(function () {
+                    window.location.href = contextPath + '/';
+                })
+                .fail(function () {
+                    window.location.href = contextPath + '/auth/fail';
+                })
         });
     })
 </script>

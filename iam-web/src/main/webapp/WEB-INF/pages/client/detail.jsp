@@ -317,7 +317,7 @@
                     .click(function () {
                         iam.deleteClient(oauthClient['_id'])
                             .done(function () {
-                                window.location.href = '/client/list';
+                                window.location.href = contextPath + '/client/list';
                             })
                             .fail(function () {
                                 toastr.error('Failed to delete oauth client');
@@ -405,7 +405,7 @@
             } else {
                 iam.createClient(data)
                     .done(function () {
-                        window.location.href = '/client/list';
+                        window.location.href = contextPath + '/client/list';
                     })
                     .fail(function () {
                         toastr.error('Failed to create oauth client');

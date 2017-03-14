@@ -47,7 +47,7 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
 
-                <form id="login_form" class="reg-page" action="/auth/sendPasswd" method="post" role="form">
+                <form id="login_form" class="reg-page" action="${pageContext.request.contextPath}/auth/sendPasswd" method="post" role="form">
                     <div class="reg-header">
                         <h2><uengine:message code="login.forget1"></uengine:message> </h2>
                         <p><uengine:message code="login.forget.desc"></uengine:message> </p>

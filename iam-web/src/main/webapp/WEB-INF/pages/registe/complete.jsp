@@ -49,7 +49,7 @@
     $(function () {
         $('#register_form').submit(function (e) {
             e.preventDefault();
-            location.href = '/auth/login';
+            location.href = contextPath + '/auth/login';
         });
     })
 </script>

@@ -92,7 +92,7 @@
                 .click(function(){
                     iam.deleteScope(_id)
                         .done(function () {
-                            window.location.href = '/scope/list';
+                            window.location.href = contextPath + '/scope/list';
                         })
                         .fail(function () {
                             toastr.error('Failed to delete scope');
@@ -135,7 +135,7 @@
             } else {
                 iam.createScope(data)
                     .done(function () {
-                        window.location.href = '/scope/list';
+                        window.location.href = contextPath + '/scope/list';
                     })
                     .fail(function () {
                         toastr.error('Failed to create oauth scope');

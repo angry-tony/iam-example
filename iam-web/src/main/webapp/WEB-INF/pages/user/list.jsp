@@ -37,7 +37,7 @@
                         <h5>Management Groups</h5>
 
                         <div class="ibox-tools">
-                            <a href="/user/new" type="button" class="btn btn-primary btn-sm">New +</a>
+                            <a href="${pageContext.request.contextPath}/user/new" type="button" class="btn btn-primary btn-sm">New +</a>
                         </div>
 
                     </div>
@@ -72,7 +72,7 @@
                     defaultContent: '',
                     event: {
                         click: function (key, value, rowValue, rowIdx, td) {
-                            window.location.href = '/user/' + rowValue['_id'] + '/edit';
+                            window.location.href = contextPath + '/user/' + rowValue['_id'] + '/edit';
                         }
                     }
                 },

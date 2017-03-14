@@ -17,7 +17,7 @@
 
     <%@include file="../template/header_js.jsp" %>
 
-    <link rel="stylesheet" href="/resources/assets/css/pages/page_log_reg_v1.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/pages/page_log_reg_v1.css">
 </head>
 
 <!-- body classes:
@@ -33,7 +33,7 @@
         <div class="container">
             <h1 class="pull-left"><uengine:message code="menu.register"/></h1>
             <ul class="pull-right breadcrumb">
-                <li><a href="index.html"><uengine:message code="menu.home"/></a></li>
+                <li><a href="${pageContext.request.contextPath}/index"><uengine:message code="menu.home"/></a></li>
                 <li class="active"><uengine:message code="menu.register"/></li>
             </ul>
         </div>
@@ -48,7 +48,7 @@
                     <div class="reg-header">
                         <h2><uengine:message code="login.sendpasswd.success1"></uengine:message> </h2>
 
-                        <p>Already Signed Up? Click <a href="/auth/login" class="color-green">Sign In</a> to login
+                        <p>Already Signed Up? Click <a href="${pageContext.request.contextPath}/auth/login" class="color-green">Sign In</a> to login
                             your account.</p>
                         <br>
 

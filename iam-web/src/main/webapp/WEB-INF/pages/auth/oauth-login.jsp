@@ -22,8 +22,8 @@
 
     <%@include file="../template/header_js.jsp" %>
 
-    <link rel="stylesheet" href="/resources/assets/css/pages/page_log_reg_v1.css">
-    <script type="text/javascript" src="/resources/plugins/cookie/js.cookie.js"></script>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/pages/page_log_reg_v1.css">
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resources/plugins/cookie/js.cookie.js"></script>
 </head>
 
 <script type="text/javascript">
@@ -75,7 +75,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "/oauth/check_session",
+                url: contextPath + "/oauth/check_session",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "text",
@@ -115,7 +115,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "/oauth/check_scope",
+                url: contextPath + "/oauth/check_scope",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "text",
@@ -147,7 +147,7 @@
             };
             $.ajax({
                 type: "POST",
-                url: "/oauth/create_scope_token",
+                url: contextPath + "/oauth/create_scope_token",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "text",
@@ -172,7 +172,7 @@
 
         var redirectScopeAuthorize = function (allow) {
 
-            var redirect = '/oauth/redirect';
+            var redirect = contextPath + '/oauth/redirect';
             redirectData.userName = userName;
             $.redirectPost(redirect, redirectData);
         };
@@ -234,7 +234,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: "/oauth/login",
+                    url: contextPath + "/oauth/login",
                     data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
                     dataType: "text",
@@ -271,7 +271,7 @@
         <div class="container">
             <h1 class="pull-left"><uengine:message code="menu.login"/></h1>
             <ul class="pull-right breadcrumb">
-                <li><a href="index.html"><uengine:message code="menu.home"/></a></li>
+                <li><a href="${pageContext.request.contextPath}/index"><uengine:message code="menu.home"/></a></li>
                 <li class="active"><uengine:message code="menu.login"/></li>
             </ul>
         </div>
@@ -337,7 +337,7 @@
 
                     <br>
 
-                    <p><a class="color-green" href="/registe/register">
+                    <p><a class="color-green" href="${pageContext.request.contextPath}/registe/register">
                         <uengine:message code="login.singup1"></uengine:message> </a>
                         <uengine:message code="login.singup2"></uengine:message></p>
                     <hr>
@@ -345,7 +345,7 @@
                     <h4><uengine:message code="login.forget1"></uengine:message></h4>
 
                     <p><uengine:message code="login.forget2"></uengine:message>
-                        <a class="color-green" href="/auth/forgetPasswd">
+                        <a class="color-green" href="${pageContext.request.contextPath}/auth/forgetPasswd">
                             <uengine:message code="login.forget3"></uengine:message> </a>
                         <uengine:message code="login.forget4"></uengine:message></p>
 
