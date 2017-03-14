@@ -4,13 +4,13 @@
     <parent>
         <artifactId>oceIAM</artifactId>
         <groupId>org.uengine.garuda</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>iam-common</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>OCE IAM - Common</name>
 
     <dependencies>
