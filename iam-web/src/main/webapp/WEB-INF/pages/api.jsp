@@ -51,11 +51,12 @@
 
     <script type="text/javascript">
         $(function () {
+            var contextPath = '${pageContext.request.contextPath}';
             var url = window.location.search.match(/url=([^&]+)/);
             if (url && url.length > 1) {
                 url = decodeURIComponent(url[1]);
             } else {
-                url = "${pageContext.request.contextPath}" + "/resources/swagger/swagger.json";
+                url = contextPath + "/resources/swagger/swagger.json";
             }
 
             hljs.configure({
@@ -85,6 +86,7 @@
                     if (window.SwaggerTranslator) {
                         window.SwaggerTranslator.translate();
                     }
+                    window.swaggerUi.api.setBasePath(contextPath + '/rest/v1');
                 },
                 onFailure: function (data) {
                     log("Unable to Load SwaggerUI");
@@ -95,7 +97,9 @@
                 showRequestHeaders: false
             });
 
+            //window.swaggerUi.api.basePath = "/oce/rest/v1";
             window.swaggerUi.load();
+            //console.log(window.swaggerUi.api);
 
             function log() {
                 if ('console' in window) {

@@ -5,7 +5,6 @@
     "description": "OCE IAM REST API CONSOLE",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
   "schemes": [
     "http"
   ],
@@ -14,18 +13,93 @@
     "application/json"
   ],
   "paths": {
-    "/user": {
+    "/user/pagination": {
       "get": {
-        "summary": "List user",
-        "description": "list of user",
-        "parameters": [
-        ],
         "tags": [
           "User"
         ],
+        "summary": "List user",
+        "description": "",
+        "operationId": "getUsers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "An array of users"
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/search/{searchKey}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Search users",
+        "description": "",
+        "operationId": "searchUsers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "searchKey",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": ".*"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
           },
           "204": {
             "description": "NO_CONTENT"
@@ -39,15 +113,41 @@
           "405": {
             "description": "METHOD_NOT_ALLOWED"
           }
-        },
-        "security": [
-          {
-            "management_key": []
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "List All user",
+        "description": "list of all user",
+        "parameters": [
+        ],
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
           },
-          {
-            "management_secret": []
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
           }
-        ]
+        }
       },
       "post": {
         "summary": "Create User",
@@ -86,15 +186,7 @@
           "409": {
             "description": "CONFLICT"
           }
-        },
-        "security": [
-          {
-            "management_key": []
-          },
-          {
-            "management_secret": []
-          }
-        ]
+        }
       }
     },
     "/user/{_id}": {
@@ -115,7 +207,10 @@
         ],
         "responses": {
           "200": {
-            "description": "User"
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           },
           "204": {
             "description": "NO_CONTENT"
@@ -168,7 +263,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           },
           "401": {
             "description": "UNAUTHORIZED"
@@ -237,10 +335,113 @@
         ]
       }
     },
+    "/scope/pagination": {
+      "get": {
+        "tags": [
+          "Scope"
+        ],
+        "summary": "List scopes",
+        "description": "",
+        "operationId": "getScopes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Scope"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scope/search/{searchKey}": {
+      "get": {
+        "tags": [
+          "Scope"
+        ],
+        "summary": "Search scopes",
+        "description": "",
+        "operationId": "searchScopes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "searchKey",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": ".*"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Scope"
+              }
+            }
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
+      }
+    },
     "/scope": {
       "get": {
-        "summary": "List scope",
-        "description": "list of scope",
+        "summary": "List all scope",
+        "description": "list of all scope",
         "parameters": [
         ],
         "tags": [
@@ -454,6 +655,109 @@
             "management_secret": []
           }
         ]
+      }
+    },
+    "/client/pagination": {
+      "get": {
+        "tags": [
+          "Client"
+        ],
+        "summary": "List clients",
+        "description": "",
+        "operationId": "getClients",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Client"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/search/{searchKey}": {
+      "get": {
+        "tags": [
+          "Client"
+        ],
+        "summary": "Search clients",
+        "description": "",
+        "operationId": "searchClients",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "searchKey",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "pattern": ".*"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 0,
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "default": 100,
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Client"
+              }
+            }
+          },
+          "204": {
+            "description": "NO_CONTENT"
+          },
+          "401": {
+            "description": "UNAUTHORIZED"
+          },
+          "400": {
+            "description": "BAD_REQUEST"
+          },
+          "405": {
+            "description": "METHOD_NOT_ALLOWED"
+          }
+        }
       }
     },
     "/client": {
@@ -1168,6 +1472,9 @@
           "type": "string"
         },
         "refreshTokenValidity": {
+          "type": "string"
+        },
+        "autoDeletionToken": {
           "type": "string"
         },
         "codeLifetime": {
