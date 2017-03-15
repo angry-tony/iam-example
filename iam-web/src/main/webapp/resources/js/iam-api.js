@@ -1,15 +1,13 @@
 /**
  * Created by Seungpil Park on 2016. 9. 6..
  */
-var IAM = function (host, port, contextPath) {
+var IAM = function (host,contextPath) {
     this.host = host;
-    this.port = port;
-    this.schema = 'http';
     this.contextPath = contextPath;
-    if (!host && !port) {
-        this.baseUrl = '';
+    if (!host) {
+        this.baseUrl = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
     } else {
-        this.baseUrl = this.schema + '://' + this.host + ':' + this.port;
+        this.baseUrl = this.host;
     }
     if (this.contextPath) {
         this.baseUrl = this.baseUrl + this.contextPath;

@@ -97,7 +97,7 @@
     var currentUser;
     var currentManagement;
     var contextPath = '${pageContext.request.contextPath}';
-    var iam = new IAM('localhost', 18080, contextPath);
+    var iam = new IAM(null, contextPath);
 
     //로그인,회원가입 관련 페이지가 아닌 경우 토큰 밸리데이팅을 수행한다.
     var pathname = window.location.pathname;
