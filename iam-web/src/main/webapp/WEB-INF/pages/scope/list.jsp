@@ -36,7 +36,7 @@
                         <h5>Oauth Scopes</h5>
 
                         <div class="ibox-tools">
-                            <a href="${pageContext.request.contextPath}/client/new" type="button" class="btn btn-primary btn-sm">New +</a>
+                            <a href="${pageContext.request.contextPath}/scope/new" type="button" class="btn btn-primary btn-sm">New +</a>
                         </div>
 
                     </div>

@@ -112,7 +112,7 @@
                 })
         }else{
             $('#readonly-fields').hide();
-            $('[name=title]').html('Create New Management Group');
+            $('[name=title]').html('Create New Scope');
         }
 
         form.submit(function (event) {
