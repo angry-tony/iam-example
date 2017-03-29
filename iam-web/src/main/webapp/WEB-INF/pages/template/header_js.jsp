@@ -114,7 +114,7 @@
                 iam.getManagements()
                     .then(function (response) {
                         //리스트가 없고 management 생성 페이지가 아닌경우 management 생성 페이지로 이동한다.
-                        if ((!response || !response.length) && pathname.indexOf('/management/new') != 0) {
+                        if ((!response || !response.length) && pathname.indexOf('/management/new') == -1) {
                             window.location.href = contextPath + '/management/new';
                             return;
                         }
