@@ -11,7 +11,6 @@
         <property name="applicationContextSchedulerContextKey" value="CTX"/>
         <property name="waitForJobsToCompleteOnShutdown" value="true"/>
         <property name="configLocation" value="/WEB-INF/quartz.properties"/>
-        <!--<property name="dataSource" ref="dataSource"/>-->
         <property name="jobDetails">
             <list>
                 <ref bean="stopJob"/>
@@ -25,16 +24,11 @@
         </property>
     </bean>
 
-    <!--<bean id="jobScheduler" class="org.opencloudengine.garuda.backend.scheduler.QuartzJobScheduler">-->
-        <!--<property name="scheduler" ref="quartzJobScheduler"/>-->
-    <!--</bean>-->
-
     <!-- ========================= JOB DEFINITION ========================= -->
 
     <bean name="stopJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="durability" value="true"/>
         <property name="jobClass" value="org.opencloudengine.garuda.backend.scheduler.jobs.StopJob"/>
-        <!--<property name="applicationContextJobDataKey" value="spring"/>-->
     </bean>
 
     <bean id="stopJobTrigger" class="org.opencloudengine.garuda.backend.scheduler.QuartzCronTriggerFactoryBean">

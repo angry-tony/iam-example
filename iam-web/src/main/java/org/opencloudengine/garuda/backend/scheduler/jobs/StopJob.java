@@ -40,12 +40,17 @@ public class StopJob extends QuartzJobBean {
             List<OauthClient> clientList = clientRepository.selectByAutoDeletionToken();
             for (OauthClient client : clientList) {
                 long nowTime = new Date().getTime();
+                long idelTime = 60; //sec
+                Integer refreshTokenLifetime = client.getRefreshTokenLifetime(); //sec
+                if (refreshTokenLifetime == null) {
+                    refreshTokenLifetime = 0;
+                }
 
                 Integer jwtTokenLifetime = client.getJwtTokenLifetime();
-                Long jwtExpirationTime = nowTime - (jwtTokenLifetime * 1000);
+                Long jwtExpirationTime = nowTime - (jwtTokenLifetime * 1000) - (refreshTokenLifetime * 1000) - (idelTime * 1000);
 
                 Integer bearerTokenLifetime = client.getAccessTokenLifetime();
-                Long bearerExpirationTime = nowTime - (bearerTokenLifetime * 1000);
+                Long bearerExpirationTime = nowTime - (bearerTokenLifetime * 1000) - (refreshTokenLifetime * 1000) - (idelTime * 1000);
 
                 oauthTokenRepository.deleteExpiredToken(client.get_id(), jwtExpirationTime, "JWT");
                 oauthTokenRepository.deleteExpiredToken(client.get_id(), bearerExpirationTime, "Bearer");

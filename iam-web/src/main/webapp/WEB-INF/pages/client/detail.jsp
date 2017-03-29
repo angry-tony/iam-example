@@ -184,12 +184,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label"> Auto deletion expired token </label>
+                                <label class="col-md-2 control-label"> Auto deletion expired refresh token </label>
 
                                 <div class="col-md-6">
                                     <label>
                                         <input type="checkbox" name="autoDeletionToken" value="Y"> Enable auto deletion
-                                        expired token
+                                        expired refresh token
                                     </label>
                                 </div>
                             </div>
