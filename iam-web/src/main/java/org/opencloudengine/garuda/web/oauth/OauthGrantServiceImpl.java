@@ -256,7 +256,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
         //어세스 토큰의 발급시간을 확인한다.
         Long regDate = accessToken.getRegDate();
-        Date expirationTime = new Date(regDate + oauthClient.getRefreshTokenLifetime() * 1000);
+        Long refreshTokenLifetime = new Long(0);
+        if (oauthClient.getRefreshTokenLifetime() != null) {
+            refreshTokenLifetime = new Long(oauthClient.getRefreshTokenLifetime());
+        }
+        Date expirationTime = new Date(regDate + (refreshTokenLifetime * 1000));
         int compareTo = new Date().compareTo(expirationTime);
         if (compareTo > 0) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
