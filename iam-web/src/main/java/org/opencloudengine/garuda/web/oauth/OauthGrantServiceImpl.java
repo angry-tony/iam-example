@@ -312,7 +312,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         AccessTokenResponse tokenResponse = this.insertAccessToken(accessTokenResponse, type);
 
         //기존 토큰은 삭제한다.
-        //oauthTokenService.deleteTokenById(accessToken.get_id());
+        oauthTokenService.deleteTokenById(accessToken.get_id());
 
         //리스폰스를 수행한다.
         this.processRedirect(tokenResponse);
