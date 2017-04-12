@@ -28,12 +28,12 @@ public interface OauthClientService {
     OauthClient selectByClientKeyAndSecret(String clientKey, String clientSecret);
 
     OauthClient updateById(String id, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
-                           String webServerRedirectUri, String refreshTokenValidity,String autoDeletionToken, Integer codeLifetime,
+                           String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken, String requiredContext, Integer codeLifetime,
                            Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
 
     void deleteById(String id);
 
     OauthClient createClient(String managementId, String name, String description, String clientTrust, String clientType, String activeClient, String authorizedGrantTypes,
-                             String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken, Integer codeLifetime,
+                             String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken, String requiredContext, Integer codeLifetime,
                              Integer refreshTokenLifetime, Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes);
 }

@@ -172,23 +172,28 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
             //커스텀 토큰 스크립트를 수행한다.
             Map context = (Map) claims.get("context");
-            String managementId = (String) context.get("managementId");
-            String clientKey = (String) context.get("clientKey");
-            String userId = context.containsKey("userId") ? (String) context.get("userId") : null;
-            String scopes = (String) context.get("scopes");
-            String type = (String) context.get("type");
+            String managementId = context.get("managementId") != null ? (String) context.get("managementId") : null;
+            String clientKey = context.get("clientKey") != null ? (String) context.get("clientKey") : null;
+            String userId = context.get("userId") != null ? (String) context.get("userId") : null;
+            String scopes = context.get("scopes") != null ? (String) context.get("scopes") : null;
+            String type = context.get("type") != null ? (String) context.get("type") : null;
             String claim = JsonUtils.marshal((Map) claims.get("claim"));
-            Management management = managementService.selectById(managementId);
-            if (customService.inCase(management, CustomServiceImpl.VALIDATE_TOKEN)) {
-                OauthClient oauthClient = oauthClientService.selectByClientKey(clientKey);
-                OauthUser oauthUser = userId != null ? oauthUserService.selectById(userId) : null;
-                boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scopes,
-                        "JWT", claim, type);
-                if (!value) {
-                    accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
-                    accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                    this.processRedirect(accessTokenResponse);
-                    return;
+
+            //여기서 만일 JWT 의 항목별 줄임기능을 붙일경우, 아래 로직들은 파라미터가 있으면 수행하고 없으면 수행하지 말아야 한다.
+            if (managementId != null && clientKey != null && userId != null && scopes != null
+                    && claim != null && type != null) {
+                Management management = managementService.selectById(managementId);
+                if (customService.inCase(management, CustomServiceImpl.VALIDATE_TOKEN)) {
+                    OauthClient oauthClient = oauthClientService.selectByClientKey(clientKey);
+                    OauthUser oauthUser = userId != null ? oauthUserService.selectById(userId) : null;
+                    boolean value = customService.processTokenScript(management, oauthClient, oauthUser, scopes,
+                            "JWT", claim, type);
+                    if (!value) {
+                        accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
+                        accessTokenResponse.setError_description("Access denied by custom token issuance rule");
+                        this.processRedirect(accessTokenResponse);
+                        return;
+                    }
                 }
             }
 

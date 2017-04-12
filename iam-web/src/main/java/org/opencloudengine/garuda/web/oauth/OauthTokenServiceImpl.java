@@ -9,6 +9,7 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.opencloudengine.garuda.common.exception.ServiceException;
@@ -120,23 +121,26 @@ public class OauthTokenServiceImpl implements OauthTokenService {
 
         //콘텍스트 설정
         Map context = new HashMap();
+        context.put("managementId", accessToken.getManagementId());
+        context.put("clientId", accessToken.getClientId());
+        context.put("clientKey", oauthClient.getClientKey());
+        context.put("type", accessToken.getType());
+        context.put("scopes", accessToken.getScopes());
+        context.put("refreshToken", accessToken.getRefreshToken());
 
-        if(type.equals("user")){
-            context.put("managementId", accessToken.getManagementId());
-            context.put("clientId", accessToken.getClientId());
-            context.put("clientKey", oauthClient.getClientKey());
+        if (type.equals("user")) {
             context.put("userId", accessToken.getOauthUserId());
             context.put("userName", oauthUser.getUserName());
-            context.put("type", accessToken.getType());
-            context.put("scopes", accessToken.getScopes());
-            context.put("refreshToken", accessToken.getRefreshToken());
-        }else{
-            context.put("managementId", accessToken.getManagementId());
-            context.put("clientId", accessToken.getClientId());
-            context.put("clientKey", oauthClient.getClientKey());
-            context.put("type", accessToken.getType());
-            context.put("scopes", accessToken.getScopes());
-            context.put("refreshToken", accessToken.getRefreshToken());
+        }
+
+        //클라이언트의 콘텍스트 필수 항목만 context 에 집어넣는다.
+        String requiredContext = oauthClient.getRequiredContext() != null ? oauthClient.getRequiredContext() : "";
+        List<String> contextList = Arrays.asList(requiredContext.split(","));
+        Object[] keyArray = context.keySet().toArray();
+        for (int i = 0; i < keyArray.length; i++) {
+            if (!contextList.contains(keyArray[i])) {
+                context.remove(keyArray[i]);
+            }
         }
 
         JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();

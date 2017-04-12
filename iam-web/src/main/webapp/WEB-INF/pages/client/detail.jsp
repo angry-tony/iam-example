@@ -194,6 +194,64 @@
                                 </div>
                             </div>
 
+                            <%--"context": {--%>
+                            <%--"clientId": "0d63c73ab7fe404a87c4249217593ed3",--%>
+                            <%--"clientKey": "73645f19-0c98-4df5-a919-acb19d16901e",--%>
+                            <%--"managementId": "3ace83d6f157453ab5fb3b7940aa29dc",--%>
+                            <%--"scopes": "smart_eform_scope",--%>
+                            <%--"userName": "test1@forcs.com",--%>
+                            <%--"type": "user",--%>
+                            <%--"userId": "aac71d44c83142e9ad1dc2dc1ea4c6a2",--%>
+                            <%--"refreshToken": "1566ccd4-cadf-439c-8aaf-3b27b8182dd4"--%>
+                            <%--},--%>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Jwt Context Fields </label>
+
+                                <div class="col-md-6">
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="clientId"> clientId
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="clientKey"> clientKey
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="managementId"> managementId
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="scopes"> scopes
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="type"> type
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="refreshToken"> refreshToken
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="userName"> userName
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="userId"> userId
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Code Lifetime <span
                                         class="color-red">*</span></label>
@@ -361,6 +419,18 @@
                         }
                     });
                 });
+
+                var selectedRequiredContexts = [];
+                if(oauthClient['requiredContext']){
+                    selectedRequiredContexts = oauthClient['requiredContext'].split(',');
+                }
+                $.each(selectedRequiredContexts, function (index, selectedRequiredContext) {
+                    form.find('[name=requiredContext]').each(function () {
+                        if ($(this).val() == selectedRequiredContext) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+                });
             }
         };
 
@@ -375,6 +445,17 @@
             });
             data['authorizedGrantTypes'] = grantType.join(',');
             delete data['grantType'];
+
+            var requiredContext = [];
+            form.find('[name=requiredContext]').each(function () {
+                if ($(this).prop('checked')) {
+                    requiredContext.push($(this).val());
+                }
+            });
+            data['requiredContext'] = requiredContext.join(',');
+            //requiredContext
+
+
             if(typeof data['scopes'] == 'object'){
                 data['scopes'] = data['scopes'].join(',');
             }
