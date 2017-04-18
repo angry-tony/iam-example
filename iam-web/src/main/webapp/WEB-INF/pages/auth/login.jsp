@@ -69,7 +69,7 @@
         $('#login_form').submit(function (event) {
             event.preventDefault();
             var data = $(this).serializeObject();
-            iam.login(data)
+            iam.adminLogin(data)
                 .done(function () {
                     window.location.href = contextPath + '/';
                 })

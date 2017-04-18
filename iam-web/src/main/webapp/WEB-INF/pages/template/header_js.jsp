@@ -102,7 +102,7 @@
     //로그인,회원가입 관련 페이지가 아닌 경우 토큰 밸리데이팅을 수행한다.
     var pathname = window.location.pathname;
     if (pathname.indexOf(contextPath + '/auth') != 0 && pathname.indexOf(contextPath + '/registe') != 0) {
-        iam.validateToken()
+        iam.adminValidateToken()
             .fail(function () {
                 iam.logout();
                 window.location.href = contextPath + '/auth/login';

@@ -58,8 +58,6 @@ public class StopJob extends QuartzJobBean {
                     bearerTokenLifetime = new Long(client.getAccessTokenLifetime());
                 }
                 Long bearerExpirationTime = nowTime - (bearerTokenLifetime * 1000) - (refreshTokenLifetime * 1000) - (idelTime * 1000);
-                Date date1 = new Date(bearerTokenLifetime);
-
 
                 oauthTokenRepository.deleteExpiredToken(client.get_id(), jwtExpirationTime, "JWT");
                 oauthTokenRepository.deleteExpiredToken(client.get_id(), bearerExpirationTime, "Bearer");
