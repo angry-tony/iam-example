@@ -142,8 +142,6 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 return;
             }
 
-            String sharedSecret = config.getProperty("security.jwt.secret");
-
             boolean validated = JwtUtils.validateToken(token);
             if (!validated) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);

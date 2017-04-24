@@ -163,8 +163,7 @@ public class UserServiceImpl implements UserService {
             String issuer = configurationHelper.get("security.jwt.issuer");
 
             //시그네이쳐 설정
-            String sharedSecret = configurationHelper.get("security.jwt.secret");
-            JWSSigner signer = new MACSigner(sharedSecret);
+            JWSSigner signer = new MACSigner(JwtUtils.getHS256SecretKey());
 
             //콘텍스트 설정
             Map context = new HashMap();
@@ -196,7 +195,6 @@ public class UserServiceImpl implements UserService {
         try {
             JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(sessionToken);
 
-            String sharedSecret = configurationHelper.get("security.jwt.secret");
             Map context = (Map) jwtClaimsSet.getClaim("context");
             String username = (String) context.get("username");
             String password = (String) context.get("password");
