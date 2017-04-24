@@ -4,9 +4,11 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.util.JwtUtils;
 import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
@@ -98,10 +100,6 @@ public class OauthTokenServiceImpl implements OauthTokenService {
         //발급자
         String issuer = config.getProperty("security.jwt.issuer");
 
-        //시그네이쳐 설정
-        String sharedSecret = config.getProperty("security.jwt.secret");
-        JWSSigner signer = new MACSigner(sharedSecret);
-
         //콘텍스트 설정
         Map context = new HashMap();
         context.put("managementId", accessToken.getManagementId());
@@ -135,10 +133,21 @@ public class OauthTokenServiceImpl implements OauthTokenService {
                 .claim("claim", StringUtils.isEmpty(claimJson) ? new HashMap<>() : JsonUtils.marshal(claimJson))
                 .build();
 
-        SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+        //알고리즘 판별.
+        String algorithm = oauthClient.getJwtAlgorithm();
 
-        signedJWT.sign(signer);
-
-        return signedJWT.serialize();
+        if (JWSAlgorithm.RS256.getName().equals(algorithm)) {
+            JWSSigner signer = new RSASSASigner(JwtUtils.getRSAPrivateKey());
+            SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSet);
+            signedJWT.sign(signer);
+            return signedJWT.serialize();
+        }
+        //디폴트는 HS256
+        else {
+            JWSSigner signer = new MACSigner(JwtUtils.getHS256SecretKey());
+            SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+            signedJWT.sign(signer);
+            return signedJWT.serialize();
+        }
     }
 }

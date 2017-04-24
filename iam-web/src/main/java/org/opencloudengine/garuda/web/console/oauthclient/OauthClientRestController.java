@@ -155,7 +155,7 @@ public class OauthClientRestController {
             OauthClient createdClient = oauthClientService.createClient(management.get_id(), oauthClient.getName(), oauthClient.getDescription(), oauthClient.getClientTrust()
                     , oauthClient.getClientType(), oauthClient.getActiveClient(), oauthClient.getAuthorizedGrantTypes(), oauthClient.getWebServerRedirectUri()
                     , oauthClient.getRefreshTokenValidity(), oauthClient.getAutoDeletionToken(),
-                    oauthClient.getRequiredContext(),
+                    oauthClient.getRequiredContext(), oauthClient.getJwtAlgorithm(),
                     oauthClient.getCodeLifetime(), oauthClient.getRefreshTokenLifetime()
                     , oauthClient.getAccessTokenLifetime(), oauthClient.getJwtTokenLifetime(), oauthClient.getScopes());
 
@@ -186,7 +186,7 @@ public class OauthClientRestController {
                     oauthClient.getClientTrust(), oauthClient.getClientType(), oauthClient.getActiveClient(),
                     oauthClient.getAuthorizedGrantTypes(), oauthClient.getWebServerRedirectUri(),
                     oauthClient.getRefreshTokenValidity(), oauthClient.getAutoDeletionToken(),
-                    oauthClient.getRequiredContext(),
+                    oauthClient.getRequiredContext(), oauthClient.getJwtAlgorithm(),
                     oauthClient.getCodeLifetime(), oauthClient.getRefreshTokenLifetime(),
                     oauthClient.getAccessTokenLifetime(), oauthClient.getJwtTokenLifetime(), oauthClient.getScopes());
 

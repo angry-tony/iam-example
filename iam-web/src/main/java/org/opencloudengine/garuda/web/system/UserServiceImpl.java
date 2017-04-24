@@ -205,7 +205,7 @@ public class UserServiceImpl implements UserService {
             Date issueTime = jwtClaimsSet.getIssueTime();
             Date expirationTime = new Date(issueTime.getTime() + Integer.parseInt(configurationHelper.get("security.web.session.timeout")) * 1000);
 
-            boolean validated = JwtUtils.validateToken(sessionToken, sharedSecret, expirationTime);
+            boolean validated = JwtUtils.validateToken(sessionToken, expirationTime);
             if (validated) {
                 User user = this.selectByUserEmail(username);
                 if (user != null && password.equals(user.getPassword())) {

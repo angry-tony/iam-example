@@ -82,7 +82,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     @Override
     public OauthClient updateById(String id, String name, String description, String clientTrust, String clientType, String activeClient,
                                   String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken,
-                                  String requiredContext,
+                                  String requiredContext, String jwtAlgorithm,
                                   Integer codeLifetime, Integer refreshTokenLifetime,
                                   Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
         OauthClient oauthClient = new OauthClient();
@@ -99,6 +99,7 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
         oauthClient.setAutoDeletionToken(autoDeletionToken);
         oauthClient.setRequiredContext(requiredContext);
+        oauthClient.setJwtAlgorithm(jwtAlgorithm);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);
         oauthClient.setJwtTokenLifetime(jwtTokenLifetime);
 
@@ -122,7 +123,7 @@ public class OauthClientServiceImpl implements OauthClientService {
     @Override
     public OauthClient createClient(String managementId, String name, String description, String clientTrust, String clientType, String activeClient,
                                     String authorizedGrantTypes, String webServerRedirectUri, String refreshTokenValidity, String autoDeletionToken,
-                                    String requiredContext,
+                                    String requiredContext, String jwtAlgorithm,
                                     Integer codeLifetime, Integer refreshTokenLifetime,
                                     Integer accessTokenLifetime, Integer jwtTokenLifetime, String scopes) {
 
@@ -131,7 +132,6 @@ public class OauthClientServiceImpl implements OauthClientService {
 
         oauthClient.setClientKey(UUID.randomUUID().toString());
         oauthClient.setClientSecret(UUID.randomUUID().toString());
-        oauthClient.setClientJwtSecret(UUID.randomUUID().toString());
 
         oauthClient.setName(name);
         oauthClient.setDescription(description);
@@ -143,6 +143,7 @@ public class OauthClientServiceImpl implements OauthClientService {
         oauthClient.setRefreshTokenValidity(refreshTokenValidity);
         oauthClient.setAutoDeletionToken(autoDeletionToken);
         oauthClient.setRequiredContext(requiredContext);
+        oauthClient.setJwtAlgorithm(jwtAlgorithm);
         oauthClient.setCodeLifetime(codeLifetime);
         oauthClient.setRefreshTokenLifetime(refreshTokenLifetime);
         oauthClient.setAccessTokenLifetime(accessTokenLifetime);

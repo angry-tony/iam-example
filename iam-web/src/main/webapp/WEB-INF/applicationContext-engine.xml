@@ -33,6 +33,6 @@
 
     <bean id="stopJobTrigger" class="org.opencloudengine.garuda.backend.scheduler.QuartzCronTriggerFactoryBean">
         <property name="jobDetail" ref="stopJob"/>
-        <property name="cronExpression" value="0/10 * * * * ?"/>
+        <property name="cronExpression" value="0/30 * * * * ?"/>
     </bean>
 </beans>

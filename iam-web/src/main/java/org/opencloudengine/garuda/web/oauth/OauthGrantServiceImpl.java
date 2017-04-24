@@ -144,7 +144,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
             String sharedSecret = config.getProperty("security.jwt.secret");
 
-            boolean validated = JwtUtils.validateToken(token, sharedSecret);
+            boolean validated = JwtUtils.validateToken(token);
             if (!validated) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("Invalid token secret.");
@@ -629,7 +629,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
         //Jwt를 검증한다.
         boolean validatedToken = false;
-        validatedToken = JwtUtils.validateToken(jwtToken, oauthClient.getClientJwtSecret());
+        validatedToken = JwtUtils.validateToken(jwtToken);
         if (!validatedToken) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("Invalid jwt signature.");
@@ -638,7 +638,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //Jwt 타임아웃 체크
-        validatedToken = JwtUtils.validateToken(jwtToken, oauthClient.getClientJwtSecret(), expirationTime);
+        validatedToken = JwtUtils.validateToken(jwtToken, expirationTime);
         if (!validatedToken) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("jwt token is expired.");

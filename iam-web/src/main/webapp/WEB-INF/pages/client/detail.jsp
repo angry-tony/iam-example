@@ -59,14 +59,6 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">Client Jwt Secret <span
-                                            class="color-red">*</span></label>
-
-                                    <div class="col-md-6">
-                                        <input type="text" name="clientJwtSecret" class="form-control" readonly>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="form-group">
@@ -194,16 +186,6 @@
                                 </div>
                             </div>
 
-                            <%--"context": {--%>
-                            <%--"clientId": "0d63c73ab7fe404a87c4249217593ed3",--%>
-                            <%--"clientKey": "73645f19-0c98-4df5-a919-acb19d16901e",--%>
-                            <%--"managementId": "3ace83d6f157453ab5fb3b7940aa29dc",--%>
-                            <%--"scopes": "smart_eform_scope",--%>
-                            <%--"userName": "test1@forcs.com",--%>
-                            <%--"type": "user",--%>
-                            <%--"userId": "aac71d44c83142e9ad1dc2dc1ea4c6a2",--%>
-                            <%--"refreshToken": "1566ccd4-cadf-439c-8aaf-3b27b8182dd4"--%>
-                            <%--},--%>
                             <div class="form-group">
                                 <label class="col-md-2 control-label">Jwt Context Fields </label>
 
@@ -250,6 +232,26 @@
                                     </div>
                                 </div>
 
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">Jwt Algorithm<span
+                                        class="color-red">*</span></label>
+
+                                <div class="col-md-6">
+                                    <div>
+                                        <label>
+                                            <input type="radio" name="jwtAlgorithm"
+                                                   value="HS256" checked> HS256
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <input type="radio" name="jwtAlgorithm"
+                                                   value="RS256"> RS256
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">

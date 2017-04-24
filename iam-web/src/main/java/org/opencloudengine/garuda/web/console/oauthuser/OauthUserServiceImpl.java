@@ -131,7 +131,7 @@ public class OauthUserServiceImpl implements OauthUserService {
         Date issueTime = jwtClaimsSet.getIssueTime();
         Date expirationTime = new Date(issueTime.getTime() + management.getSessionTokenLifetime() * 1000);
 
-        boolean validated = JwtUtils.validateToken(sessionToken, sharedSecret, expirationTime);
+        boolean validated = JwtUtils.validateToken(sessionToken, expirationTime);
 
         oauthSessionToken.setToken(sessionToken);
         oauthSessionToken.setValidated(validated);
@@ -161,7 +161,7 @@ public class OauthUserServiceImpl implements OauthUserService {
         Date issueTime = jwtClaimsSet.getIssueTime();
         Date expirationTime = new Date(issueTime.getTime() + management.getScopeCheckLifetime() * 1000);
 
-        boolean validated = JwtUtils.validateToken(scopeToken, sharedSecret, expirationTime);
+        boolean validated = JwtUtils.validateToken(scopeToken, expirationTime);
 
         oauthScopeToken.setToken(scopeToken);
         oauthScopeToken.setValidated(validated);
