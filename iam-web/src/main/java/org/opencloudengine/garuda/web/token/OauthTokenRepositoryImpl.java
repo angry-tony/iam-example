@@ -122,6 +122,19 @@ public class OauthTokenRepositoryImpl implements OauthTokenRepository {
     }
 
     @Override
+    public OauthAccessToken selectTokenByOldRefreshToken(String refreshToken) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenByOldRefreshToken");
+            Key.ComplexKey complex = new Key().complex(refreshToken);
+            return builder.newRequest(Key.Type.COMPLEX, OauthAccessToken.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
     public OauthAccessToken selectTokenByRefreshToken(String refreshToken) {
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(TOKEN_NAMESPACE, "selectTokenByRefreshToken");

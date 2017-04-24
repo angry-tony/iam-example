@@ -14,6 +14,7 @@ public class OauthAccessToken extends CouchDAO {
     private String managementId;
     private String clientId;
     private String refreshToken;
+    private String oldRefreshToken;
     private Long regDate;
     private Long updDate;
 
@@ -73,6 +74,14 @@ public class OauthAccessToken extends CouchDAO {
         this.refreshToken = refreshToken;
     }
 
+    public String getOldRefreshToken() {
+        return oldRefreshToken;
+    }
+
+    public void setOldRefreshToken(String oldRefreshToken) {
+        this.oldRefreshToken = oldRefreshToken;
+    }
+
     public Long getRegDate() {
         return regDate;
     }
@@ -99,6 +108,7 @@ public class OauthAccessToken extends CouchDAO {
                 ", managementId='" + managementId + '\'' +
                 ", clientId='" + clientId + '\'' +
                 ", refreshToken='" + refreshToken + '\'' +
+                ", oldRefreshToken='" + oldRefreshToken + '\'' +
                 ", regDate=" + regDate +
                 ", updDate=" + updDate +
                 '}';

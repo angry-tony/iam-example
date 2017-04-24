@@ -8,6 +8,9 @@
     "selectTokenByToken": {
       "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){emit([doc.token],doc); }}"
     },
+    "selectTokenByOldRefreshToken": {
+      "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){emit([doc.oldRefreshToken],doc); }}"
+    },
     "selectTokenByRefreshToken": {
       "map": "function(doc) {if(doc.docType == \"oauth_access_token\"){emit([doc.refreshToken],doc); }}"
     },

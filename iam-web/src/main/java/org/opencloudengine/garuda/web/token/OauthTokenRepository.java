@@ -18,6 +18,8 @@ public interface OauthTokenRepository {
 
     OauthAccessToken selectTokenByToken(String token);
 
+    OauthAccessToken selectTokenByOldRefreshToken(String refreshToken);
+
     OauthAccessToken selectTokenByRefreshToken(String refreshToken);
 
     OauthAccessToken selectTokenByManagementIdAndId(String managementId, String id);

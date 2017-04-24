@@ -69,6 +69,11 @@ public class OauthTokenServiceImpl implements OauthTokenService {
     }
 
     @Override
+    public OauthAccessToken selectTokenByOldRefreshToken(String refreshToken) {
+        return oauthTokenRepository.selectTokenByOldRefreshToken(refreshToken);
+    }
+
+    @Override
     public OauthAccessToken selectTokenByRefreshToken(String refreshToken) {
         return oauthTokenRepository.selectTokenByRefreshToken(refreshToken);
     }

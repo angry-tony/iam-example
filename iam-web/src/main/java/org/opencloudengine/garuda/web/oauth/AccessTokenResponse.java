@@ -33,6 +33,7 @@ public class AccessTokenResponse implements Serializable {
     private Management management;
     private OauthUser oauthUser;
     private HttpServletResponse response;
+    private boolean saveWithOldRefreshToken = false;
 
     private String error;
     private String error_description;
@@ -197,6 +198,14 @@ public class AccessTokenResponse implements Serializable {
         this.response = response;
     }
 
+    public boolean getSaveWithOldRefreshToken() {
+        return saveWithOldRefreshToken;
+    }
+
+    public void setSaveWithOldRefreshToken(boolean saveWithOldRefreshToken) {
+        this.saveWithOldRefreshToken = saveWithOldRefreshToken;
+    }
+
     public String getError() {
         return error;
     }
@@ -236,6 +245,7 @@ public class AccessTokenResponse implements Serializable {
                 ", management=" + management +
                 ", oauthUser=" + oauthUser +
                 ", response=" + response +
+                ", saveWithOldRefreshToken=" + saveWithOldRefreshToken +
                 ", error='" + error + '\'' +
                 ", error_description='" + error_description + '\'' +
                 '}';

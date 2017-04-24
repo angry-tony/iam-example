@@ -239,6 +239,30 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             return;
         }
 
+        //올드 리프레쉬 토큰을 찾는다.
+        //올드 리프레쉬 토큰이 있고, 1분 이내에 발급되었다면, 그대로 내보낸다.
+        OauthAccessToken oldAccessToken = oauthTokenService.selectTokenByOldRefreshToken(accessTokenResponse.getRefreshToken());
+        if(oldAccessToken != null){
+            Long regDate = oldAccessToken.getRegDate();
+            long diff = (long) Math.floor((new Date().getTime() - regDate) / 1000);
+            long timeout = Long.parseLong(config.getProperty("security.jwt.oldrefreshtoken.timeout"));
+            if(diff < timeout){
+                accessTokenResponse.setAccessToken(oldAccessToken.getToken());
+                boolean matches = oldAccessToken.getToken().matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}");
+                //JWT 토큰일경우
+                if (!matches) {
+                    accessTokenResponse.setTokenType("JWT");
+                    accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getJwtTokenLifetime() - (int) diff);
+                }else{
+                    accessTokenResponse.setTokenType("Bearer");
+                    accessTokenResponse.setExpiresIn(accessTokenResponse.getOauthClient().getAccessTokenLifetime() - (int) diff);
+                }
+                accessTokenResponse.setRefreshToken(oldAccessToken.getRefreshToken());
+                this.responseToken(accessTokenResponse);
+                return;
+            }
+        }
+
         //어세스 토큰을 찾는다.
         OauthAccessToken accessToken = oauthTokenService.selectTokenByRefreshToken(accessTokenResponse.getRefreshToken());
         if (accessToken == null) {
@@ -311,6 +335,8 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //어세스 토큰을 만들고 저장한다.
+        //기존 리프레쉬 토큰을 어세스 토큰에 같이 저장한다.
+        accessTokenResponse.setSaveWithOldRefreshToken(true);
         AccessTokenResponse tokenResponse = this.insertAccessToken(accessTokenResponse, type);
 
         //기존 토큰은 삭제한다.
@@ -907,6 +933,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
 
         if ("Y".equals(accessTokenResponse.getOauthClient().getRefreshTokenValidity())) {
             accessToken.setRefreshToken(UUID.randomUUID().toString());
+        }
+
+        //이전 리프레쉬 토큰을 함께 저장해야 하는 경우(리프레쉬 토큰 로직인 경우)
+        if(accessTokenResponse.getSaveWithOldRefreshToken()){
+            accessToken.setOldRefreshToken(accessTokenResponse.getRefreshToken());
         }
 
         //토큰 타입이 명시되지 않으면 배리어이다.
