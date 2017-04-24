@@ -1,17 +1,11 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.token;
 
 import com.cloudant.client.api.model.Response;
 import com.cloudant.client.api.views.Key;
 import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
-import org.mybatis.spring.SqlSessionTemplate;
-import org.opencloudengine.garuda.backend.scheduler.jobs.StopJob;
-import org.opencloudengine.garuda.common.repository.PersistentRepositoryImpl;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
-import org.opencloudengine.garuda.web.management.Management;
-import org.opencloudengine.garuda.web.management.ManagementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

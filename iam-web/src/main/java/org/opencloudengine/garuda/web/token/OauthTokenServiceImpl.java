@@ -1,36 +1,19 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.token;
 
-import com.cloudant.client.api.views.Key;
-import com.cloudant.client.api.views.ViewRequestBuilder;
-import com.cloudant.client.api.views.ViewResponse;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.opencloudengine.garuda.common.exception.ServiceException;
-import org.opencloudengine.garuda.util.HttpUtils;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.StringUtils;
-import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
-import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
-import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
-import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
-import org.opencloudengine.garuda.web.console.oauthuser.OauthScopeToken;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-import org.opencloudengine.garuda.web.management.Management;
-import org.opencloudengine.garuda.web.management.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Service

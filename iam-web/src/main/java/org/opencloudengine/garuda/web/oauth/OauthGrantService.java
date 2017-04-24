@@ -14,7 +14,7 @@ public interface OauthGrantService {
 
     void processJWTGrant(AccessTokenResponse accessTokenResponse) throws Exception;
 
-    void processRedirect(AccessTokenResponse accessTokenResponse);
+    void responseToken(AccessTokenResponse accessTokenResponse);
 
     void processTokenInfo(AccessTokenResponse accessTokenResponse) throws Exception;
 

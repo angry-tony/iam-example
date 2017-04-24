@@ -1,11 +1,6 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.token;
 
 import org.opencloudengine.garuda.couchdb.CouchDAO;
-
-import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
 
 /**
  * Created by uengine on 2015. 6. 3..

@@ -14,8 +14,13 @@ import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
+import org.opencloudengine.garuda.web.custom.CustomService;
+import org.opencloudengine.garuda.web.custom.CustomServiceImpl;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
+import org.opencloudengine.garuda.web.token.OauthAccessToken;
+import org.opencloudengine.garuda.web.token.OauthCode;
+import org.opencloudengine.garuda.web.token.OauthTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -46,9 +51,6 @@ public class OauthServiceImpl implements OauthService {
     ConfigurationHelper configurationHelper;
 
     @Autowired
-    private OauthUserService oauthUserService;
-
-    @Autowired
     private OauthTokenService oauthTokenService;
 
     @Autowired
@@ -57,6 +59,11 @@ public class OauthServiceImpl implements OauthService {
     @Autowired
     private CustomService customService;
 
+    /**
+     * Authorization Code,Implicit Grant 의 최초 요청을 검증하는 단계.
+     * @param request
+     * @return
+     */
     @Override
     public AuthorizeResponse validateAuthorize(HttpServletRequest request) {
 
@@ -175,131 +182,15 @@ public class OauthServiceImpl implements OauthService {
             }
         }
         authorizeResponse.setOauthScopes(requestScopes);
-
-
         return authorizeResponse;
     }
 
-    @Override
-    public void processAccessToken(HttpServletRequest request, HttpServletResponse response) {
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
-
-        accessTokenResponse.setClientId(request.getParameter("client_id"));
-        accessTokenResponse.setClientSecret(request.getParameter("client_secret"));
-        accessTokenResponse.setGrant_type(request.getParameter("grant_type"));
-        accessTokenResponse.setCode(request.getParameter("code"));
-        accessTokenResponse.setRedirectUri(request.getParameter("redirect_uri"));
-        accessTokenResponse.setScope(request.getParameter("scope"));
-        accessTokenResponse.setUsername(request.getParameter("username"));
-        accessTokenResponse.setPassword(request.getParameter("password"));
-        accessTokenResponse.setAssertion(request.getParameter("assertion"));
-        accessTokenResponse.setRefreshToken(request.getParameter("refresh_token"));
-        accessTokenResponse.setTokenType(request.getParameter("token_type"));
-        accessTokenResponse.setClaim(request.getParameter("claim"));
-        accessTokenResponse.setResponse(response);
-
-        //grant_type을 검증한다.
-        if (StringUtils.isEmpty(accessTokenResponse.getGrant_type())) {
-            accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
-            accessTokenResponse.setError_description("grant_type is required.");
-            oauthGrantService.processRedirect(accessTokenResponse);
-            return;
-        }
-
-        //gratn_type 별로 프로세스를 수행한다.
-        try {
-            switch (accessTokenResponse.getGrant_type()) {
-                case "authorization_code":
-                    oauthGrantService.processCodeGrant(accessTokenResponse);
-                    break;
-
-                case "password":
-                    oauthGrantService.processPasswordGrant(accessTokenResponse);
-                    break;
-
-                case "client_credentials":
-                    oauthGrantService.processClientCredentialsGrant(accessTokenResponse);
-                    break;
-
-                case "urn:ietf:params:oauth:grant-type:jwt-bearer":
-                    oauthGrantService.processJWTGrant(accessTokenResponse);
-                    break;
-
-                case "refresh_token":
-                    oauthGrantService.processRefreshToken(accessTokenResponse);
-                    break;
-
-                default:
-                    accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
-                    accessTokenResponse.setError_description("grant_type must be one of authorization_code,password,client_credentials,refresh_token,urn:ietf:params:oauth:grant-type:jwt-bearer");
-                    oauthGrantService.processRedirect(accessTokenResponse);
-            }
-        } catch (Exception ex) {
-            accessTokenResponse.setError(OauthConstant.SERVER_ERROR);
-            accessTokenResponse.setError_description("server error during access token processing");
-            oauthGrantService.processRedirect(accessTokenResponse);
-        }
-    }
-
-    @Override
-    public void responseAuthorize(AuthorizeResponse authorizeResponse) {
-
-        //리다이렉트 URL 이 없는 경우는 실행하지 않는다.
-        if (StringUtils.isEmpty(authorizeResponse.getRedirectUri())) {
-            return;
-        }
-
-        //application/x-www-form-urlencoded 을 이용해 리다이렉트 할 것.
-        try {
-            //에러를 전달해야 하는경우
-            if (authorizeResponse.getError() != null) {
-
-                Map<String, String> headers = new HashMap();
-                headers.put("Content-Type", "application/x-www-form-urlencoded");
-
-                Map params = new HashMap();
-                params.put("error", authorizeResponse.getError());
-                params.put("error_description", authorizeResponse.getError_description());
-                params.put("state", authorizeResponse.getState());
-
-                String getQueryString = HttpUtils.createGETQueryString(params);
-                String url = authorizeResponse.getRedirectUri();
-
-                HttpResponse response = new HttpUtils().makeRequest("GET", url + getQueryString, null, headers);
-
-                StatusLine statusLine = response.getStatusLine();
-                int statusCode = statusLine.getStatusCode();
-
-                if (statusCode != 200) {
-                    throw new ServiceException("statusCode" + statusCode + ", while excute" + url);
-                }
-            }
-        } catch (Exception ex) {
-            //리다이렉트 전달 과정 중 실패가 일어나더라도 프로세스에는 영향을 끼지지 않는다.
-        }
-    }
-
-    @Override
-    public AuthorizeResponse fetchAuthorize(String managementKey, String clientKey, String userName,
-                                            String scopes, String responseType, String redirectUri, String state,
-                                            String tokenType, String claim) {
-
-        AuthorizeResponse authorizeResponse = new AuthorizeResponse();
-
-        authorizeResponse.setClientId(clientKey);
-        authorizeResponse.setRedirectUri(redirectUri);
-        authorizeResponse.setScope(scopes);
-        authorizeResponse.setState(state);
-        authorizeResponse.setResponseType(responseType);
-        authorizeResponse.setTokenType(tokenType);
-        authorizeResponse.setClaim(URLDecoder.decode(claim));
-        authorizeResponse.setOauthClient(oauthClientService.selectByClientKey(clientKey));
-        authorizeResponse.setOauthScopes(oauthScopeService.selectClientScopes(authorizeResponse.getOauthClient().get_id()));
-        authorizeResponse.setManagement(managementService.selectByKey(managementKey));
-        authorizeResponse.setOauthUser(oauthUserService.selectByManagementIdAndUserName(authorizeResponse.getManagement().get_id(), userName));
-        return authorizeResponse;
-    }
-
+    /**
+     * Authorization Code,Implicit Grant 에서 사용자 인증을 마친 후 진행하는 단계
+     * @param authorizeResponse
+     * @param response
+     * @throws IOException
+     */
     @Override
     public void processAuthorize(AuthorizeResponse authorizeResponse, HttpServletResponse response) throws IOException {
 
@@ -380,18 +271,15 @@ public class OauthServiceImpl implements OauthService {
                     }
 
                     oauthTokenService.insertToken(accessToken);
-
                     params.put("access_token", accessToken.getToken());
                     params.put("scope", authorizeResponse.getScope());
                     params.put("state", authorizeResponse.getState());
-
                     break;
 
                 default:
                     params.put("error", OauthConstant.SERVER_ERROR);
                     params.put("error_description", "Server can not process authorize");
                     params.put("state", authorizeResponse.getState());
-
                     break;
             }
         } catch (Exception ex) {
@@ -407,6 +295,67 @@ public class OauthServiceImpl implements OauthService {
     }
 
     @Override
+    public void processAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
+
+        accessTokenResponse.setClientId(request.getParameter("client_id"));
+        accessTokenResponse.setClientSecret(request.getParameter("client_secret"));
+        accessTokenResponse.setGrant_type(request.getParameter("grant_type"));
+        accessTokenResponse.setCode(request.getParameter("code"));
+        accessTokenResponse.setRedirectUri(request.getParameter("redirect_uri"));
+        accessTokenResponse.setScope(request.getParameter("scope"));
+        accessTokenResponse.setUsername(request.getParameter("username"));
+        accessTokenResponse.setPassword(request.getParameter("password"));
+        accessTokenResponse.setAssertion(request.getParameter("assertion"));
+        accessTokenResponse.setRefreshToken(request.getParameter("refresh_token"));
+        accessTokenResponse.setTokenType(request.getParameter("token_type"));
+        accessTokenResponse.setClaim(request.getParameter("claim"));
+        accessTokenResponse.setResponse(response);
+
+        //grant_type을 검증한다.
+        if (StringUtils.isEmpty(accessTokenResponse.getGrant_type())) {
+            accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
+            accessTokenResponse.setError_description("grant_type is required.");
+            oauthGrantService.responseToken(accessTokenResponse);
+            return;
+        }
+
+        //gratn_type 별로 프로세스를 수행한다.
+        try {
+            switch (accessTokenResponse.getGrant_type()) {
+                case "authorization_code":
+                    oauthGrantService.processCodeGrant(accessTokenResponse);
+                    break;
+
+                case "password":
+                    oauthGrantService.processPasswordGrant(accessTokenResponse);
+                    break;
+
+                case "client_credentials":
+                    oauthGrantService.processClientCredentialsGrant(accessTokenResponse);
+                    break;
+
+                case "urn:ietf:params:oauth:grant-type:jwt-bearer":
+                    oauthGrantService.processJWTGrant(accessTokenResponse);
+                    break;
+
+                case "refresh_token":
+                    oauthGrantService.processRefreshToken(accessTokenResponse);
+                    break;
+
+                default:
+                    accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
+                    accessTokenResponse.setError_description("grant_type must be one of authorization_code,password,client_credentials,refresh_token,urn:ietf:params:oauth:grant-type:jwt-bearer");
+                    oauthGrantService.responseToken(accessTokenResponse);
+            }
+        } catch (Exception ex) {
+            accessTokenResponse.setError(OauthConstant.SERVER_ERROR);
+            accessTokenResponse.setError_description("server error during access token processing");
+            oauthGrantService.responseToken(accessTokenResponse);
+        }
+    }
+
+    @Override
     public void processTokenInfo(HttpServletRequest request, HttpServletResponse response) {
 
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
@@ -419,7 +368,7 @@ public class OauthServiceImpl implements OauthService {
         } catch (Exception ex) {
             accessTokenResponse.setError(OauthConstant.SERVER_ERROR);
             accessTokenResponse.setError_description("server error during access token processing");
-            oauthGrantService.processRedirect(accessTokenResponse);
+            oauthGrantService.responseToken(accessTokenResponse);
         }
     }
 }

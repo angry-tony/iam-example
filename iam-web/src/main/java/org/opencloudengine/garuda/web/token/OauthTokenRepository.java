@@ -1,8 +1,4 @@
-package org.opencloudengine.garuda.web.oauth;
-
-import org.opencloudengine.garuda.web.management.Management;
-
-import java.util.List;
+package org.opencloudengine.garuda.web.token;
 
 public interface OauthTokenRepository {
 

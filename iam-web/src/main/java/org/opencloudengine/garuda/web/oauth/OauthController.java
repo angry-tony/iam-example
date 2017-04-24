@@ -1,12 +1,16 @@
 package org.opencloudengine.garuda.web.oauth;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.common.rest.Response;
-import org.opencloudengine.garuda.util.ExceptionUtils;
-import org.opencloudengine.garuda.util.JsonFormatterUtils;
-import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.util.*;
+import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
+import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthScopeToken;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthSessionToken;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
+import org.opencloudengine.garuda.web.management.ManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -18,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 
 @Controller
@@ -33,37 +38,15 @@ public class OauthController {
     @Autowired
     private OauthUserService oauthUserService;
 
+    @Autowired
+    private OauthClientService oauthClientService;
 
-    @RequestMapping(value = "/authorize", method = RequestMethod.GET, produces = "application/json")
-    @ResponseStatus(HttpStatus.OK)
-    public ModelAndView authorize(HttpSession session, HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
+    @Autowired
+    private ManagementService managementService;
 
-        try {
-            AuthorizeResponse authorizeResponse = oauthService.validateAuthorize(request);
-            if (authorizeResponse.getError() != null) {
-                Map map = new HashMap();
-                map.put("error", authorizeResponse.getError());
-                map.put("error_description", authorizeResponse.getError_description());
-                map.put("state", authorizeResponse.getState());
-                String marshal = JsonUtils.marshal(map);
-                String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-                response.getWriter().write(prettyPrint);
+    @Autowired
+    private OauthScopeService oauthScopeService;
 
-                oauthService.responseAuthorize(authorizeResponse);
-                return null;
-            } else {
-                //인증 화면으로 넘어갈 것.
-                ModelAndView mav = new ModelAndView("/auth/oauth-login");
-                mav.addObject("authorizeResponse", authorizeResponse);
-                mav.addObject("jsonAuthorizeResponse", JsonUtils.marshal(authorizeResponse));
-                return mav;
-            }
-        } catch (Exception ex) {
-            ExceptionUtils.httpExceptionResponse(ex, response);
-            return null;
-        }
-    }
 
     @RequestMapping(value = "/check_session", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
@@ -170,25 +153,22 @@ public class OauthController {
     }
 
 
-    @RequestMapping(value = "/authorize_redirect", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public void authorize_redirect(HttpServletRequest request, HttpServletResponse response
-    ) throws IOException {
-
-        try {
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            Set<String> paramKeys = parameterMap.keySet();
-            Iterator<String> iterator = paramKeys.iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                String[] value = parameterMap.get(key);
-                System.out.println(key + " : " + value);
-            }
-        } catch (Exception ex) {
-            ExceptionUtils.httpExceptionResponse(ex, response);
-        }
-    }
-
+    /**
+     * Authorization Code,Implicit Grant 플로우의 3th 파티 사용자가 로그인 페이지에서 인증절차를 마친 후 리다이렉트 되는 페이지
+     *
+     * @param request
+     * @param response
+     * @param managementKey
+     * @param clientKey
+     * @param userName
+     * @param scopes
+     * @param responseType
+     * @param redirectUri
+     * @param state
+     * @param tokenType
+     * @param claim
+     * @throws IOException
+     */
     @RequestMapping(value = "/redirect", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     public void redirect(HttpServletRequest request, HttpServletResponse response,
@@ -203,10 +183,79 @@ public class OauthController {
                          @RequestParam(defaultValue = "") String claim
     ) throws IOException {
         try {
-            AuthorizeResponse authorizeResponse = oauthService.fetchAuthorize(managementKey, clientKey, userName, scopes, responseType, redirectUri, state, tokenType, claim);
+            AuthorizeResponse authorizeResponse = new AuthorizeResponse();
+
+            authorizeResponse.setClientId(clientKey);
+            authorizeResponse.setRedirectUri(redirectUri);
+            authorizeResponse.setScope(scopes);
+            authorizeResponse.setState(state);
+            authorizeResponse.setResponseType(responseType);
+            authorizeResponse.setTokenType(tokenType);
+            authorizeResponse.setClaim(URLDecoder.decode(claim));
+            authorizeResponse.setOauthClient(oauthClientService.selectByClientKey(clientKey));
+            authorizeResponse.setOauthScopes(oauthScopeService.selectClientScopes(authorizeResponse.getOauthClient().get_id()));
+            authorizeResponse.setManagement(managementService.selectByKey(managementKey));
+            authorizeResponse.setOauthUser(oauthUserService.selectByManagementIdAndUserName(authorizeResponse.getManagement().get_id(), userName));
             oauthService.processAuthorize(authorizeResponse, response);
         } catch (Exception ex) {
             ExceptionUtils.httpExceptionResponse(ex, response);
+        }
+    }
+
+    /**
+     * Authorization Code,Implicit Grant 플로우의 3th 파티 앱이 최초 요청하는 로그인 페이지.
+     *
+     * @param session
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/authorize", method = RequestMethod.GET, produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView authorize(HttpSession session, HttpServletRequest request, HttpServletResponse response
+    ) throws IOException {
+
+        try {
+            AuthorizeResponse authorizeResponse = oauthService.validateAuthorize(request);
+            if (authorizeResponse.getError() != null) {
+
+                //응답에 바로 에러를 보내준다.
+                Map map = new HashMap();
+                map.put("error", authorizeResponse.getError());
+                map.put("error_description", authorizeResponse.getError_description());
+                map.put("state", authorizeResponse.getState());
+                String marshal = JsonUtils.marshal(map);
+                String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
+                response.getWriter().write(prettyPrint);
+
+                //TODO 아래의 리다이렉트 URL 로 에러를 보내주는 로직은, 추후 큐에 의해 스케쥴링되도록 한다.
+                //리다이렉트 URL 에도 에러를 보내준다.
+                //리다이렉트 URL 이 없는 경우는 실행하지 않는다.
+                if (!StringUtils.isEmpty(authorizeResponse.getRedirectUri())) {
+                    try {
+                        //application/x-www-form-urlencoded 을 이용해 리다이렉트 할 것.
+                        Map<String, String> headers = new HashMap();
+                        headers.put("Content-Type", "application/x-www-form-urlencoded");
+
+                        String getQueryString = HttpUtils.createGETQueryString(map);
+                        String url = authorizeResponse.getRedirectUri();
+                        new HttpUtils().makeRequest("GET", url + getQueryString, null, headers);
+                    } catch (Exception ex) {
+                        //리다이렉트 전달 과정 중 실패가 일어나더라도 프로세스에는 영향을 끼지지 않는다.
+                    }
+                }
+                return null;
+            } else {
+                //인증 화면으로 넘어갈 것.
+                ModelAndView mav = new ModelAndView("/auth/oauth-login");
+                mav.addObject("authorizeResponse", authorizeResponse);
+                mav.addObject("jsonAuthorizeResponse", JsonUtils.marshal(authorizeResponse));
+                return mav;
+            }
+        } catch (Exception ex) {
+            ExceptionUtils.httpExceptionResponse(ex, response);
+            return null;
         }
     }
 

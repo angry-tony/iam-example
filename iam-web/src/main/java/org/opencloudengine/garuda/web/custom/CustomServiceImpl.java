@@ -1,4 +1,4 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.custom;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.mozilla.javascript.Context;

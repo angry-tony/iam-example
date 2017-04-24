@@ -17,6 +17,8 @@
  */
 package org.opencloudengine.garuda.util;
 
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -43,6 +45,9 @@ public class JwtUtils {
     public static boolean validateToken(String jwtToken, String sharedSecret) throws Exception {
         JWSVerifier verifier = new MACVerifier(sharedSecret);
         JWSObject jwsObject = JWSObject.parse(jwtToken);
+        JWSHeader header = jwsObject.getHeader();
+        JWSAlgorithm algorithm = header.getAlgorithm();
+        System.out.println("algorithm.toString() : " + algorithm.toString());
 
         if (!jwsObject.verify(verifier)) {
             return false;
@@ -53,6 +58,9 @@ public class JwtUtils {
     public static boolean validateToken(String jwtToken, String sharedSecret, Date expirationTime) throws Exception {
         JWSVerifier verifier = new MACVerifier(sharedSecret);
         JWSObject jwsObject = JWSObject.parse(jwtToken);
+        JWSHeader header = jwsObject.getHeader();
+        JWSAlgorithm algorithm = header.getAlgorithm();
+        System.out.println("algorithm.toString() : " + algorithm.toString());
 
         if (!jwsObject.verify(verifier)) {
             return false;

@@ -1,11 +1,7 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.token;
 
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 public interface OauthTokenService {
 

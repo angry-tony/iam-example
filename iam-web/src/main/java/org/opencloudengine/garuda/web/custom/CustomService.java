@@ -1,4 +1,4 @@
-package org.opencloudengine.garuda.web.oauth;
+package org.opencloudengine.garuda.web.custom;
 
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;

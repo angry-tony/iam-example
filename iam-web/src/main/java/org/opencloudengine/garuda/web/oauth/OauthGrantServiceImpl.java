@@ -1,27 +1,26 @@
 package org.opencloudengine.garuda.web.oauth;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.opencloudengine.garuda.common.exception.ServiceException;
 import org.opencloudengine.garuda.util.*;
-import org.opencloudengine.garuda.web.configuration.ConfigurationHelper;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScopeService;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUser;
 import org.opencloudengine.garuda.web.console.oauthuser.OauthUserService;
+import org.opencloudengine.garuda.web.custom.CustomService;
+import org.opencloudengine.garuda.web.custom.CustomServiceImpl;
 import org.opencloudengine.garuda.web.management.Management;
 import org.opencloudengine.garuda.web.management.ManagementService;
+import org.opencloudengine.garuda.web.token.OauthAccessToken;
+import org.opencloudengine.garuda.web.token.OauthCode;
+import org.opencloudengine.garuda.web.token.OauthTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
@@ -71,7 +70,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (accessToken == null) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("Requested access_token is not exist.");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
             Management management = managementService.selectById(accessToken.getManagementId());
@@ -87,7 +86,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (diff <= 0) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("requested access_token has expired.");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             } else {
                 map.put("expires_in", diff);
@@ -100,7 +99,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                 if (!value) {
                     accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                     accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                    this.processRedirect(accessTokenResponse);
+                    this.responseToken(accessTokenResponse);
                     return;
                 }
             }
@@ -139,7 +138,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!config.getProperty("security.jwt.issuer").equals(issuer)) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("Invalid issuer.");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
 
@@ -149,7 +148,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!validated) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("Invalid token secret.");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
 
@@ -161,7 +160,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (diff <= 0) {
                 accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
                 accessTokenResponse.setError_description("requested access_token has expired.");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             } else {
                 map.put("expires_in", diff);
@@ -191,7 +190,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                     if (!value) {
                         accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                         accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                        this.processRedirect(accessTokenResponse);
+                        this.responseToken(accessTokenResponse);
                         return;
                     }
                 }
@@ -238,7 +237,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!"Y".equals(oauthClient.getRefreshTokenValidity())) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type refresh_token");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -247,7 +246,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (accessToken == null) {
             accessTokenResponse.setError(OauthConstant.INVALID_TOKEN);
             accessTokenResponse.setError_description("Requested refresh_token is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -255,7 +254,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!accessToken.getClientId().equals(oauthClient.get_id())) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("client does not have authority to requested refresh_token.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -270,7 +269,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (compareTo > 0) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested refresh_token has expired.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -294,7 +293,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!value) {
                 accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                 accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
         }
@@ -320,7 +319,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         oauthTokenService.deleteTokenById(accessToken.get_id());
 
         //리스폰스를 수행한다.
-        this.processRedirect(tokenResponse);
+        this.responseToken(tokenResponse);
     }
 
     @Override
@@ -354,7 +353,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!grantTypes.contains("code")) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type authorization_code");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -373,7 +372,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!accessTokenResponse.getRedirectUri().equals(oauthClient.getWebServerRedirectUri())) {
             accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
             accessTokenResponse.setError_description("redirect_uri is not match to previously stored redirect_uri.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -382,7 +381,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (oauthCode == null) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested code is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
         //코드의 발급시간을 확인한다.
@@ -392,7 +391,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (compareTo > 0) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested code has expired.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -401,7 +400,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (oauthUser == null) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested user is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
         accessTokenResponse.setOauthUser(oauthUser);
@@ -415,7 +414,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!value) {
                 accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                 accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
         }
@@ -424,7 +423,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         this.insertAccessToken(accessTokenResponse, "user");
 
         //리스폰스를 수행한다.
-        this.processRedirect(accessTokenResponse);
+        this.responseToken(accessTokenResponse);
     }
 
     @Override
@@ -457,7 +456,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!grantTypes.contains("password")) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type password");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -473,7 +472,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!enabelScopesNames.contains(requestScopesNames.get(i))) {
                 accessTokenResponse.setError(OauthConstant.INVALID_SCOPE);
                 accessTokenResponse.setError_description("Client dost not have requested scope");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             } else {
                 for (int c = 0; c < clientScopes.size(); c++) {
@@ -490,7 +489,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (oauthUser == null) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("requested user is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
         accessTokenResponse.setOauthUser(oauthUser);
@@ -502,7 +501,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!value) {
                 accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                 accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
         }
@@ -511,7 +510,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         this.insertAccessToken(accessTokenResponse, "user");
 
         //리스폰스를 수행한다.
-        this.processRedirect(accessTokenResponse);
+        this.responseToken(accessTokenResponse);
     }
 
     @Override
@@ -544,7 +543,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!grantTypes.contains("credentials")) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type client_credentials");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -560,7 +559,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!enabelScopesNames.contains(requestScopesNames.get(i))) {
                 accessTokenResponse.setError(OauthConstant.INVALID_SCOPE);
                 accessTokenResponse.setError_description("Client dost not have requested scope");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             } else {
                 for (int c = 0; c < clientScopes.size(); c++) {
@@ -579,7 +578,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!value) {
                 accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
                 accessTokenResponse.setError_description("Access denied by custom token issuance rule");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             }
         }
@@ -588,7 +587,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         this.insertAccessToken(accessTokenResponse, "client");
 
         //리스폰스를 수행한다.
-        this.processRedirect(accessTokenResponse);
+        this.responseToken(accessTokenResponse);
     }
 
     @Override
@@ -607,7 +606,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         } catch (Exception ex) {
             accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
             accessTokenResponse.setError_description("incorrect jwt token format.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -624,7 +623,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (oauthClient == null) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -634,7 +633,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!validatedToken) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("Invalid jwt signature.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -643,7 +642,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!validatedToken) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("jwt token is expired.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -651,7 +650,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!"Y".equals(oauthClient.getActiveClient())) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
         accessTokenResponse.setOauthClient(oauthClient);
@@ -666,7 +665,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!grantTypes.contains("credentials")) {
             accessTokenResponse.setError(OauthConstant.UNSUPPORTED_GRANT_TYPE);
             accessTokenResponse.setError_description("Requested client does not support grant_type client_credentials");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return;
         }
 
@@ -682,7 +681,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             if (!enabelScopesNames.contains(requestScopesNames.get(i))) {
                 accessTokenResponse.setError(OauthConstant.INVALID_SCOPE);
                 accessTokenResponse.setError_description("Client dost not have requested scope");
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return;
             } else {
                 for (int c = 0; c < clientScopes.size(); c++) {
@@ -718,11 +717,11 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         }
 
         //리스폰스를 수행한다.
-        this.processRedirect(accessTokenResponse);
+        this.responseToken(accessTokenResponse);
     }
 
     @Override
-    public void processRedirect(AccessTokenResponse accessTokenResponse) {
+    public void responseToken(AccessTokenResponse accessTokenResponse) {
         try {
             if (accessTokenResponse.getError() != null) {
                 Map map = new HashMap();
@@ -743,54 +742,15 @@ public class OauthGrantServiceImpl implements OauthGrantService {
             } else {
                 Map map = new HashMap();
 
-                switch (accessTokenResponse.getGrant_type()) {
-                    case "authorization_code":
-                        map.put("access_token", accessTokenResponse.getAccessToken());
-                        map.put("token_type", accessTokenResponse.getTokenType());
-                        map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
-                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
-                        }
-                        break;
-
-                    case "password":
-                        map.put("access_token", accessTokenResponse.getAccessToken());
-                        map.put("token_type", accessTokenResponse.getTokenType());
-                        map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
-                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
-                        }
-                        break;
-
-                    case "client_credentials":
-                        map.put("access_token", accessTokenResponse.getAccessToken());
-                        map.put("token_type", accessTokenResponse.getTokenType());
-                        map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
-                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
-                        }
-                        break;
-
-                    case "urn:ietf:params:oauth:grant-type:jwt-bearer":
-                        map.put("access_token", accessTokenResponse.getAccessToken());
-                        map.put("token_type", accessTokenResponse.getTokenType());
-                        map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
-                            map.put("refresh_token", accessTokenResponse.getRefreshToken());
-                        }
-                        break;
-
-                    case "refresh_token":
-                        map.put("access_token", accessTokenResponse.getAccessToken());
-                        map.put("token_type", accessTokenResponse.getTokenType());
-                        map.put("expires_in", accessTokenResponse.getExpiresIn());
-                        map.put("refresh_token", accessTokenResponse.getRefreshToken());
-                        break;
+                map.put("access_token", accessTokenResponse.getAccessToken());
+                map.put("token_type", accessTokenResponse.getTokenType());
+                map.put("expires_in", accessTokenResponse.getExpiresIn());
+                if (!StringUtils.isEmpty(accessTokenResponse.getRefreshToken())) {
+                    map.put("refresh_token", accessTokenResponse.getRefreshToken());
                 }
 
                 String marshal = JsonUtils.marshal(map);
                 String prettyPrint = JsonFormatterUtils.prettyPrint(marshal);
-                System.out.println(prettyPrint);
 
                 HttpServletResponse response = accessTokenResponse.getResponse();
 
@@ -879,7 +839,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                     break;
             }
             if (accessTokenResponse.getError() != null) {
-                this.processRedirect(accessTokenResponse);
+                this.responseToken(accessTokenResponse);
                 return false;
             }
         }
@@ -890,7 +850,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (oauthClient == null) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not exist.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return false;
         }
 
@@ -898,7 +858,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!"Y".equals(oauthClient.getActiveClient())) {
             accessTokenResponse.setError(OauthConstant.UNAUTHORIZED_CLIENT);
             accessTokenResponse.setError_description("Requested client is not active.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return false;
         }
 
@@ -906,7 +866,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
         if (!oauthClient.getClientSecret().equals(accessTokenResponse.getClientSecret())) {
             accessTokenResponse.setError(OauthConstant.ACCESS_DENIED);
             accessTokenResponse.setError_description("client_secret is not match.");
-            this.processRedirect(accessTokenResponse);
+            this.responseToken(accessTokenResponse);
             return false;
         }
 
@@ -923,7 +883,7 @@ public class OauthGrantServiceImpl implements OauthGrantService {
                     } catch (IOException ex) {
                         accessTokenResponse.setError(OauthConstant.INVALID_REQUEST);
                         accessTokenResponse.setError_description("claim for jwt must be a json object string format");
-                        this.processRedirect(accessTokenResponse);
+                        this.responseToken(accessTokenResponse);
                         return false;
                     }
                 }

@@ -10,7 +10,7 @@ import org.opencloudengine.garuda.model.User;
 import org.opencloudengine.garuda.util.ExceptionUtils;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClient;
 import org.opencloudengine.garuda.web.console.oauthclient.OauthClientService;
-import org.opencloudengine.garuda.web.oauth.CustomService;
+import org.opencloudengine.garuda.web.custom.CustomService;
 import org.opencloudengine.garuda.web.rest.RestAuthService;
 import org.opencloudengine.garuda.web.system.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
