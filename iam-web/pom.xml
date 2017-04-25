@@ -5,13 +5,13 @@
     <parent>
         <artifactId>oceIAM</artifactId>
         <groupId>org.uengine.garuda</groupId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iam-web</artifactId>
     <packaging>war</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>OCE IAM Web Page - Personal</name>
     <url>http://www.oceiam.org</url>
 
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.uengine.garuda</groupId>
             <artifactId>iam-common</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
