@@ -120,9 +120,8 @@
 
     <repositories>
         <repository>
-            <id>central</id>
-            <name>Open Cloud Engine Maven Repository</name>
-            <url>http://maven.opencloudengine.org/content/groups/public/</url>
+            <id>oss-rh</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>

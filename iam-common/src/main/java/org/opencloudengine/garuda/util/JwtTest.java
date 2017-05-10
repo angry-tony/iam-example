@@ -1,12 +1,10 @@
 package org.opencloudengine.garuda.util;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import net.minidev.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -82,55 +80,19 @@ public class JwtTest {
         boolean verify = signedJWT.verify(verifier);
         System.out.println(verify);
 
-//        String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxMjQ3ODYsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjhjNTYzODViLTEwM2ItNDkyMS04ODA3LWYwYTgwZDFmZDI5ZiIsInR5cGUiOiJ1c2VyIiwib2F1dGhVc2VySWQiOiIxNTQzYzVhYzJjNTA0OWIxODA1ODY2MmRhMjM2ZjAxMSIsImNsaWVudElkIjoiOTdlZDhmMzBkYTAxNDgwMGI5MmEyNGQ4YmVkNmQ1YTUifSwiaXNzIjoib2NlLmlhbSIsImNsYWltIjp7ImFhYSI6ImJiYiJ9LCJpYXQiOjE0NjIxMjExODZ9.J8Edpn5fTtgx9-6cLXGiYV0NnRuPO2rbv28xkR55sl4";
-//        String sharedSecret = "fcf5afd7-be51-4dfc-949f-d4ab768b985d";
-//
-//        JWTClaimsSet jwtClaimsSet = JwtUtils.parseToken(jwt);
-//        System.out.println(jwtClaimsSet);
-//
-//
+
+        String jwt = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE0NjIxMjQ3ODYsImNvbnRleHQiOnsic2NvcGVzIjoiZm9ybTpjcmVhdGUiLCJtYW5hZ2VtZW50SWQiOiI1ZTM0MzJhZDE3MjY0NGVhODA0MWZlNjdlYjhmNWNiZCIsInJlZnJlc2hUb2tlbiI6IjhjNTYzODViLTEwM2ItNDkyMS04ODA3LWYwYTgwZDFmZDI5ZiIsInR5cGUiOiJ1c2VyIiwib2F1dGhVc2VySWQiOiIxNTQzYzVhYzJjNTA0OWIxODA1ODY2MmRhMjM2ZjAxMSIsImNsaWVudElkIjoiOTdlZDhmMzBkYTAxNDgwMGI5MmEyNGQ4YmVkNmQ1YTUifSwiaXNzIjoib2NlLmlhbSIsImNsYWltIjp7ImFhYSI6ImJiYiJ9LCJpYXQiOjE0NjIxMjExODZ9.J8Edpn5fTtgx9-6cLXGiYV0NnRuPO2rbv28xkR55sl4";
+
 //        //만료시간 체크 없이 시그네이쳐 밸리데이션
-//        boolean validateToken = validateToken(jwt, sharedSecret);
+//        boolean validateToken = JwtUtils.validateToken(jwt);
 //
 //
 //        //Jwt 토큰에 포함된 만료시간과 함께 시그네이쳐 밸리데이션
-//        boolean validateToken1 = validateToken(jwt, sharedSecret, null);
+//        boolean validateToken1 = JwtUtils.validateToken(jwt, null);
 //
 //
 //        //임의의 만료시간과 함께 시그네이쳐 밸리데이션
-//        Date expireTime = new Date();
-//        boolean validateToken2 = validateToken(jwt, sharedSecret, expireTime);
-    }
-
-    public static boolean validateToken(String jwtToken, String sharedSecret) throws Exception {
-        JWSVerifier verifier = new MACVerifier(sharedSecret);
-        JWSObject jwsObject = JWSObject.parse(jwtToken);
-
-        if (!jwsObject.verify(verifier)) {
-            return false;
-        }
-        return true;
-    }
-
-    public static boolean validateToken(String jwtToken, String sharedSecret, Date expirationTime) throws Exception {
-        JWSVerifier verifier = new MACVerifier(sharedSecret);
-        JWSObject jwsObject = JWSObject.parse(jwtToken);
-
-        if (!jwsObject.verify(verifier)) {
-            return false;
-        }
-
-        JSONObject jsonPayload = jwsObject.getPayload().toJSONObject();
-        JWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(jsonPayload);
-
-        if (expirationTime == null) {
-            expirationTime = jwtClaimsSet.getExpirationTime();
-        }
-
-        int compareTo = new Date().compareTo(expirationTime);
-        if (compareTo > 0) {
-            return false;
-        }
-        return true;
+//        Date expireTime = new Date(140213...);
+//        boolean validateToken2 = JwtUtils.validateToken(jwt, expireTime);
     }
 }
