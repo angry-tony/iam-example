@@ -104,8 +104,9 @@ public class OauthScopeRepositoryImpl implements OauthScopeRepository {
                     build().getResponse().getRows();
 
             for (ViewResponse.Row<Key.ComplexKey, OauthScope> row : rows) {
-                OauthScope value = row.getValue();
-                list.add(value);
+                if(managementId.equals(row.getValue().getManagementId())){
+                    list.add(row.getValue());
+                }
             }
             return list;
 

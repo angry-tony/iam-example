@@ -120,7 +120,9 @@ public class OauthClientRepositoryImpl implements OauthClientRepository {
                     build().getResponse().getRows();
 
             for (ViewResponse.Row<Key.ComplexKey, OauthClient> row : rows) {
-                list.add(row.getValue());
+                if(managementId.equals(row.getValue().getManagementId())){
+                    list.add(row.getValue());
+                }
             }
             return list;
 

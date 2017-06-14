@@ -6,6 +6,7 @@ import com.cloudant.client.api.views.ViewRequestBuilder;
 import com.cloudant.client.api.views.ViewResponse;
 import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.util.StringUtils;
 import org.opencloudengine.garuda.web.security.AESPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -116,8 +117,10 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
 
             for (ViewResponse.Row<Key.ComplexKey, OauthUser> row : rows) {
                 OauthUser value = row.getValue();
-                value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
-                list.add(value);
+                if(managementId.equals(value.getManagementId())){
+                    value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+                    list.add(value);
+                }
             }
             return list;
 
