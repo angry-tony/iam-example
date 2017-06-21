@@ -385,6 +385,18 @@ ex)
 error_description 필드에 보다 자세한 Human-readable ASCII text 형식의 상황설명을 살필 수 있습니다.
 
 
+### Resource Owner Password Credentials CURL Example
+
+```
+curl -X POST \
+  http://iam.uengine.io:8080/oauth/access_token \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -H 'postman-token: 8ecd37ed-0bc7-3e93-bae6-b5514fd010cd' \
+  -d 'client_id=e74a9505-a811-407f-b4f6-129b7af1c703&grant_type=password&client_secret=109cf590-ac67-4b8c-912a-913373ada046&username=sppark2&password=gosu23546&scope=uEngineSubscriptions%2Fsubscriptionsapi&token_type=JWT&claim=%7B%22aaa%22%3A%22bbb%22%7D'
+```
+
+
 ### Client Credentials Grant Flow
 
 어플리케이션 이 Confidential Client 일 때 client_id 와 client_secret 을 가지고 인증하는 방식입니다. 사용자 인증방식이 아닌, 어플리케이션 자체가 서비스 프로바이더의
