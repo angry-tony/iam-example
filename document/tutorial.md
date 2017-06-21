@@ -396,6 +396,8 @@ curl -X POST \
   -d 'client_id=e74a9505-a811-407f-b4f6-129b7af1c703&grant_type=password&client_secret=109cf590-ac67-4b8c-912a-913373ada046&username=sppark2&password=gosu23546&scope=uEngineSubscriptions%2Fsubscriptionsapi&token_type=JWT&claim=%7B%22aaa%22%3A%22bbb%22%7D'
 ```
 
+![](images/password_flow_example.png)
+
 
 ### Client Credentials Grant Flow
 
