@@ -11,6 +11,7 @@ import org.opencloudengine.garuda.web.security.AESPasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,10 +45,26 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
     }
 
     @Override
-    public OauthUser selectById(String id) {
+    public OauthUser selectById(String userName) {
         try {
             ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectById");
-            Key.ComplexKey complex = new Key().complex(id);
+            Key.ComplexKey complex = new Key().complex(userName);
+            OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
+                    keys(complex).
+                    build().getResponse().getRows().get(0).getValue();
+            value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
+            return value;
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    @Override
+    public OauthUser selectByName(String name) {
+        try {
+            ViewRequestBuilder builder = serviceFactory.getDb().getViewRequestBuilder(NAMESPACE, "selectByName");
+            Key.ComplexKey complex = new Key().complex(name);
             OauthUser value = builder.newRequest(Key.Type.COMPLEX, OauthUser.class).
                     keys(complex).
                     build().getResponse().getRows().get(0).getValue();
@@ -117,7 +134,7 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
 
             for (ViewResponse.Row<Key.ComplexKey, OauthUser> row : rows) {
                 OauthUser value = row.getValue();
-                if(managementId.equals(value.getManagementId())){
+                if (managementId.equals(value.getManagementId())) {
                     value.setUserPassword(passwordEncoder.decode(value.getUserPassword()));
                     list.add(value);
                 }
@@ -253,5 +270,22 @@ public class OauthUserRepositoryImpl implements OauthUserRepository {
     public void deleteById(String id) {
         OauthUser oauthUser = this.selectById(id);
         serviceFactory.getDb().remove(oauthUser);
+    }
+
+    @Override
+    public OauthUser insertAvatar(InputStream in, String contentType, OauthUser oauthUser) {
+        try {
+            this.deleteAvatar(oauthUser);
+        } catch (Exception ex) {
+        }
+        oauthUser = this.selectById(oauthUser.get_id());
+        serviceFactory.getDb().saveAttachment(in, "avatar", contentType, oauthUser.get_id(), oauthUser.get_rev());
+        return this.selectById(oauthUser.get_id());
+    }
+
+
+    @Override
+    public void deleteAvatar(OauthUser oauthUser) {
+        serviceFactory.getDb().removeAttachment(oauthUser, "avatar");
     }
 }

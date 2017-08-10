@@ -1,5 +1,6 @@
 package org.opencloudengine.garuda.web.console.oauthuser;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface OauthUserRepository {
@@ -8,6 +9,8 @@ public interface OauthUserRepository {
     OauthUser insert(OauthUser oauthUser);
 
     OauthUser selectById(String id);
+
+    OauthUser selectByName(String userName);
 
     List<OauthUser> selectAllByManagementId(String managementId);
 
@@ -28,4 +31,8 @@ public interface OauthUserRepository {
     OauthUser updateById(OauthUser oauthUser);
 
     void deleteById(String id);
+
+    OauthUser insertAvatar(InputStream in, String contentType, OauthUser oauthUser);
+
+    void deleteAvatar(OauthUser oauthUser);
 }

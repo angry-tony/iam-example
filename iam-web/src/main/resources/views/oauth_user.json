@@ -5,6 +5,9 @@
     "selectById": {
       "map": "function(doc) { if(doc.docType == \"oauth_user\"){ emit([doc._id], doc); }}"
     },
+    "selectByName": {
+      "map": "function(doc) { if(doc.docType == \"oauth_user\"){ emit([doc.userName], doc); }}"
+    },
     "selectByManagementId": {
       "map": "function(doc) { if(doc.docType == \"oauth_user\"){ emit([doc.managementId], doc); }}"
     },

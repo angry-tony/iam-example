@@ -3,7 +3,7 @@ package org.opencloudengine.garuda.client.examples;
 import org.opencloudengine.garuda.client.IamClient;
 import org.opencloudengine.garuda.client.ResourceOwnerPasswordCredentials;
 import org.opencloudengine.garuda.client.TokenType;
-import org.opencloudengine.garuda.util.JsonUtils;
+import org.opencloudengine.garuda.client.util.JsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;

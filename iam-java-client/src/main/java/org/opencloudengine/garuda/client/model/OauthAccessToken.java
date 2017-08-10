@@ -1,6 +1,7 @@
 package org.opencloudengine.garuda.client.model;
 
-import org.opencloudengine.garuda.couchdb.CouchDAO;
+
+import org.opencloudengine.garuda.client.couchdb.CouchDAO;
 
 /**
  * Created by uengine on 2015. 6. 3..

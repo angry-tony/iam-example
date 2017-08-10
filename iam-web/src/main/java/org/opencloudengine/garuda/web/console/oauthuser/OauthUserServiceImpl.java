@@ -19,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -42,6 +45,11 @@ public class OauthUserServiceImpl implements OauthUserService {
     @Override
     public OauthUser selectById(String id) {
         return oauthUserRepository.selectById(id);
+    }
+
+    @Override
+    public OauthUser selectByName(String userName) {
+        return oauthUserRepository.selectByName(userName);
     }
 
     @Override
@@ -279,5 +287,15 @@ public class OauthUserServiceImpl implements OauthUserService {
         oauthScopeToken.setScopes(scopes);
 
         return oauthScopeToken;
+    }
+
+    @Override
+    public OauthUser insertAvatar(InputStream in, String contentType, OauthUser oauthUser) {
+        return oauthUserRepository.insertAvatar(in, contentType, oauthUser);
+    }
+
+    @Override
+    public void deleteAvatar(OauthUser oauthUser) {
+        oauthUserRepository.deleteAvatar(oauthUser);
     }
 }

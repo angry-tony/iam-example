@@ -8,13 +8,16 @@ import org.apache.http.util.EntityUtils;
 import org.opencloudengine.garuda.client.model.OauthClient;
 import org.opencloudengine.garuda.client.model.OauthScope;
 import org.opencloudengine.garuda.client.model.OauthUser;
-import org.opencloudengine.garuda.util.HttpUtils;
-import org.opencloudengine.garuda.util.JsonUtils;
-import org.opencloudengine.garuda.util.StringUtils;
+import org.opencloudengine.garuda.client.util.HttpUtils;
+import org.opencloudengine.garuda.client.util.JsonUtils;
+import org.opencloudengine.garuda.client.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -242,7 +245,7 @@ public class IamClient {
     public OauthUser getUserByName(String userName) throws Exception {
 
         HttpUtils httpUtils = new HttpUtils();
-        String url = createRestBaseUrl() + "/username/" + userName;
+        String url = createRestBaseUrl() + "/user/search/findByName?userName=" + userName;
 
         Map<String, String> headers = new HashMap();
         headers.put("Content-Type", "application/json");
@@ -309,6 +312,87 @@ public class IamClient {
         if (response.getStatusLine().getStatusCode() != 204) {
             throw new Exception("Failed to delete oauth user");
         }
+    }
+
+    public OauthUser createUserAvatar(File file, String contentType, String id, String userName) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        if (!StringUtils.isEmpty(id)) {
+            params.put("id", id);
+        }
+        if (!StringUtils.isEmpty(userName)) {
+            params.put("userName", userName);
+        }
+        params.put("contentType", contentType);
+        String queryString = HttpUtils.createGETQueryString(params);
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/avatar";
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeFileRequest("POST", url + queryString, file, headers);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode != 201) {
+            throw new Exception("Failed to create oauth user avatar");
+        }
+
+        Header[] locations = response.getHeaders("Location");
+        Header location = locations[0];
+        String userId = location.getValue().substring(location.getValue().lastIndexOf("/") + 1);
+        return getUser(userId);
+    }
+
+    public void deleteUserAvatar(String id, String userName) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/avatar";
+        Map<String, Object> params = new HashMap<>();
+        if (!StringUtils.isEmpty(id)) {
+            params.put("id", id);
+        }
+        if (!StringUtils.isEmpty(userName)) {
+            params.put("userName", userName);
+        }
+        String queryString = HttpUtils.createGETQueryString(params);
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("DELETE", url + queryString, null, headers);
+        if (response.getStatusLine().getStatusCode() != 204) {
+            throw new Exception("Failed to delete oauth user avatar");
+        }
+    }
+
+    public void getUserAvatar(String id, String userName, OutputStream outputStream) throws Exception {
+
+        HttpUtils httpUtils = new HttpUtils();
+        String url = createRestBaseUrl() + "/avatar";
+        Map<String, Object> params = new HashMap<>();
+        if (!StringUtils.isEmpty(id)) {
+            params.put("id", id);
+        }
+        if (!StringUtils.isEmpty(userName)) {
+            params.put("userName", userName);
+        }
+        String queryString = HttpUtils.createGETQueryString(params);
+
+        Map<String, String> headers = new HashMap();
+        headers.put("Content-Type", "application/json");
+        headers.put("client-key", this.clientId);
+        headers.put("client-secret", this.clientSecret);
+
+        HttpResponse response = httpUtils.makeRequest("GET", url + queryString, null, headers);
+        if (response.getStatusLine().getStatusCode() != 200) {
+            throw new Exception("Failed to get oauth user avatar");
+        }
+        response.getEntity().writeTo(outputStream);
     }
 
     public OauthClient createClient(OauthClient oauthClient) throws Exception {

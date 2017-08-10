@@ -1,10 +1,14 @@
 package org.opencloudengine.garuda.web.console.oauthuser;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 public interface OauthUserService {
 
     OauthUser selectById(String id);
+
+    OauthUser selectByName(String userName);
 
     List<OauthUser> selectAllByManagementId(String managementId);
 
@@ -39,4 +43,8 @@ public interface OauthUserService {
     OauthSessionToken generateSessionToken(String managementKey, String userName, String userPassword) throws Exception;
 
     OauthScopeToken generateScopeToken(String managementKey, String userName, String clientKey, String scopes) throws Exception;
+
+    OauthUser insertAvatar(InputStream in, String contentType, OauthUser oauthUser);
+
+    void deleteAvatar(OauthUser oauthUser);
 }
