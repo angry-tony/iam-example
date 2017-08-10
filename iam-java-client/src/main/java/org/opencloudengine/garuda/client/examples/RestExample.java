@@ -30,7 +30,7 @@ public class RestExample {
 
         OauthUser oauthUser = iamClient.getUserByName("jyjang@uengine.org");
 
-        iamClient.createUserAvatar(new File("/Users/uengine/Downloads/5iELGDdoK8.svg"),"image/svg+xml",oauthUser.get_id());
+        iamClient.createUserAvatar(new File("/Users/uengine/Downloads/5iELGDdoK8.svg"),"image/svg+xml",oauthUser.get_id(), null);
         //iamClient.deleteUserAvatar(oauthUser.get_id());
 
 
