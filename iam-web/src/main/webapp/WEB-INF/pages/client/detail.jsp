@@ -230,6 +230,11 @@
                                             <input type="checkbox" name="requiredContext" value="userId"> userId
                                         </label>
                                     </div>
+                                    <div>
+                                        <label>
+                                            <input type="checkbox" name="requiredContext" value="user"> user
+                                        </label>
+                                    </div>
                                 </div>
 
                             </div>

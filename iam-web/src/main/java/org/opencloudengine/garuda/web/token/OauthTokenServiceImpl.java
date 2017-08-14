@@ -117,6 +117,14 @@ public class OauthTokenServiceImpl implements OauthTokenService {
         if (type.equals("user")) {
             context.put("userId", accessToken.getOauthUserId());
             context.put("userName", oauthUser.getUserName());
+            Map<String, Object> userMap = JsonUtils.convertClassToMap(oauthUser);
+
+            //remove unused fields.
+            userMap.remove("userPassword");
+            userMap.remove("_rev");
+            userMap.remove("docType");
+
+            context.put("user", userMap);
         }
 
         //클라이언트의 콘텍스트 필수 항목만 context 에 집어넣는다.
