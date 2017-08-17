@@ -25,6 +25,7 @@ import org.opencloudengine.garuda.couchdb.CouchServiceFactory;
 import org.opencloudengine.garuda.util.JsonUtils;
 import org.opencloudengine.garuda.util.ResourceUtils;
 import org.opencloudengine.garuda.web.console.oauthscope.OauthScope;
+import org.opencloudengine.garuda.web.notification.NotificationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

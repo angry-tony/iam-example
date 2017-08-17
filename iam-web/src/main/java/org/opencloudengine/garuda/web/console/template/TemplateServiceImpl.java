@@ -1,5 +1,6 @@
 package org.opencloudengine.garuda.web.console.template;
 
+import org.opencloudengine.garuda.web.notification.NotificationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -17,6 +17,8 @@
 package org.opencloudengine.garuda.web.console.template;
 
 
+import org.opencloudengine.garuda.web.notification.NotificationType;
+
 import java.util.List;
 
 /**

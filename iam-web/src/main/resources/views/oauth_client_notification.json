@@ -1,0 +1,9 @@
+{
+  "_id": "_design/oauth_client_notification",
+  "language": "javascript",
+  "views": {
+    "selectConfigByClientId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client_notification\"){emit([doc.clientId],doc); }}"
+    }
+  }
+}
