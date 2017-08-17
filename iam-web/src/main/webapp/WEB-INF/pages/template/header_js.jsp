@@ -145,9 +145,32 @@
 
 
     $(function () {
+        //상단 헤더에 조직 선택 리스트를 생성한다.
         if (managements && managements.length) {
+            for (var i in managements) {
+                var management = managements[i];
+                var li = $('<li><a href="#" name="management-item">' + management['managementName'] + '</a></li>');
+                $('[name=management-list]').append(li);
+                li.find('a').data('management', management);
+                li.find('a').click(function () {
+                    var selectedManagement = $(this).data('management');
+                    iam.setDefaultManagement(
+                        selectedManagement['_id'],
+                        selectedManagement['managementKey'],
+                        selectedManagement['managementSecret']
+                    );
+                    window.location.href = '${pageContext.request.contextPath}/';
+                });
+            }
             $('#management-current').html(currentManagement['managementName']);
         }
+
+        //조직 생성 페이지를 링크시킨다.
+        var li = $('<li><a href="#"> + New </a></li>');
+        $('[name=management-list]').append(li);
+        li.find('a').click(function () {
+            window.location.href = '${pageContext.request.contextPath}/management/new';
+        });
 
         $('form').each(function () {
             var form = $(this);
