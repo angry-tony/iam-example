@@ -27,8 +27,8 @@ var IAM = function (host, contextPath) {
             xhr.setRequestHeader('management-secret', managementSecret);
         }
         if (clientKey && clientSecret) {
-            xhr.setRequestHeader('client-key', managementKey);
-            xhr.setRequestHeader('client-secret', managementSecret);
+            xhr.setRequestHeader('client-key', clientKey);
+            xhr.setRequestHeader('client-secret', clientSecret);
         }
     });
 };
@@ -142,8 +142,8 @@ IAM.prototype = {
         };
         return this.send(options);
     },
-    validateToken: function(token){
-        token = token ? token :  localStorage.getItem("uengine-iam-access-token");
+    validateToken: function (token) {
+        token = token ? token : localStorage.getItem("uengine-iam-access-token");
         var options = {
             type: "GET",
             url: '/oauth/token_info?access_token=' + token,
@@ -257,6 +257,45 @@ IAM.prototype = {
             url: '/rest/v1/user/' + id
         };
         return this.send(options);
+    },
+    createUserAvatarByFormData: function (file, contentType, id, userName) {
+        var formData = new FormData();
+        if (id) {
+            formData.append('id', id);
+        }
+        if (userName) {
+            formData.append('userName', userName);
+        }
+        formData.append('contentType', contentType);
+        formData.append('file', file);
+        var options = {
+            type: "POST",
+            url: '/rest/v1/avatar/formdata',
+            data: formData,
+            contentType: false,
+            processData: false
+        };
+        return this.send(options);
+    },
+    deleteUserAvatarByUserName: function (userName) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/avatar?userName=' + userName
+        };
+        return this.send(options);
+    },
+    deleteUserAvatarById: function (id) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/avatar?id=' + id
+        };
+        return this.send(options);
+    },
+    getUserAvatarUrlById: function (id) {
+        return this.baseUrl + '/rest/v1/avatar?id=' + id;
+    },
+    getUserAvatarUrlByUserName: function (userName) {
+        return this.baseUrl + '/rest/v1/avatar?userName=' + userName;
     },
     getClient: function (id) {
         var options = {
@@ -432,6 +471,61 @@ IAM.prototype = {
         };
         return this.send(options);
     },
+    getNotificationConfig: function (clientId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/notification_config',
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+    updateNotificationConfig: function (clientId, data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client/' + clientId + '/notification_config',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text'
+        };
+        return this.send(options);
+    },
+
+    getAllTemplate: function (clientId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/template',
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+
+    createTemplate: function (clientId, template_type, locale, data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text'
+        };
+        return this.send(options);
+    },
+
+    deleteTemplate: function (clientId, template_type, locale) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale
+        };
+        return this.send(options);
+    },
+
+    setDefaultTemplate: function (clientId, template_type, locale) {
+        var options = {
+            type: "PUT",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale,
+            dataType: 'text'
+        };
+        return this.send(options);
+    },
     send: function (options) {
         var caller = arguments.callee.caller.name;
         var me = this;
@@ -440,10 +534,14 @@ IAM.prototype = {
             type: options.type,
             url: me.baseUrl + options.url
         };
+        if (options.processData || typeof options.processData == 'boolean') {
+            ajaxOptions.processData = options.processData;
+        }
+
         if (options.dataType) {
             ajaxOptions.dataType = options.dataType;
         }
-        if (options.contentType) {
+        if (options.contentType || typeof options.contentType == 'boolean') {
             ajaxOptions.contentType = options.contentType;
         }
         if (typeof options.async == 'boolean' && !options.async) {
