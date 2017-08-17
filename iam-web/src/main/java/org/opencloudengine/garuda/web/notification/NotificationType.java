@@ -5,8 +5,7 @@ package org.opencloudengine.garuda.web.notification;
  */
 public enum NotificationType {
     SIGN_UP,
+    SIGNED_UP,
     FORGOT_PASSWORD,
-    USER_CREATED,
-    USER_UPDATED,
-    USER_PASSWORD_CHANGED
+    PASSWORD_CHANGED
 }

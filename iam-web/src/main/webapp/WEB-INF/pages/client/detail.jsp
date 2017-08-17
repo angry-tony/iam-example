@@ -379,7 +379,8 @@
                                                         </div>
                                                         <div class="form-group">
                                                             <div class="col-md-offset-2 col-md-10">
-                                                                <button class="btn btn-primary" type="submit" name="submit">Save
+                                                                <button class="btn btn-primary" type="submit"
+                                                                        name="submit">Save
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -565,36 +566,34 @@
         };
 
         var drawNotificationItem = function (key, isNotify) {
+            var description = '';
             if (key == 'FROM') {
                 notificationForm.find('[name=from]').val(notificationConfig[key]);
                 return;
             }
-            if (key == 'FROM_NAME') {
+            else if (key == 'FROM_NAME') {
                 notificationForm.find('[name=from_name]').val(notificationConfig[key]);
                 return;
             }
-
+            else if (key == 'SIGN_UP') {
+                description = '고객의 회원가입 요청 이메일 입니다. 이 이메일에 포함된 링크는 요청시 입력한 redirect 경로입니다.';
+            }
+            else if (key == 'SIGNED_UP') {
+                description = '고객 가입 완료 안내 이메일 입니다.';
+            }
+            else if (key == 'FORGOT_PASSWORD') {
+                description = '고객의 비밀번호 분실 이메일 입니다. 이 이메일에 포함된 링크는 요청시 입력한 redirect 경로입니다.';
+            }
+            else if (key == 'PASSWORD_CHANGED') {
+                description = '고객 비밀번호 변경 알림 이메일 입니다.';
+            }
+            else {
+                return;
+            }
             var item = $('#notification-type-item').clone();
             item.removeAttr('id');
 
             $('#notification-type-appender').append(item);
-
-            var description = '';
-            if (key == 'SIGN_UP') {
-                description = '고객의 회원가입 요청 이메일 입니다. 이 이메일에 포함된 링크는 요청시 입력한 redirect 경로입니다.';
-            }
-            if (key == 'FORGOT_PASSWORD') {
-                description = '고객의 비밀번호 분실 이메일 입니다. 이 이메일에 포함된 링크는 요청시 입력한 redirect 경로입니다.';
-            }
-            if (key == 'USER_CREATED') {
-                description = '고객 가입 완료 안내 이메일 입니다.';
-            }
-            if (key == 'USER_UPDATED') {
-                description = '고객 정보 변경 안내 이메일 입니다.';
-            }
-            if (key == 'USER_PASSWORD_CHANGED') {
-                description = '고객 비밀번호 변경 알림 이메일 입니다.';
-            }
 
             item.find('[name=notification_type]').html(key);
             item.find('[name=notification_description]').html(description);

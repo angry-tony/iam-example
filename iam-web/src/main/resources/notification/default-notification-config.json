@@ -2,8 +2,7 @@
   "FROM": "iam@uengine.org",
   "FROM_NAME": "uEngine-IAM",
   "SIGN_UP": true,
+  "SIGNED_UP": true,
   "FORGOT_PASSWORD": true,
-  "USER_CREATED": true,
-  "USER_UPDATED": true,
-  "USER_PASSWORD_CHANGED": true
+  "PASSWORD_CHANGED": true
 }

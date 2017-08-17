@@ -68,8 +68,24 @@ public class NotificationConfigRestController {
                 notificationConfig.setConfiguration(notificationConfigRepository.getDefaultConfig());
                 notificationConfig = notificationConfigRepository.insertConfig(notificationConfig);
             }
-            Map map = JsonUtils.marshal(notificationConfig.getConfiguration());
-            return new ResponseEntity<>(map, HttpStatus.OK);
+
+            //규칙중 필수값이 없다면 디폴트 규칙으로 업데이트 하도록 한다.
+            boolean needToUpdate = false;
+            Map defaultConfig = JsonUtils.marshal(notificationConfigRepository.getDefaultConfig());
+            Map existConfig = JsonUtils.marshal(notificationConfig.getConfiguration());
+            for (int i = 0; i < NotificationType.values().length; i++) {
+                String requiredType = NotificationType.values()[i].toString();
+                if(!existConfig.containsKey(requiredType)){
+                    existConfig.put(requiredType, defaultConfig.get(requiredType));
+                    needToUpdate = true;
+                }
+            }
+            if(needToUpdate){
+                notificationConfig.setConfiguration(JsonUtils.marshal(existConfig));
+                notificationConfigRepository.updateConfig(notificationConfig);
+            }
+
+            return new ResponseEntity<>(existConfig, HttpStatus.OK);
         } catch (Exception ex) {
             ExceptionUtils.httpExceptionResponse(ex, response);
             return null;
