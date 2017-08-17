@@ -1,0 +1,12 @@
+{
+  "_id": "_design/oauth_registe",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) { if(doc.docType == \"oauth_registe\"){ emit([doc._id], doc); }}"
+    },
+    "selectByClientIdAndTokenAndType": {
+      "map": "function(doc) { if(doc.docType == \"oauth_registe\"){emit([doc.clientId, doc.token, doc.notification_type], doc); }}"
+    }
+  }
+}

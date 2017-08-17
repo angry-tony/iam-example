@@ -47,6 +47,29 @@ public class RestAuthServiceImpl implements RestAuthService {
     }
 
     @Override
+    public OauthClient clientParser(HttpServletRequest request) {
+
+        Map<String, String> headers = this.getHeaders(request);
+        String clientKey = headers.get("client-key");
+        String clientSecret = headers.get("client-secret");
+
+
+        //클라이언트 키와 시크릿 헤더 파악
+        if (!StringUtils.isEmpty(clientKey) && !StringUtils.isEmpty(clientSecret)) {
+            OauthClient oauthClient = oauthClientService.selectByClientKeyAndSecret(clientKey, clientSecret);
+            if (oauthClient == null) {
+                return null;
+            }
+            if (!"trust".equals(oauthClient.getClientTrust())) {
+                return null;
+            }
+            return oauthClient;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Management managementParser(HttpServletRequest request) {
 
         Map<String, String> headers = this.getHeaders(request);

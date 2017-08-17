@@ -211,6 +211,14 @@ public class OauthUserRestController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
+            //같은 사용자 이름으로는 업데이트 불가.
+            if(oauthUser.getUserName() != null){
+                OauthUser existUser = oauthUserService.selectByName(oauthUser.getUserName());
+                if (existUser != null && !existUser.get_id().equals(currentUser.get_id())) {
+                    return new ResponseEntity<>(HttpStatus.CONFLICT);
+                }
+            }
+
             oauthUser.set_id(currentUser.get_id());
             oauthUserService.updateById(oauthUser);
 
@@ -391,32 +399,4 @@ public class OauthUserRestController {
             return null;
         }
     }
-//
-//    @RequestMapping(value = "/user/signup", method = RequestMethod.POST)
-//    public ResponseEntity<Void> signUpUser(HttpServletRequest request, HttpServletResponse response,
-//                                           @RequestParam(required = false) String redirect_url,
-//                                           @RequestParam(required = false) String lang,
-//                                           @RequestBody OauthUser oauthUser) {
-//        try {
-//            Management management = restAuthService.managementParser(request);
-//            if (management == null) {
-//                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//            }
-//
-//            //이미 존재하는 유저인 경우
-//            OauthUser existUser = oauthUserService.selectByName(oauthUser.getUserName());
-//            if (existUser != null) {
-//                return new ResponseEntity<>(HttpStatus.CONFLICT);
-//            }
-//
-//            OauthUser createdUser = oauthUserService.createUser(management.get_id(), oauthUser);
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setLocation(ucBuilder.path("/rest/v1/user/{_id}").buildAndExpand(createdUser.get_id()).toUri());
-//            return new ResponseEntity<>(headers, HttpStatus.CREATED);
-//        } catch (Exception ex) {
-//            ExceptionUtils.httpExceptionResponse(ex, response);
-//            return null;
-//        }
-//    }
 }

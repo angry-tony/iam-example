@@ -28,8 +28,6 @@ public interface OauthUserService {
 
     OauthUser selectByManagementIdAndId(String managementId, String id);
 
-    OauthUser updateById(String id, String userName, String userPassword, Integer level);
-
     OauthUser updateById(OauthUser oauthUser);
 
     void deleteById(String id);

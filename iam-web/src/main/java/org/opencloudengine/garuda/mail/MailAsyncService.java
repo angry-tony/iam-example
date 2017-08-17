@@ -118,8 +118,37 @@ public class MailAsyncService implements ConsumerNameAware, Consumer<Event<Map>>
                 );
                 break;
 
+            case "notificationMail":
+                this.notificationMail(
+                        map.get("subject") != null ? map.get("subject").toString() : null,
+                        map.get("body") != null ? map.get("body").toString() : null,
+                        map.get("fromAddress") != null ? map.get("fromAddress").toString() : null,
+                        map.get("fromName") != null ? map.get("fromName").toString() : null,
+                        map.get("toUser") != null ? map.get("toUser").toString() : null
+                );
+                break;
+
             default:
                 break;
+        }
+    }
+
+    @Async
+    public void notificationMail(String subject, String body, String fromAddress, String fromName, final String toUser) {
+        Session session = setMailProperties(toUser);
+
+        try {
+            InternetAddress from = new InternetAddress(fromAddress, fromName);
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(from);
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toUser));
+            message.setSubject(subject);
+            message.setContent(body, "text/html; charset=utf-8");
+            Transport.send(message);
+
+            logger.info("{} 메일주소로 메일을 발송했습니다.", toUser);
+        } catch (Exception e) {
+            throw new ServiceException("메일을 발송할 수 없습니다.", e);
         }
     }
 

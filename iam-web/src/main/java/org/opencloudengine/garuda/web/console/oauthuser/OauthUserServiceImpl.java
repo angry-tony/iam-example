@@ -93,16 +93,6 @@ public class OauthUserServiceImpl implements OauthUserService {
     }
 
     @Override
-    public OauthUser updateById(String id, String userName, String userPassword, Integer level) {
-        OauthUser oauthUser = new OauthUser();
-        oauthUser.set_id(id);
-        oauthUser.setUserName(userName);
-        oauthUser.setUserPassword(userPassword);
-        oauthUser.setLevel(level);
-        return oauthUserRepository.updateById(oauthUser);
-    }
-
-    @Override
     public OauthUser updateById(OauthUser oauthUser) {
         return oauthUserRepository.updateById(oauthUser);
     }
