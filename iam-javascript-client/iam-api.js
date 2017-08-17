@@ -266,7 +266,7 @@ IAM.prototype = {
         if (userName) {
             formData.append('userName', userName);
         }
-        formData.append('contentType' , contentType);
+        formData.append('contentType', contentType);
         formData.append('file', file);
         var options = {
             type: "POST",
@@ -297,6 +297,74 @@ IAM.prototype = {
     getUserAvatarUrlByUserName: function (userName) {
         return this.baseUrl + '/rest/v1/avatar?userName=' + userName;
     },
+    signUp: function (redirect_url, data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/user/signup?redirect_url=' + redirect_url,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+    signUpVerification: function (token) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/user/signup/verification?token=' + token,
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    signUpAccept: function (token) {
+        var data = {
+            token: token
+        };
+        var options = {
+            type: "POST",
+            url: '/rest/v1/user/signup/accept',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+
+    forgotPassword: function (redirect_url, userName) {
+        var data = {
+            userName: userName
+        };
+        var options = {
+            type: "POST",
+            url: '/rest/v1/user/forgot?redirect_url=' + redirect_url,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+    forgotPasswordVerification: function (token) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/user/forgot/verification?token=' + token,
+            dataType: "json"
+        };
+        return this.send(options);
+    },
+    forgotPasswordAccept: function (token, password) {
+        var data = {
+            token: token,
+            password: password
+        };
+        var options = {
+            type: "POST",
+            url: '/rest/v1/user/forgot/accept',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+
     getClient: function (id) {
         var options = {
             type: "GET",
@@ -468,6 +536,61 @@ IAM.prototype = {
         var options = {
             type: "DELETE",
             url: '/rest/v1/scope/' + id
+        };
+        return this.send(options);
+    },
+    getNotificationConfig: function (clientId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/notification_config',
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+    updateNotificationConfig: function (clientId, data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client/' + clientId + '/notification_config',
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text'
+        };
+        return this.send(options);
+    },
+
+    getAllTemplate: function (clientId) {
+        var options = {
+            type: "GET",
+            url: '/rest/v1/client/' + clientId + '/template',
+            dataType: 'json'
+        };
+        return this.send(options);
+    },
+
+    createTemplate: function (clientId, template_type, locale, data) {
+        var options = {
+            type: "POST",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale,
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            dataType: 'text'
+        };
+        return this.send(options);
+    },
+
+    deleteTemplate: function (clientId, template_type, locale) {
+        var options = {
+            type: "DELETE",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale
+        };
+        return this.send(options);
+    },
+
+    setDefaultTemplate: function (clientId, template_type, locale) {
+        var options = {
+            type: "PUT",
+            url: '/rest/v1/client/' + clientId + '/template/' + template_type + '/' + locale,
+            dataType: 'text'
         };
         return this.send(options);
     },
