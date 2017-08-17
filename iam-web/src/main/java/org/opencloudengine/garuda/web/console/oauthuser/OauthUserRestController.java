@@ -391,4 +391,32 @@ public class OauthUserRestController {
             return null;
         }
     }
+//
+//    @RequestMapping(value = "/user/signup", method = RequestMethod.POST)
+//    public ResponseEntity<Void> signUpUser(HttpServletRequest request, HttpServletResponse response,
+//                                           @RequestParam(required = false) String redirect_url,
+//                                           @RequestParam(required = false) String lang,
+//                                           @RequestBody OauthUser oauthUser) {
+//        try {
+//            Management management = restAuthService.managementParser(request);
+//            if (management == null) {
+//                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//            }
+//
+//            //이미 존재하는 유저인 경우
+//            OauthUser existUser = oauthUserService.selectByName(oauthUser.getUserName());
+//            if (existUser != null) {
+//                return new ResponseEntity<>(HttpStatus.CONFLICT);
+//            }
+//
+//            OauthUser createdUser = oauthUserService.createUser(management.get_id(), oauthUser);
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setLocation(ucBuilder.path("/rest/v1/user/{_id}").buildAndExpand(createdUser.get_id()).toUri());
+//            return new ResponseEntity<>(headers, HttpStatus.CREATED);
+//        } catch (Exception ex) {
+//            ExceptionUtils.httpExceptionResponse(ex, response);
+//            return null;
+//        }
+//    }
 }

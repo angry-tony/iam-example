@@ -358,6 +358,32 @@
                                         <div class="feed-activity-list">
                                             <div class="feed-element">
                                                 <div class="media-body">
+
+                                                    <form class="form-horizontal" role="form" id="notification_form">
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">From Address<span
+                                                                    class="color-red">*</span></label>
+
+                                                            <div class="col-md-6">
+                                                                <input name="from" type="text" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="col-md-2 control-label">From Name <span
+                                                                    class="color-red">*</span></label>
+
+                                                            <div class="col-md-6">
+                                                                <input name="from_name" type="text"
+                                                                       class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <div class="col-md-offset-2 col-md-10">
+                                                                <button class="btn btn-primary" type="submit" name="submit">Save
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                     <div class="col-md-4">
                                                         TYPE
                                                     </div>
@@ -470,6 +496,8 @@
         var notificationTemplates;
 
         var form = $('#oauthClientForm');
+        var notificationForm = $('#notification_form');
+
         if (_id) {
             iam.getAllScope()
                 .done(function (scopes) {
@@ -495,6 +523,7 @@
                     toastr.error('Failed to find scopes');
                 })
         } else {
+            $('#notification-append').hide();
             iam.getAllScope()
                 .done(function (scopes) {
                     oauthScopes = scopes;
@@ -508,6 +537,9 @@
         var fillNotifications = function () {
             notificationConfig = null
             notificationTemplates = null;
+            notificationForm.find('[name=from]').val('');
+            notificationForm.find('[name=from_name]').val('');
+
             $('#notification-type-appender').find('[name=notification-type-item]').remove();
 
             iam.getNotificationConfig(_id)
@@ -533,6 +565,15 @@
         };
 
         var drawNotificationItem = function (key, isNotify) {
+            if (key == 'FROM') {
+                notificationForm.find('[name=from]').val(notificationConfig[key]);
+                return;
+            }
+            if (key == 'FROM_NAME') {
+                notificationForm.find('[name=from_name]').val(notificationConfig[key]);
+                return;
+            }
+
             var item = $('#notification-type-item').clone();
             item.removeAttr('id');
 
@@ -566,13 +607,6 @@
             item.find('[name=notification_use]').prop('checked', isNotify);
             item.find('[name=notification_use]').click(function () {
                 notificationConfig[key] = $(this).prop('checked');
-                iam.updateNotificationConfig(_id, notificationConfig)
-                    .done(function () {
-                        toastr.success("Notification config updated.");
-                    })
-                    .fail(function () {
-                        toastr.error("Failed to update notification config.");
-                    })
             });
 
             var templates = notificationTemplates[key];
@@ -802,6 +836,25 @@
                         blockStop();
                     })
             }
+        });
+
+        notificationForm.submit(function (event) {
+            event.preventDefault();
+
+            blockStart('Please wait a moment...');
+            notificationConfig['FROM'] = notificationForm.find('[name=from]').val();
+            notificationConfig['FROM_NAME'] = notificationForm.find('[name=from_name]').val();
+
+            iam.updateNotificationConfig(_id, notificationConfig)
+                .done(function () {
+                    toastr.success("Notification config updated.");
+                })
+                .fail(function () {
+                    toastr.error("Failed to update notification config.");
+                })
+                .always(function () {
+                    blockStop();
+                });
         });
     });
 </script>
