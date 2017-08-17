@@ -1,0 +1,18 @@
+{
+  "_id": "_design/oauth_client_template",
+  "language": "javascript",
+  "views": {
+    "selectById": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client_template\"){emit([doc._id],doc); }}"
+    },
+    "selectByClientId": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client_template\"){emit([doc.clientId],doc); }}"
+    },
+    "selectByClientIdAndType": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client_template\"){emit([doc.clientId,doc.notification_type],doc); }}"
+    },
+    "selectByClientIdAndTypeAndLocale": {
+      "map": "function(doc) {if(doc.docType == \"oauth_client_template\"){emit([doc.clientId,doc.notification_type,doc.locale],doc); }}"
+    }
+  }
+}
