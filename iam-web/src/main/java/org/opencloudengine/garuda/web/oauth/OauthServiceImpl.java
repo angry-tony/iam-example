@@ -70,6 +70,10 @@ public class OauthServiceImpl implements OauthService {
         AuthorizeResponse authorizeResponse = new AuthorizeResponse();
 
         authorizeResponse.setClientId(request.getParameter("client_id"));
+        if(StringUtils.isEmpty(authorizeResponse.getClientId())){
+            authorizeResponse.setClientId(request.getHeader("client-key"));
+        }
+
         authorizeResponse.setResponseType(request.getParameter("response_type"));
         authorizeResponse.setRedirectUri(request.getParameter("redirect_uri"));
         authorizeResponse.setScope(request.getParameter("scope"));
@@ -299,7 +303,15 @@ public class OauthServiceImpl implements OauthService {
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
 
         accessTokenResponse.setClientId(request.getParameter("client_id"));
+        if(StringUtils.isEmpty(accessTokenResponse.getClientId())){
+            accessTokenResponse.setClientId(request.getHeader("client-key"));
+        }
+
         accessTokenResponse.setClientSecret(request.getParameter("client_secret"));
+        if(StringUtils.isEmpty(accessTokenResponse.getClientSecret())){
+            accessTokenResponse.setClientSecret(request.getHeader("client-secret"));
+        }
+
         accessTokenResponse.setGrant_type(request.getParameter("grant_type"));
         accessTokenResponse.setCode(request.getParameter("code"));
         accessTokenResponse.setRedirectUri(request.getParameter("redirect_uri"));

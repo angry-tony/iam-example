@@ -28,9 +28,27 @@ public class RestExample {
                 "109cf590-ac67-4b8c-912a-913373ada046");
         iamClient.setRestBasePath("/oce/rest/v1");
 
-        OauthUser oauthUser = iamClient.getUserByName("jyjang@uengine.org");
 
-        iamClient.createUserAvatar(new File("/Users/uengine/Downloads/5iELGDdoK8.svg"),"image/svg+xml",oauthUser.get_id(), null);
+        /**
+         * 템플릿 테스트
+         */
+
+        /**
+         * 회원가입 테스트
+         */
+
+        /**
+         * 비밀번호 분실 테스트
+         */
+
+        /**
+         * 비밀번호 변경 테스트
+         */
+
+
+//        OauthUser oauthUser = iamClient.getUserByName("jyjang@uengine.org");
+//
+//        iamClient.createUserAvatar(new File("/Users/uengine/Downloads/5iELGDdoK8.svg"),"image/svg+xml",oauthUser.get_id(), null);
         //iamClient.deleteUserAvatar(oauthUser.get_id());
 
 
